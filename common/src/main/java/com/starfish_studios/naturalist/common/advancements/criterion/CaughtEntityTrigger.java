@@ -22,7 +22,7 @@ public class CaughtEntityTrigger extends SimpleCriterionTrigger<CaughtEntityTrig
         return ID;
     }
 
-    public @NotNull TriggerInstance createInstance(JsonObject json, EntityPredicate.Composite entityPredicate, DeserializationContext conditionsParser) {
+    public @NotNull TriggerInstance createInstance(JsonObject json, ContextAwarePredicate entityPredicate, DeserializationContext conditionsParser) {
         ItemPredicate itemPredicate = ItemPredicate.fromJson(json.get("item"));
         return new TriggerInstance(entityPredicate, itemPredicate);
     }
@@ -36,7 +36,7 @@ public class CaughtEntityTrigger extends SimpleCriterionTrigger<CaughtEntityTrig
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {
         private final ItemPredicate item;
 
-        public TriggerInstance(EntityPredicate.Composite composite, ItemPredicate itemPredicate) {
+        public TriggerInstance(ContextAwarePredicate composite, ItemPredicate itemPredicate) {
             super(CaughtEntityTrigger.ID, composite);
             this.item = itemPredicate;
         }

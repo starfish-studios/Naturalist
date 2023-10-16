@@ -5,10 +5,10 @@ import com.starfish_studios.naturalist.common.entity.Catfish;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
 @Environment(EnvType.CLIENT)
-public class CatfishModel extends AnimatedGeoModel<Catfish> {
+public class CatfishModel extends GeoModel<Catfish> {
     @Override
     public ResourceLocation getModelResource(Catfish catfish) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/catfish.geo.json");

@@ -30,7 +30,7 @@ public class DistancedFollowParentGoal extends Goal {
         if (this.animal.getAge() >= 0) {
             return false;
         } else {
-            List<? extends Animal> adults = this.animal.level.getEntitiesOfClass(this.animal.getClass(), this.animal.getBoundingBox().inflate(horizontalScanRange, verticalScanRange, horizontalScanRange));
+            List<? extends Animal> adults = this.animal.level().getEntitiesOfClass(this.animal.getClass(), this.animal.getBoundingBox().inflate(horizontalScanRange, verticalScanRange, horizontalScanRange));
             Animal parent = null;
             double distance = Double.MAX_VALUE;
 

@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 
 public class BetterGroundPathNavigation extends GroundPathNavigation {
@@ -11,6 +12,10 @@ public class BetterGroundPathNavigation extends GroundPathNavigation {
         super(mob, level);
     }
 
+    public boolean canCutCorner(BlockPathTypes pathType) {
+        return (pathType != BlockPathTypes.DANGER_FIRE && pathType != BlockPathTypes.DANGER_POWDER_SNOW
+                && pathType != BlockPathTypes.DANGER_OTHER && pathType != BlockPathTypes.WALKABLE_DOOR);
+    }
     @Override
     protected void followThePath() {
         boolean shouldAdvance;
@@ -21,7 +26,7 @@ public class BetterGroundPathNavigation extends GroundPathNavigation {
         double y = Math.abs(this.mob.getY() - (double)nextPos.getY());
         double z = Math.abs(this.mob.getZ() - ((double)nextPos.getZ() + 0.5));
         shouldAdvance = x < (double) this.maxDistanceToWaypoint && z < (double) this.maxDistanceToWaypoint && y < 1.0;
-        if (shouldAdvance || this.mob.canCutCorner(this.path.getNextNode().type) && this.shouldTargetNextNodeInDirection(tempMobPos)) {
+        if (shouldAdvance || canCutCorner(this.path.getNextNode().type) && this.shouldTargetNextNodeInDirection(tempMobPos)) {
             this.path.advance();
         }
         this.doStuckDetection(tempMobPos);

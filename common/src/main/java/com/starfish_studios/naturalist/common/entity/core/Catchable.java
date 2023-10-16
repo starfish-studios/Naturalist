@@ -107,7 +107,7 @@ public interface Catchable {
             ItemStack itemStack3 = ItemUtils.createFilledResult(itemStack, player, itemStack2, false);
             player.setItemInHand(hand, itemStack3);
             player.playSound(SoundEvents.ITEM_PICKUP, 0.3F, 1.0F);
-            Level level = entity.level;
+            Level level = entity.level();
             if (!level.isClientSide) {
                 CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, itemStack2);
             }
@@ -131,7 +131,7 @@ public interface Catchable {
                 ItemHelper.spawnItemOnEntity(player, caughtItemStack);
             }
             player.playSound(SoundEvents.ITEM_PICKUP, 0.3F, 1.0F);
-            if (!entity.level.isClientSide) {
+            if (!entity.level().isClientSide) {
                 CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, caughtItemStack);
             }
             entity.discard();

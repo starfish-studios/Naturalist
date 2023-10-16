@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @Environment(EnvType.CLIENT)
 public class DeerRenderer extends GeoEntityRenderer<Deer> {
@@ -21,18 +21,17 @@ public class DeerRenderer extends GeoEntityRenderer<Deer> {
     }
 
     @Override
-    public void renderEarly(Deer animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
-        super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
+    public void render(Deer animatable, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (animatable.isBaby()) {
-            stackIn.scale(0.6F, 0.6F, 0.6F);
+            poseStack.scale(0.6F, 0.6F, 0.6F);
         }
         else {
-            stackIn.scale(0.9F, 0.9F, 0.9F);
+            poseStack.scale(0.9F, 0.9F, 0.9F);
         }
+        super.render(animatable, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
-    @Override
-    public RenderType getRenderType(Deer animatable, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
+   public RenderType getRenderType(Deer animatable, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
         return RenderType.entityCutoutNoCull(textureLocation);
     }
 }

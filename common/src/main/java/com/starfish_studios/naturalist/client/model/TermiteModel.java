@@ -5,10 +5,10 @@ import com.starfish_studios.naturalist.common.entity.Termite;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
 @Environment(EnvType.CLIENT)
-public class TermiteModel extends AnimatedGeoModel<Termite> {
+public class TermiteModel extends GeoModel<Termite> {
     @Override
     public ResourceLocation getModelResource(Termite object) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/termite.geo.json");

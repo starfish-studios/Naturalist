@@ -14,21 +14,21 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 // This is the class that acts as the heart for all of our animals.
 // It allows us to reduce the amount of code present in each animal's class for better organization.
 /** It is also JAM-PACKED with notes, so I can remember how things work or for other people to learn. */
 
-public class NaturalistAnimal extends net.minecraft.world.entity.animal.Animal implements IAnimatable {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+public class NaturalistAnimal extends net.minecraft.world.entity.animal.Animal implements GeoAnimatable {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(ItemTags.PIGLIN_FOOD);
     /** Food items are defined here. I used "PIGLIN_FOOD" as an example, but any tag or even a list of items can be used. */
 
@@ -75,20 +75,29 @@ public class NaturalistAnimal extends net.minecraft.world.entity.animal.Animal i
       * but these are the base animations most of our mobs use.
     **/
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    @Override
+    public double getTick(Object object) {
+        return 0; // TODO: ??
+    }
+
+    private <E extends GeoAnimatable> PlayState predicate(final AnimationState<E> event) {  // Replace `YourEntityName` with the name of your entity
+        if (event.getLimbSwingAmount() > 1.0E-6) { // Replaced `getDeltaMovement().horizontalDistanceSqr()`
             if (this.isSprinting()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("run"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("run"));
                 event.getController().setAnimationSpeed(2.0D);
             } else {
-                event.getController().setAnimation(new AnimationBuilder().loop("walk"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("walk"));
                 event.getController().setAnimationSpeed(1.0D);
             }
             return PlayState.CONTINUE;
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
         }
-        event.getController().markNeedsReload();
+        // event.getController().markNeedsReload();
         return PlayState.STOP;
     }
 
@@ -99,17 +108,14 @@ public class NaturalistAnimal extends net.minecraft.world.entity.animal.Animal i
      *  Using a single controller will cause animations to override one another.
      */
     @Override
-    public void registerControllers(AnimationData data) {
-        data.setResetSpeedInTicks(5);
-        data.addAnimationController(new AnimationController<>(this, "controller", 5, this::predicate));
-        /* data.addAnimationController(new AnimationController<>(this, "attackController", 5, this::predicate)); */
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // TODO: used to be 5
+        // data.setResetSpeedInTicks(5);
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        /* controllers.add(new AnimationController<>(this, "attackController", 5, this::predicate)); */
     }
 
     // Returns the factory created at the top of the class
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 
     // MISC. METHODS
     /** This is where I keep miscellaneous things used elsewhere.

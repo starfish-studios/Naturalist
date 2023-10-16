@@ -38,22 +38,21 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.AnimationState;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 import java.util.List;
 
-public class Rhino extends Animal implements IAnimatable {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+public class Rhino extends Animal implements GeoEntity {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> CHARGE_COOLDOWN_TICKS = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_TARGET = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.BOOLEAN);
     private int stunnedTick;
@@ -61,7 +60,7 @@ public class Rhino extends Animal implements IAnimatable {
 
     public Rhino(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.maxUpStep = 1.0f;
+        this.setMaxUpStep(1.0f);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -177,7 +176,7 @@ public class Rhino extends Animal implements IAnimatable {
             double d = this.getX() - (double)this.getBbWidth() * Math.sin(this.yBodyRot * ((float)Math.PI / 180)) + (this.random.nextDouble() * 0.6 - 0.3);
             double e = this.getY() + (double)this.getBbHeight() - 0.3;
             double f = this.getZ() + (double)this.getBbWidth() * Math.cos(this.yBodyRot * ((float)Math.PI / 180)) + (this.random.nextDouble() * 0.6 - 0.3);
-            this.level.addParticle(ParticleTypes.ENTITY_EFFECT, d, e, f, 0.4980392156862745, 0.5137254901960784, 0.5725490196078431);
+            this.level().addParticle(ParticleTypes.ENTITY_EFFECT, d, e, f, 0.4980392156862745, 0.5137254901960784, 0.5725490196078431);
         }
     }
 
@@ -192,7 +191,7 @@ public class Rhino extends Animal implements IAnimatable {
         this.resetChargeCooldownTicks();
         this.getNavigation().stop();
         this.playSound(SoundEvents.RAVAGER_STUNNED, 1.0f, 1.0f);
-        this.level.broadcastEntityEvent(this, (byte)39);
+        this.level().broadcastEntityEvent(this, (byte)39);
         defender.push(this);
         defender.hurtMarked = true;
     }
@@ -238,41 +237,45 @@ public class Rhino extends Animal implements IAnimatable {
         return this.isBaby() ? NaturalistSoundEvents.RHINO_AMBIENT_BABY.get() : NaturalistSoundEvents.RHINO_AMBIENT.get();
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Rhino> PlayState predicate(final AnimationState<E> event) {
         if (this.stunnedTick > 0) {
-            event.getController().setAnimation(new AnimationBuilder().loop("stunned"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("stunned"));
             event.getController().setAnimationSpeed(1.0F);
         } else if (event.isMoving()) {
             if (this.isSprinting()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("charge"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("charge"));
                 event.getController().setAnimationSpeed(3.0F);
             } else {
-                event.getController().setAnimation(new AnimationBuilder().loop("walk"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("walk"));
                 event.getController().setAnimationSpeed(1.0F);
             }
         } else if (this.hasChargeCooldown() && this.hasTarget()) {
-            event.getController().setAnimation(new AnimationBuilder().loop("foot"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("foot"));
             event.getController().setAnimationSpeed(1.0F);
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
             event.getController().setAnimationSpeed(1.0F);
         }
         return PlayState.CONTINUE;
     }
 
     private void soundListener(SoundKeyframeEvent<Rhino> event) {
-        Rhino rhino = event.getEntity();
-        if (rhino.level.isClientSide) {
-            if (event.sound.equals("scrape")) {
-                rhino.level.playLocalSound(rhino.getX(), rhino.getY(), rhino.getZ(), NaturalistSoundEvents.RHINO_SCRAPE.get(), rhino.getSoundSource(), 1.0F, rhino.getVoicePitch(), false);
+        Rhino rhino = event.getAnimatable();
+        if (rhino.level().isClientSide) {
+            if (event.getKeyframeData().getSound().equals("scrape")) {
+                rhino.level().playLocalSound(rhino.getX(), rhino.getY(), rhino.getZ(), NaturalistSoundEvents.RHINO_SCRAPE.get(), rhino.getSoundSource(), 1.0F, rhino.getVoicePitch(), false);
             }
         }
     }
 
-    private <E extends IAnimatable> PlayState attackPredicate(AnimationEvent<E> event) {
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
-            event.getController().markNeedsReload();
-            event.getController().setAnimation(new AnimationBuilder().playOnce("attack"));
+    private <E extends Rhino> PlayState attackPredicate(final AnimationState<E> event) {
+        if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
+            // event.getController().markNeedsReload();
+            event.getController().setAnimation(RawAnimation.begin().thenPlay("attack"));
             event.getController().setAnimationSpeed(0.8F);
             this.swinging = false;
         }
@@ -280,18 +283,15 @@ public class Rhino extends Animal implements IAnimatable {
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.setResetSpeedInTicks(5);
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // TODO: used to be 5
+        // data.setResetSpeedInTicks(5);
         AnimationController<Rhino> controller = new AnimationController<>(this, "controller", 5, this::predicate);
-        controller.registerSoundListener(this::soundListener);
-        data.addAnimationController(controller);
-        data.addAnimationController(new AnimationController<>(this, "attackController", 5, this::attackPredicate));
+        controller.setSoundKeyframeHandler(this::soundListener);
+        controllers.add(controller);
+        controllers.add(new AnimationController<>(this, "attackController", 5, this::attackPredicate));
     }
 
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 
     static class RhinoPrepareChargeGoal extends Goal {
         protected final Rhino rhino;
@@ -394,34 +394,34 @@ public class Rhino extends Animal implements IAnimatable {
         @Override
         public void tick() {
             this.mob.getLookControl().setLookAt(Vec3.atCenterOf(this.path.getTarget()));
-            if (this.mob.horizontalCollision && this.mob.onGround) {
+            if (this.mob.horizontalCollision && this.mob.onGround()) {
                 this.mob.jumpFromGround();
             }
-            if (this.mob.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            if (this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
                 AABB boundingBox = this.mob.getBoundingBox().inflate(0.2);
                 for (BlockPos pos : BlockPos.betweenClosed(Mth.floor(boundingBox.minX), Mth.floor(boundingBox.minY), Mth.floor(boundingBox.minZ), Mth.floor(boundingBox.maxX), Mth.floor(boundingBox.maxY), Mth.floor(boundingBox.maxZ))) {
-                    BlockState state = this.mob.level.getBlockState(pos);
+                    BlockState state = this.mob.level().getBlockState(pos);
                     if (!state.is(NaturalistTags.BlockTags.RHINO_CHARGE_BREAKABLE)) continue;
-                    this.mob.level.destroyBlock(pos, true, this.mob);
+                    this.mob.level().destroyBlock(pos, true, this.mob);
                 }
             }
-            if (!this.mob.level.isClientSide()) {
-                ((ServerLevel) this.mob.level).sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, this.mob.getX(), this.mob.getY(), this.mob.getZ(), 5, this.mob.getBbWidth() / 4.0F, 0, this.mob.getBbWidth() / 4.0F, 0.01D);
+            if (!this.mob.level().isClientSide()) {
+                ((ServerLevel) this.mob.level()).sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, this.mob.getX(), this.mob.getY(), this.mob.getZ(), 5, this.mob.getBbWidth() / 4.0F, 0, this.mob.getBbWidth() / 4.0F, 0.01D);
             }
-            if (this.mob.level.getGameTime() % 2L == 0L) {
+            if (this.mob.level().getGameTime() % 2L == 0L) {
                 this.mob.playSound(SoundEvents.HOGLIN_STEP, 0.5F, this.mob.getVoicePitch());
             }
             this.tryToHurt();
         }
 
         protected void tryToHurt() {
-            List<LivingEntity> nearbyEntities = this.mob.level.getNearbyEntities(LivingEntity.class, TargetingConditions.forCombat(), this.mob, this.mob.getBoundingBox());
+            List<LivingEntity> nearbyEntities = this.mob.level().getNearbyEntities(LivingEntity.class, TargetingConditions.forCombat(), this.mob, this.mob.getBoundingBox());
             if (!nearbyEntities.isEmpty()) {
                 LivingEntity livingEntity = nearbyEntities.get(0);
                 if (!(livingEntity instanceof Rhino)) {
-                    livingEntity.hurt(DamageSource.mobAttack(this.mob), (float) this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                    livingEntity.hurt(livingEntity.damageSources().mobAttack(this.mob), (float) this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
                     float speed = Mth.clamp(this.mob.getSpeed() * 1.65f, 0.2f, 3.0f);
-                    float shieldBlockModifier = livingEntity.isDamageSourceBlocked(DamageSource.mobAttack(this.mob)) ? 0.5f : 1.0f;
+                    float shieldBlockModifier = livingEntity.isDamageSourceBlocked(livingEntity.damageSources().mobAttack(this.mob)) ? 0.5f : 1.0f;
                     livingEntity.knockback(shieldBlockModifier * speed * 2.0D, this.chargeDirection.x(), this.chargeDirection.z());
                     double knockbackResistance = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
                     livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(0.0, 0.4f * knockbackResistance, 0.0));
@@ -451,7 +451,7 @@ public class Rhino extends Animal implements IAnimatable {
                 if (!rhino.isWithinYRange(target)) {
                     return false;
                 }
-                List<Rhino> nearbyEntities = this.rhino.level.getEntitiesOfClass(Rhino.class, this.rhino.getBoundingBox().inflate(8.0, 4.0, 8.0));
+                List<Rhino> nearbyEntities = this.rhino.level().getEntitiesOfClass(Rhino.class, this.rhino.getBoundingBox().inflate(8.0, 4.0, 8.0));
                 for (Rhino mob : nearbyEntities) {
                     if (!mob.isBaby()) continue;
                     return true;

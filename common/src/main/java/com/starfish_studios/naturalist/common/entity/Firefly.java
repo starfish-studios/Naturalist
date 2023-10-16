@@ -35,19 +35,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Firefly extends Animal implements FlyingAnimal, IAnimatable {
+public class Firefly extends Animal implements FlyingAnimal, GeoEntity {
     private static final EntityDataAccessor<Integer> GLOW_TICKS_REMAINING = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> SUN_TICKS = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
     @NotNull
@@ -69,7 +69,7 @@ public class Firefly extends Animal implements FlyingAnimal, IAnimatable {
     protected PathNavigation createNavigation(Level pLevel) {
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, pLevel) {
             public boolean isStableDestination(BlockPos pPos) {
-                return !this.level.getBlockState(pPos.below()).isAir();
+                return !level().getBlockState(pPos.below()).isAir();
             }
         };
         navigation.setCanOpenDoors(false);
@@ -162,30 +162,30 @@ public class Firefly extends Animal implements FlyingAnimal, IAnimatable {
             this.setSunTicks(this.getSunTicks() + 1);
             if (this.getSunTicks() > 600) {
                 BlockPos pos = this.blockPosition();
-                if (!level.isClientSide) {
+                if (!level().isClientSide) {
                     for(int i = 0; i < 20; ++i) {
                         double x = random.nextGaussian() * 0.02D;
                         double y = random.nextGaussian() * 0.02D;
                         double z = random.nextGaussian() * 0.02D;
-                        ((ServerLevel)level).sendParticles(ParticleTypes.POOF, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 1, x, y, z, 0.15F);
+                        ((ServerLevel)level()).sendParticles(ParticleTypes.POOF, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 1, x, y, z, 0.15F);
                     }
                 }
-                level.playSound(null, this.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
+                level().playSound(null, this.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level().random.nextFloat() * 0.2F);
                 this.discard();
             }
         }
     }
 
     private boolean canGlow() {
-        if (!this.level.isClientSide) {
-            return this.level.isNight() || this.level.getMaxLocalRawBrightness(this.blockPosition()) < 8;
+        if (!this.level().isClientSide) {
+            return this.level().isNight() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;
         }
         return false;
     }
 
     @Override
     protected boolean isSunBurnTick() {
-        if (this.level.isDay() && !this.hasCustomName() && !this.level.isClientSide) {
+        if (this.level().isDay() && !this.hasCustomName() && !this.level().isClientSide) {
             return this.getLightLevelDependentMagicValue() > 0.5F;
         }
 
@@ -219,25 +219,26 @@ public class Firefly extends Animal implements FlyingAnimal, IAnimatable {
         return NaturalistSoundEvents.FIREFLY_DEATH.get();
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Firefly> PlayState predicate(final AnimationState<E> event) {
         if (this.isFlying()) {
-            event.getController().setAnimation(new AnimationBuilder().loop("firefly.fly"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("firefly.fly"));
             return PlayState.CONTINUE;
         }
-        event.getController().markNeedsReload();
+        // event.getController().markNeedsReload();
         return PlayState.STOP;
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.setResetSpeedInTicks(5);
-        data.addAnimationController(new AnimationController<>(this, "controller", 5, this::predicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // TODO: used to be 5
+        // data.setResetSpeedInTicks(5);
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
     }
 
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 
     static class FireflyHideInGrassGoal extends MoveToBlockGoal {
         private final Firefly firefly;
@@ -260,7 +261,7 @@ public class Firefly extends Animal implements FlyingAnimal, IAnimatable {
         @Override
         public void tick() {
             super.tick();
-            Level level = firefly.level;
+            Level level = firefly.level();
             if (this.isReachedTarget()) {
                 if (!level.isClientSide) {
                     ((ServerLevel)level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.GRASS.defaultBlockState()), firefly.getX(), firefly.getY(), firefly.getZ(), 50, firefly.getBbWidth() / 4.0F, firefly.getBbHeight() / 4.0F, firefly.getBbWidth() / 4.0F, 0.05D);

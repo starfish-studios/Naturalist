@@ -6,16 +6,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class BoarModel extends AnimatedGeoModel<Boar> {
+public class BoarModel extends GeoModel<Boar> {
     @Override
     public ResourceLocation getModelResource(Boar boar) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/boar.geo.json");
@@ -32,15 +30,15 @@ public class BoarModel extends AnimatedGeoModel<Boar> {
     }
 
     @Override
-    public void setLivingAnimations(Boar boar, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(boar, uniqueID, customPredicate);
+    public void setCustomAnimations(Boar animatable, long instanceId, AnimationState<Boar> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
 
-        if (boar.isBaby()) {
+        if (animatable.isBaby()) {
             head.setScaleX(1.75F);
             head.setScaleY(1.75F);
             head.setScaleZ(1.75F);
@@ -50,7 +48,7 @@ public class BoarModel extends AnimatedGeoModel<Boar> {
             head.setScaleZ(1.0F);
         }
 
-        head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-        head.setRotationZ(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
+        head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+        head.setRotZ(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
     }
 }

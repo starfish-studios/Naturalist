@@ -6,16 +6,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class LizardModel extends AnimatedGeoModel<Lizard> {
+public class LizardModel extends GeoModel<Lizard> {
     public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[]{
             new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/green.png"),
             new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/brown.png"),
@@ -30,17 +28,7 @@ public class LizardModel extends AnimatedGeoModel<Lizard> {
 
     @Override
     public ResourceLocation getTextureResource(Lizard lizard) {
-        if (lizard.getVariant() == 0) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/green.png");
-        } else if (lizard.getVariant() == 1) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/brown.png");
-        } else if (lizard.getVariant() == 2) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/beardie.png");
-        } else if (lizard.getVariant() == 3) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/leopard_gecko.png");
-        } else {
-        return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/brown.png");
-        }
+        return TEXTURE_LOCATIONS[Math.min(lizard.getVariant(), TEXTURE_LOCATIONS.length - 1)];
     }
 
     @Override
@@ -49,26 +37,23 @@ public class LizardModel extends AnimatedGeoModel<Lizard> {
     }
 
     @Override
-    public void setLivingAnimations(Lizard lizard, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(lizard, uniqueID, customPredicate);
+    public void setCustomAnimations(Lizard animatable, long instanceId, AnimationState<Lizard> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
-        IBone tail = this.getAnimationProcessor().getBone("tail");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        CoreGeoBone tail = this.getAnimationProcessor().getBone("tail");
+        CoreGeoBone basiliskBody = this.getAnimationProcessor().getBone("basilisk_body");
+        CoreGeoBone basiliskTail = this.getAnimationProcessor().getBone("basilisk_tail");
+        CoreGeoBone beardieHead = this.getAnimationProcessor().getBone("beardie_head");
+        CoreGeoBone beardieBody = this.getAnimationProcessor().getBone("beardie_body");
+        CoreGeoBone gecko = this.getAnimationProcessor().getBone("gecko");
 
-        IBone basiliskBody = this.getAnimationProcessor().getBone("basilisk_body");
-        IBone basiliskTail = this.getAnimationProcessor().getBone("basilisk_tail");
+        head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+        head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
 
-        IBone beardieHead = this.getAnimationProcessor().getBone("beardie_head");
-        IBone beardieBody = this.getAnimationProcessor().getBone("beardie_body");
-
-        IBone gecko = this.getAnimationProcessor().getBone("gecko");
-
-        head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-        head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
-
-        tail.setHidden(!lizard.hasTail());
+        tail.setHidden(!animatable.hasTail());
     }
 }

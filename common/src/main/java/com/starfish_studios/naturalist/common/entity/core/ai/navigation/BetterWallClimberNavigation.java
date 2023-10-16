@@ -50,7 +50,7 @@ public class BetterWallClimberNavigation extends GroundPathNavigation {
                 if (!this.pathToPosition.closerToCenterThan(this.mob.position(),
                         Math.max(this.mob.getBbWidth(), 1.0D))
                         && (!(this.mob.getY() > (double) this.pathToPosition.getY())
-                        || !(new BlockPos(this.pathToPosition.getX(), this.mob.getY(),
+                        || !(new BlockPos(this.pathToPosition.getX(), (int) this.mob.getY(),
                         this.pathToPosition.getZ())).closerToCenterThan(this.mob.position(),
                         Math.max(this.mob.getBbWidth(), 1.0D)))) {
                     this.mob.getMoveControl().setWantedPosition(this.pathToPosition.getX(), this.pathToPosition.getY(),

@@ -26,11 +26,11 @@ configurations {
 
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
-    modImplementation ("software.bernie.geckolib:geckolib-forge-1.19:${rootProject.geckolib_forge_version}")
+    modImplementation ("software.bernie.geckolib:geckolib-forge-1.20.1:${rootProject.geckolib_forge_version}")
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    runtimeOnly "curse.maven:shutup-experimental-settings-407174:3759881"
+    // runtimeOnly "curse.maven:shutup-experimental-settings-407174:3759881"
 }
 
 processResources {

@@ -37,17 +37,14 @@ public class Zebra extends AbstractChestedHorse {
         this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(this.generateRandomJumpStrength(randomSource));
     }
 
-    @Override
     protected float generateRandomMaxHealth(RandomSource randomSource) {
         return 15.0f + randomSource.nextInt(8) + randomSource.nextInt(9);
     }
 
-    @Override
     protected double generateRandomJumpStrength(RandomSource randomSource) {
         return 0.4f + randomSource.nextDouble() * 0.1;
     }
 
-    @Override
     protected double generateRandomSpeed(RandomSource randomSource) {
         return (0.5f + randomSource.nextDouble() * 0.3 + randomSource.nextDouble() * 0.3 + randomSource.nextDouble() * 0.3) * 0.25;
     }

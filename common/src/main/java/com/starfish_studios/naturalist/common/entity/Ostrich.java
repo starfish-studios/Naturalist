@@ -39,18 +39,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.*;
 
-public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddleable, EggLayingAnimal {
+public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddleable, EggLayingAnimal {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS);
 
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Ostrich.class, EntityDataSerializers.BOOLEAN);
@@ -67,11 +68,9 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
     int layEggCounter;
     boolean isDigging;
 
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
-
     public Ostrich(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.maxUpStep = 2.0F;
+        this.setMaxUpStep(2.0f);
         this.steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
     }
 
@@ -102,7 +101,8 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
         this.goalSelector.addGoal(3, new EggLayingBreedGoal<>(this, 1.0));
         this.goalSelector.addGoal(3, new LaySingleEggGoal<>(this, 1.0));
         this.goalSelector.addGoal(4, new OstrichAttackGoal(this, 1.4D, true));
-        this.goalSelector.addGoal(5, new TemptGoal(this, 1.3D, Ingredient.of(NaturalistItems.GRUB_ON_A_STICK.get()), false));
+        // TODO: Forge is bullshit
+        // this.goalSelector.addGoal(5, new TemptGoal(this, 1.3D, Ingredient.of(NaturalistItems.GRUB_ON_A_STICK.get()), false));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.3D, Ingredient.of(Items.BEETROOT), false));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.3D));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
@@ -114,7 +114,7 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
             Iterable<BlockPos> list = BlockPos.betweenClosed(entity.blockPosition().offset(-2, -2, -2), entity.blockPosition().offset(2, 2, 2));
             boolean isEntityNearOstrichEggs = false;
             for (BlockPos pos : list) {
-                if (level.getBlockState(pos).is(NaturalistBlocks.OSTRICH_EGG.get())) {
+                if (level().getBlockState(pos).is(NaturalistBlocks.OSTRICH_EGG.get())) {
                     isEntityNearOstrichEggs = true;
                     break;
                 }
@@ -134,7 +134,7 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
     }
 
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-        if (DATA_BOOST_TIME.equals(key) && this.level.isClientSide) {
+        if (DATA_BOOST_TIME.equals(key) && this.level().isClientSide) {
             this.steering.onSynced();
         }
 
@@ -204,7 +204,7 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
             CriteriaTriggers.TAME_ANIMAL.trigger((ServerPlayer)player, this);
         }
 
-        this.level.broadcastEntityEvent(this, (byte)7);
+        this.level().broadcastEntityEvent(this, (byte)7);
     }
 
     @Nullable
@@ -234,13 +234,13 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
             double d = this.random.nextGaussian() * 0.02;
             double e = this.random.nextGaussian() * 0.02;
             double f = this.random.nextGaussian() * 0.02;
-            this.level.addParticle(particleOptions, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d, e, f);
+            this.level().addParticle(particleOptions, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d, e, f);
         }
 
     }
 
     public void makeMad() {
-        this.level.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.CAT_HISS, this.getSoundSource(), 1.0f, 0.6f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.CAT_HISS, this.getSoundSource(), 1.0f, 0.6f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
     }
 
     @Nullable
@@ -265,15 +265,15 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
     public void aiStep() {
         super.aiStep();
         BlockPos pos = this.blockPosition();
-        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level.getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
-            this.level.levelEvent(2001, pos, Block.getId(this.level.getBlockState(pos.below())));
+        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
+            this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
         }
     }
 
     // RIDING
 
     protected void doPlayerRide(Player player) {
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
             player.startRiding(this);
@@ -281,12 +281,12 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
     }
 
     @Override
-    public void positionRider(Entity passenger) {
-        super.positionRider(passenger);
+    protected void positionRider(Entity passenger, MoveFunction callback) {
+        super.positionRider(passenger, callback);
         if (passenger instanceof Mob mob) {
             this.yBodyRot = mob.yBodyRot;
         }
-        passenger.setPos(this.getX(), this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset(), this.getZ());
+        callback.accept(passenger, this.getX(), this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset(), this.getZ());
         if (passenger instanceof LivingEntity livingEntity) {
             livingEntity.yBodyRot = this.yBodyRot;
         }
@@ -297,29 +297,32 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
         return 1.5;
     }
 
-    @Nullable
     @Override
-    public Entity getControllingPassenger() {
+    public LivingEntity getControllingPassenger() {
         Entity entity = this.getFirstPassenger();
-        return entity != null && this.canBeControlledBy(entity) ? entity : null;
+        return entity != null && this.canBeControlledBy(entity) ? (LivingEntity) entity : null;
     }
 
     private boolean canBeControlledBy(Entity entity) {
+        // TODO: forge bullshit
+        return false;
+        /*
         if (this.isSaddled() && entity instanceof Player player) {
             return player.getMainHandItem().is(NaturalistItems.GRUB_ON_A_STICK.get()) || player.getOffhandItem().is(NaturalistItems.GRUB_ON_A_STICK.get());
         } else {
             return false;
         }
+        */
     }
 
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         boolean bl = this.isFood(player.getItemInHand(hand));
         if (!bl && this.isSaddled() && !this.isVehicle() && !player.isSecondaryUseActive()) {
-            if (!this.level.isClientSide) {
+            if (!this.level().isClientSide) {
                 player.startRiding(this);
             }
 
-            return InteractionResult.sidedSuccess(this.level.isClientSide);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
         } else {
             InteractionResult interactionResult = super.mobInteract(player, hand);
             if (!interactionResult.consumesAction()) {
@@ -354,13 +357,13 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
     public void equipSaddle(@Nullable SoundSource source) {
         this.steering.setSaddle(true);
         if (source != null) {
-            this.level.playSound((Player)null, this, SoundEvents.PIG_SADDLE, source, 0.5F, 1.0F);
+            this.level().playSound((Player)null, this, SoundEvents.PIG_SADDLE, source, 0.5F, 1.0F);
         }
 
     }
 
     public void travel(Vec3 travelVector) {
-        this.travel(this, this.steering, travelVector);
+        super.travel(travelVector);
     }
 
     public float getSteeringSpeed() {
@@ -462,7 +465,7 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
         if (lastHurt) {
             int ticks = 100 + this.random.nextInt(100);
             this.panicTicks = ticks;
-            List<? extends Ostrich> ostriches = this.level.getEntitiesOfClass(Ostrich.class, this.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
+            List<? extends Ostrich> ostriches = this.level().getEntitiesOfClass(Ostrich.class, this.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
             for (Ostrich ostrich : ostriches) {
                 ostrich.panicTicks = ticks;
             }
@@ -473,7 +476,7 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
     @Override
     public void tick() {
         super.tick();
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             if (panicTicks >= 0) {
                 panicTicks--;
             }
@@ -505,48 +508,48 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
 
     // ANIMATION
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        /* if (this.loveTime >= 40 && !this.isBaby()) {
-            event.getController().setAnimation(new AnimationBuilder().loop("dance"));
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        } */
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Ostrich> PlayState predicate(final AnimationState<E> event) {
+    /* if (this.loveTime >= 40 && !this.isBaby()) {
+        event.getController().setAnimation(RawAnimation.begin().thenLoop("dance"));
+        event.getController().setAnimationSpeed(1.0D);
+        return PlayState.CONTINUE;
+    } */
         if (this.isLayingEgg()) {
-            event.getController().setAnimation(new AnimationBuilder().loop("lay_egg"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("lay_egg"));
             event.getController().setAnimationSpeed(3.5D);
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting() || !this.getPassengers().isEmpty()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("run"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("run"));
                 event.getController().setAnimationSpeed(2.0D);
                 return PlayState.CONTINUE;
             } else {
                 if (this.isBaby()) {
                     event.getController().setAnimationSpeed(1.3D);
                 }
-                event.getController().setAnimation(new AnimationBuilder().loop("walk"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("walk"));
                 event.getController().setAnimationSpeed(1.0D);
                 return PlayState.CONTINUE;
             }
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
             event.getController().setAnimationSpeed(0.5D);
         }
-        event.getController().markNeedsReload();
+        // event.getController().markNeedsReload();
         return PlayState.STOP;
-
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.setResetSpeedInTicks(5);
-        data.addAnimationController(new AnimationController<>(this, "controller", 5, this::predicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // TODO: used to be 5
+        // data.setResetSpeedInTicks(5);
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
     }
 
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 
     public static class RunAroundLikeCrazyGoal extends Goal {
         private final Ostrich mob;
@@ -605,7 +608,7 @@ public class Ostrich extends Animal implements IAnimatable, ItemSteerable, Saddl
 
                 this.mob.ejectPassengers();
                 this.mob.makeMad();
-                this.mob.level.broadcastEntityEvent(this.mob, (byte)6);
+                this.mob.level().broadcastEntityEvent(this.mob, (byte)6);
             }
 
         }

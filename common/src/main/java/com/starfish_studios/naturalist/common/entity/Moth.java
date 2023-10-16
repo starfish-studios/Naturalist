@@ -39,22 +39,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
+import software.bernie.geckolib.core.animation.AnimationState;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class Moth extends Animal implements IAnimatable, FlyingAnimal, Catchable {
+public class Moth extends Animal implements GeoEntity, FlyingAnimal, Catchable {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> DATA_VARIANT;
     private static final EntityDataAccessor<Boolean> FROM_HAND;
 
@@ -83,7 +84,7 @@ public class Moth extends Animal implements IAnimatable, FlyingAnimal, Catchable
     protected PathNavigation createNavigation(Level pLevel) {
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, pLevel) {
             public boolean isStableDestination(BlockPos pPos) {
-                return !this.level.getBlockState(pPos.below()).isAir();
+                return !pLevel.getBlockState(pPos.below()).isAir();
             }
         };
         navigation.setCanOpenDoors(false);
@@ -245,25 +246,26 @@ public class Moth extends Animal implements IAnimatable, FlyingAnimal, Catchable
         return false;
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Moth> PlayState predicate(final AnimationState<E> event) {
         if (this.isFlying()) {
-            event.getController().setAnimation(new AnimationBuilder().loop("butterfly.fly"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("butterfly.fly"));
             return PlayState.CONTINUE;
         }
-        event.getController().markNeedsReload();
+        // event.getController().markNeedsReload();
         return PlayState.STOP;
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.setResetSpeedInTicks(5);
-        data.addAnimationController(new AnimationController<>(this, "controller", 5, this::predicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // TODO: used to be 5
+        // data.setResetSpeedInTicks(5);
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
     }
 
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 
     @Override
     public boolean isFlapping() {
@@ -272,7 +274,7 @@ public class Moth extends Animal implements IAnimatable, FlyingAnimal, Catchable
 
     @Override
     public boolean isFlying() {
-        return !this.onGround;
+        return !this.onGround();
     }
 
     @Override

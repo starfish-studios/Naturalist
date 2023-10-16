@@ -4,19 +4,16 @@ import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.common.entity.Vulture;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class VultureModel extends AnimatedGeoModel<Vulture> {
+public class VultureModel extends GeoModel<Vulture> {
     @Override
     public ResourceLocation getModelResource(Vulture vulture) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/vulture.geo.json");
@@ -33,17 +30,15 @@ public class VultureModel extends AnimatedGeoModel<Vulture> {
     }
 
     @Override
-    public void setLivingAnimations(Vulture vulture, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(vulture, uniqueID, customPredicate);
+    public void setCustomAnimations(Vulture animatable, long instanceId, AnimationState<Vulture> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
 
-        head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-        head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
+        head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+        head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
     }
-
-
 }

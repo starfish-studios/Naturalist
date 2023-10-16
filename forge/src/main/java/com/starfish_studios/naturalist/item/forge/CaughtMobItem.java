@@ -34,22 +34,28 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class CaughtMobItem extends NoFluidMobBucketItem {
-    private final EntityType<?> type;
+    private final Supplier<? extends EntityType<?>> typeSup;
+
+    private EntityType<?> type() {
+        return this.typeSup.get();
+    }
 
     public CaughtMobItem(Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, Properties properties) {
         super(entitySupplier, fluidSupplier, soundSupplier, properties);
-        this.type = entitySupplier.get();
+        this.typeSup = entitySupplier;
+        //this.type = entitySupplier.get();
+
     }
 
     @Override
     public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        if (this.type == NaturalistEntityTypes.BUTTERFLY.get()) {
+        if (this.type() == NaturalistEntityTypes.BUTTERFLY.get()) {
             CompoundTag compoundnbt = stack.getTag();
             if (compoundnbt != null && compoundnbt.contains("Variant", 3)) {
                 Butterfly.Variant variant = Butterfly.Variant.getTypeById(compoundnbt.getInt("Variant"));
                 tooltip.add((Component.translatable(String.format("tooltip.naturalist.%s", variant.toString().toLowerCase())).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY)));
             }
-        } else if (this.type == NaturalistEntityTypes.MOTH.get()) {
+        } else if (this.type() == NaturalistEntityTypes.MOTH.get()) {
             CompoundTag compoundnbt = stack.getTag();
             if (compoundnbt != null && compoundnbt.contains("Variant", 3)) {
                 Moth.Variant variant = Moth.Variant.getTypeById(compoundnbt.getInt("Variant"));
@@ -59,7 +65,7 @@ public class CaughtMobItem extends NoFluidMobBucketItem {
     }
 
     private void spawn(ServerLevel serverLevel, ItemStack itemStack, BlockPos pos) {
-        Entity entity = this.type.spawn(serverLevel, itemStack, null, pos, MobSpawnType.BUCKET, true, false);
+        Entity entity = this.type().spawn(serverLevel, itemStack, null, pos, MobSpawnType.BUCKET, true, false);
         if (entity instanceof Catchable catchable) {
             catchable.loadFromHandTag(itemStack.getOrCreateTag());
             catchable.setFromHand(true);

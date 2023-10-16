@@ -35,7 +35,7 @@ public class AlertOthersPanicGoal extends Goal {
             return false;
         } else {
             if (this.mob.isOnFire()) {
-                BlockPos blockpos = this.lookForWater(this.mob.level, this.mob, 5);
+                BlockPos blockpos = this.lookForWater(this.mob.level(), this.mob, 5);
                 if (blockpos != null) {
                     this.posX = blockpos.getX();
                     this.posY = blockpos.getY();
@@ -44,7 +44,7 @@ public class AlertOthersPanicGoal extends Goal {
                 }
             }
             if (this.mob.getLastHurtByMob() != null) {
-                List<? extends PathfinderMob> mobs = this.mob.level.getEntitiesOfClass(this.mob.getClass(), AABB.unitCubeFromLowerCorner(this.mob.position()).inflate(8.0D, 8.0D, 8.0D));
+                List<? extends PathfinderMob> mobs = this.mob.level().getEntitiesOfClass(this.mob.getClass(), AABB.unitCubeFromLowerCorner(this.mob.position()).inflate(8.0D, 8.0D, 8.0D));
                 for (PathfinderMob mob : mobs) {
                     mob.setLastHurtByMob(this.mob.getLastHurtByMob());
                 }

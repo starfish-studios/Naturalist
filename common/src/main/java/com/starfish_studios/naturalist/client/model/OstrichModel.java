@@ -6,16 +6,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class OstrichModel extends AnimatedGeoModel<Ostrich> {
+public class OstrichModel extends GeoModel<Ostrich> {
     @Override
     public ResourceLocation getModelResource(Ostrich ostrich) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/ostrich.geo.json");
@@ -35,21 +33,20 @@ public class OstrichModel extends AnimatedGeoModel<Ostrich> {
     }
 
     @Override
-    public void setLivingAnimations(Ostrich ostrich, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(ostrich, uniqueID, customPredicate);
+    public void setCustomAnimations(Ostrich animatable, long instanceId, AnimationState<Ostrich> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
-        IBone leftWing = this.getAnimationProcessor().getBone("left_wing");
-        IBone rightWing = this.getAnimationProcessor().getBone("right_wing");
-        IBone saddle = this.getAnimationProcessor().getBone("saddle");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        CoreGeoBone leftWing = this.getAnimationProcessor().getBone("left_wing");
+        CoreGeoBone rightWing = this.getAnimationProcessor().getBone("right_wing");
+        CoreGeoBone saddle = this.getAnimationProcessor().getBone("saddle");
 
-        saddle.setHidden(!ostrich.isSaddled());
+        saddle.setHidden(!animatable.isSaddled());
 
-
-        if (ostrich.isBaby()) {
+        if (animatable.isBaby()) {
             head.setScaleX(1.5F); head.setScaleY(1.5F); head.setScaleZ(1.5F);
             leftWing.setScaleX(1.2F); leftWing.setScaleY(1.2F); leftWing.setScaleZ(1.2F);
             rightWing.setScaleX(1.2F); rightWing.setScaleY(1.2F); rightWing.setScaleZ(1.2F);
@@ -59,7 +56,7 @@ public class OstrichModel extends AnimatedGeoModel<Ostrich> {
             rightWing.setScaleX(1.0F); rightWing.setScaleY(1.0F); rightWing.setScaleZ(1.0F);
         }
 
-        head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-        head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
+        head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+        head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
     }
 }

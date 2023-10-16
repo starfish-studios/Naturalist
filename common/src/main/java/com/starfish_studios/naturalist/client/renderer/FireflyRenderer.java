@@ -12,18 +12,17 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @Environment(EnvType.CLIENT)
 public class FireflyRenderer extends GeoEntityRenderer<Firefly> {
     public FireflyRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new FireflyModel());
         this.shadowRadius = 0.4F;
-        this.addLayer(new FireflyGlowLayer(this));
+        this.addRenderLayer(new FireflyGlowLayer(this));
     }
 
-    @Override
-    public RenderType getRenderType(Firefly animatable, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
+   public RenderType getRenderType(Firefly animatable, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
         return RenderType.entityCutoutNoCull(textureLocation);
     }
 }

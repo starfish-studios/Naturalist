@@ -2,6 +2,7 @@ package com.starfish_studios.naturalist.common.entity;
 
 import com.starfish_studios.naturalist.core.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -28,19 +29,19 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
-public class Dragonfly extends PathfinderMob implements IAnimatable {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+public class Dragonfly extends PathfinderMob implements GeoEntity {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Dragonfly.class, EntityDataSerializers.INT);
     @Nullable
     private BlockPos targetPosition;
@@ -129,21 +130,20 @@ public class Dragonfly extends PathfinderMob implements IAnimatable {
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
-        if (!(this.targetPosition == null || this.level.isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > this.level.getMinBuildHeight())) {
+        if (!(this.targetPosition == null || this.level().isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > this.level().getMinBuildHeight())) {
             this.targetPosition = null;
         }
         if (this.getHoverTicks() > 0) {
             this.setHoverTicks(Math.max(0, this.getHoverTicks() - 1));
         } else if (this.targetPosition == null || this.targetPosition.closerToCenterThan(this.position(), 2.0)) {
             Vec3 randomPos = RandomPos.generateRandomPos(this, () -> new BlockPos(
-                    this.getX() + this.random.nextInt(7) - this.random.nextInt(7),
-                    this.getY() + this.random.nextInt(6) - 2.0,
-                    this.getZ() + this.random.nextInt(7) - this.random.nextInt(7)
+                    (int)(this.getX() + this.random.nextInt(7) - this.random.nextInt(7)),
+                    (int)(this.getY() + this.random.nextInt(6) - 2.0),
+                    (int)(this.getZ() + this.random.nextInt(7) - this.random.nextInt(7))
             ));
-            if (randomPos != null) {
-                this.targetPosition = new BlockPos(randomPos);
-                this.setHoverTicks(15);
-            }
+            Vec3i randomPos2 = new Vec3i((int)randomPos.x, (int)randomPos.y, (int)randomPos.z);
+            this.targetPosition = new BlockPos(randomPos2);
+            this.setHoverTicks(15);
         }
         if (this.targetPosition != null && this.getHoverTicks() <= 0) {
             double x = this.targetPosition.getX() + 0.5 - this.getX();
@@ -182,7 +182,7 @@ public class Dragonfly extends PathfinderMob implements IAnimatable {
 
     @Override
     public float getWalkTargetValue(BlockPos blockPos) {
-        if (this.level.getBlockState(blockPos).isAir() && this.level.isWaterAt(blockPos.below(2))) {
+        if (this.level().getBlockState(blockPos).isAir() && this.level().isWaterAt(blockPos.below(2))) {
             return 10.0F;
         }
         return 0.0F;
@@ -196,17 +196,17 @@ public class Dragonfly extends PathfinderMob implements IAnimatable {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
-            if (!this.level.isClientSide) {
-                AreaEffectCloud areaEffectCloud = new AreaEffectCloud(this.level, this.getX(), this.getY(), this.getZ());
+            if (!this.level().isClientSide) {
+                AreaEffectCloud areaEffectCloud = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
                 areaEffectCloud.setOwner(this);
                 areaEffectCloud.setParticle(ParticleTypes.DRAGON_BREATH);
                 areaEffectCloud.setRadius(0.5f);
                 areaEffectCloud.setDuration(200);
                 areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
                 areaEffectCloud.setPos(this.getX(), this.getY(), this.getZ());
-                this.level.addFreshEntity(areaEffectCloud);
+                this.level().addFreshEntity(areaEffectCloud);
             }
-            return InteractionResult.sidedSuccess(this.level.isClientSide);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
         return super.mobInteract(player , hand);
     }
@@ -215,19 +215,19 @@ public class Dragonfly extends PathfinderMob implements IAnimatable {
     public boolean isInvertedHealAndHarm() {
         return true;
     }
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        event.getController().setAnimation(new AnimationBuilder().loop("dragonfly.fly"));
+    protected <E extends Dragonfly> PlayState predicate(final AnimationState<E> event) {
+        event.getController().setAnimation(RawAnimation.begin().thenLoop("dragonfly.fly"));
         return PlayState.CONTINUE;
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController<>(this, "controller", 0, this::predicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
 
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 }

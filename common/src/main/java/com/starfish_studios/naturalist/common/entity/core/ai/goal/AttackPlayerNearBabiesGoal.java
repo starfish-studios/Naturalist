@@ -19,7 +19,7 @@ public class AttackPlayerNearBabiesGoal extends NearestAttackableTargetGoal<Play
             return false;
         }
         if (super.canUse()) {
-            for (Mob mob : this.mob.level.getEntitiesOfClass(mob.getClass(), this.mob.getBoundingBox().inflate(8.0D, 4.0D, 8.0D))) {
+            for (Mob mob : this.mob.level().getEntitiesOfClass(mob.getClass(), this.mob.getBoundingBox().inflate(8.0D, 4.0D, 8.0D))) {
                 if (mob.isBaby()) {
                     return true;
                 }

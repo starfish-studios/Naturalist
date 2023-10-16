@@ -1,3 +1,4 @@
+/*
 package com.starfish_studios.naturalist.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -7,6 +8,7 @@ import com.starfish_studios.naturalist.common.entity.Elephant;
 import com.starfish_studios.naturalist.common.world.inventory.ElephantInventoryMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -57,4 +59,10 @@ public class ElephantInventoryScreen extends AbstractContainerScreen<ElephantInv
         super.render(poseStack, mouseX, mouseY, partialTick);
         this.renderTooltip(poseStack, mouseX, mouseY);
     }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+
+    }
 }
+ */

@@ -113,4 +113,9 @@ public class CommonPlatformHelper {
     public static void registerCompostable(float chance, ItemLike item) {
         throw new AssertionError();
     }
+
+    @ExpectPlatform
+    public static void acceptItemToCreativeTab(ItemStack itemStack) {
+        throw new AssertionError();
+    }
 }

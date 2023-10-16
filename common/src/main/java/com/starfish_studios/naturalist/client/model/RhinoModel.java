@@ -6,16 +6,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class RhinoModel extends AnimatedGeoModel<Rhino> {
+public class RhinoModel extends GeoModel<Rhino> {
     @Override
     public ResourceLocation getModelResource(Rhino rhino) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/rhino.geo.json");
@@ -32,20 +30,20 @@ public class RhinoModel extends AnimatedGeoModel<Rhino> {
     }
 
     @Override
-    public void setLivingAnimations(Rhino rhino, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(rhino, uniqueID, customPredicate);
+    public void setCustomAnimations(Rhino animatable, long instanceId, AnimationState<Rhino> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
-        IBone bigHorn = this.getAnimationProcessor().getBone("big_horn");
-        IBone smallHorn = this.getAnimationProcessor().getBone("small_horn");
-        IBone babyHorn = this.getAnimationProcessor().getBone("baby_horn");
-        IBone leftEar = this.getAnimationProcessor().getBone("left_ear");
-        IBone rightEar = this.getAnimationProcessor().getBone("right_ear");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        CoreGeoBone bigHorn = this.getAnimationProcessor().getBone("big_horn");
+        CoreGeoBone smallHorn = this.getAnimationProcessor().getBone("small_horn");
+        CoreGeoBone babyHorn = this.getAnimationProcessor().getBone("baby_horn");
+        CoreGeoBone leftEar = this.getAnimationProcessor().getBone("left_ear");
+        CoreGeoBone rightEar = this.getAnimationProcessor().getBone("right_ear");
 
-        if (rhino.isBaby()) {
+        if (animatable.isBaby()) {
             head.setScaleX(1.4F);
             head.setScaleY(1.4F);
             head.setScaleZ(1.4F);
@@ -55,9 +53,7 @@ public class RhinoModel extends AnimatedGeoModel<Rhino> {
             rightEar.setScaleX(1.1F);
             rightEar.setScaleY(1.1F);
             rightEar.setScaleZ(1.1F);
-        }
-
-        if (!rhino.isBaby()) {
+        } else {
             head.setScaleX(1.0F);
             head.setScaleY(1.0F);
             head.setScaleZ(1.0F);
@@ -67,21 +63,14 @@ public class RhinoModel extends AnimatedGeoModel<Rhino> {
             rightEar.setScaleX(1.0F);
             rightEar.setScaleY(1.0F);
             rightEar.setScaleZ(1.0F);
-            head.setScaleX(1.75F);
-            head.setScaleY(1.75F);
-            head.setScaleZ(1.75F);
-        } else {
-            head.setScaleX(1.0F);
-            head.setScaleY(1.0F);
-            head.setScaleZ(1.0F);
         }
 
-        if (!rhino.isSprinting()) {
-            head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
+        if (!animatable.isSprinting()) {
+            head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         }
 
-        bigHorn.setHidden(rhino.isBaby());
-        smallHorn.setHidden(rhino.isBaby());
-        babyHorn.setHidden(!rhino.isBaby());
+        bigHorn.setHidden(animatable.isBaby());
+        smallHorn.setHidden(animatable.isBaby());
+        babyHorn.setHidden(!animatable.isBaby());
     }
 }

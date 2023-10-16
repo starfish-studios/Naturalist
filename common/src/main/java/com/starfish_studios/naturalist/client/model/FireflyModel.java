@@ -5,10 +5,10 @@ import com.starfish_studios.naturalist.common.entity.Firefly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
 @Environment(EnvType.CLIENT)
-public class FireflyModel extends AnimatedGeoModel<Firefly> {
+public class FireflyModel extends GeoModel<Firefly> {
     @Override
     public ResourceLocation getModelResource(Firefly firefly) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/firefly.geo.json");

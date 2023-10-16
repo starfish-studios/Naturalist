@@ -35,7 +35,7 @@ public class FollowAdultGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        List<? extends Mob> list = this.mob.level.getEntitiesOfClass(this.mob.getClass(), this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
+        List<? extends Mob> list = this.mob.level().getEntitiesOfClass(this.mob.getClass(), this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
         if (!list.isEmpty()) {
             for (Mob mob : list) {
                 if (mob.isBaby()) continue;

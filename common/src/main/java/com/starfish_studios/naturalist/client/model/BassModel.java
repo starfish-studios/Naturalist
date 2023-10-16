@@ -5,10 +5,10 @@ import com.starfish_studios.naturalist.common.entity.Bass;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
 @Environment(EnvType.CLIENT)
-public class BassModel extends AnimatedGeoModel<Bass> {
+public class BassModel extends GeoModel<Bass> {
     @Override
     public ResourceLocation getModelResource(Bass bass) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/bass.geo.json");

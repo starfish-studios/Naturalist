@@ -5,10 +5,10 @@ import com.starfish_studios.naturalist.common.entity.Butterfly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
 @Environment(EnvType.CLIENT)
-public class ButterflyModel extends AnimatedGeoModel<Butterfly> {
+public class ButterflyModel extends GeoModel<Butterfly> {
     @Override
     public ResourceLocation getModelResource(Butterfly butterfly) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/butterfly.geo.json");

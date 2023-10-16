@@ -25,19 +25,19 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class Hyena extends TamableAnimal implements IAnimatable, NeutralMob {
+public class Hyena extends TamableAnimal implements GeoEntity, NeutralMob {
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME;
     public static Predicate<LivingEntity> PREY_SELECTOR;
     private static final UniformInt PERSISTENT_ANGER_TIME;
@@ -47,7 +47,7 @@ public class Hyena extends TamableAnimal implements IAnimatable, NeutralMob {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.HYENA_FOOD_ITEMS);
     private static final Ingredient BONE = Ingredient.of(Items.BONE);
 
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public Hyena(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -139,7 +139,7 @@ public class Hyena extends TamableAnimal implements IAnimatable, NeutralMob {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         Item item = itemStack.getItem();
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             boolean bl = this.isOwnedBy(player) || this.isTame() || itemStack.is(Items.BONE) && !this.isTame() && !this.isAngry();
             return bl ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else {
@@ -175,9 +175,9 @@ public class Hyena extends TamableAnimal implements IAnimatable, NeutralMob {
                     this.navigation.stop();
                     this.setTarget((LivingEntity)null);
                     this.setOrderedToSit(true);
-                    this.level.broadcastEntityEvent(this, (byte)7);
+                    this.level().broadcastEntityEvent(this, (byte)7);
                 } else {
-                    this.level.broadcastEntityEvent(this, (byte)6);
+                    this.level().broadcastEntityEvent(this, (byte)6);
                 }
 
                 return InteractionResult.SUCCESS;
@@ -189,34 +189,35 @@ public class Hyena extends TamableAnimal implements IAnimatable, NeutralMob {
 
     // ANIMATION
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Hyena> PlayState predicate(final AnimationState<E> event) {
         if (this.isInSittingPose()) {
-        event.getController().setAnimation(new AnimationBuilder().loop("sit"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("sit"));
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("run"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("run"));
                 event.getController().setAnimationSpeed(2.0D);
             } else {
-                event.getController().setAnimation(new AnimationBuilder().loop("walk"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("walk"));
                 event.getController().setAnimationSpeed(1.0D);
             }
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
             event.getController().setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.setResetSpeedInTicks(4);
-        data.addAnimationController(new AnimationController<>(this, "controller", 4, this::predicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // TODO: used to be 4
+        // data.setResetSpeedInTicks(4);
+        controllers.add(new AnimationController<>(this, "controller", 4, this::predicate));
     }
 
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 
     static {
         PREY_SELECTOR = (livingEntity) -> {

@@ -6,16 +6,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.model.GeoModel;
 
 @Environment(EnvType.CLIENT)
-public class DuckModel extends AnimatedGeoModel<Duck> {
+public class DuckModel extends GeoModel<Duck> {
     @Override
     public ResourceLocation getModelResource(Duck animal) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/duck.geo.json");
@@ -38,15 +36,15 @@ public class DuckModel extends AnimatedGeoModel<Duck> {
     }
 
     @Override
-    public void setLivingAnimations(Duck animal, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(animal, uniqueID, customPredicate);
+    public void setCustomAnimations(Duck animatable, long instanceId, AnimationState<Duck> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
 
-        if (animal.isBaby()) {
+        if (animatable.isBaby()) {
             head.setScaleX(1.7F);
             head.setScaleY(1.7F);
             head.setScaleZ(1.7F);
@@ -56,9 +54,8 @@ public class DuckModel extends AnimatedGeoModel<Duck> {
             head.setScaleZ(1.0F);
         }
 
-        
-        head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-        head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
-        
+        head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+        head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
     }
+
 }

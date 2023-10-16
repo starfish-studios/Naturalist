@@ -24,13 +24,13 @@ side = "BOTH"
 [[dependencies.naturalist]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19,)"
+versionRange = "[1.20.1,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.naturalist]]
-modId="geckolib3"
+modId="geckolib"
 mandatory=true
-versionRange="[3.1.9,)"
+versionRange="[4.0.0,)"
 ordering="NONE"
 side="BOTH"

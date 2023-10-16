@@ -31,7 +31,7 @@ public class AnimalCrateBlockItem extends BlockItem {
         final boolean b = !isHoldingLivingEntity(stack);
         final boolean b1 = canCaptureLivingEntity(interactionTarget);
         if (b && b1) {
-            if (!player.level.isClientSide) {
+            if (!player.level().isClientSide) {
                 CompoundTag compoundTag = new CompoundTag();
 
                 if (interactionTarget.isPassenger()) {
@@ -50,7 +50,7 @@ public class AnimalCrateBlockItem extends BlockItem {
                 compoundTag.remove("UUID");
                 stack.getOrCreateTag().put(AnimalCrateBlockEntity.ANIMAL_CRATE_DATA, compoundTag);
                 interactionTarget.remove(Entity.RemovalReason.DISCARDED);
-                playCaptureSound(player.level, interactionTarget.blockPosition());
+                playCaptureSound(player.level(), interactionTarget.blockPosition());
             }
             return InteractionResult.SUCCESS;
         }
@@ -63,7 +63,7 @@ public class AnimalCrateBlockItem extends BlockItem {
         ItemStack stack = context.getItemInHand();
         Player player = context.getPlayer();
         if (!player.isShiftKeyDown() && isHoldingLivingEntity(stack)) {
-            Level level = player.level;
+            Level level = player.level();
             Vec3 position = new Vec3(Math.floor(context.getClickLocation().x)+0.5f, Math.floor(context.getClickLocation().y)+0.5f, Math.floor(context.getClickLocation().z)+0.5f);
             Entity entity = createEntityFromNBT(level, stack.getTag().getCompound(AnimalCrateBlockEntity.ANIMAL_CRATE_DATA));
             if (entity != null) {

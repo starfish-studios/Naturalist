@@ -27,17 +27,18 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Lizard extends TamableAnimal implements IAnimatable {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+public class Lizard extends TamableAnimal implements GeoEntity {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_TAIL = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.BOOLEAN);
     private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS);
@@ -95,7 +96,7 @@ public class Lizard extends TamableAnimal implements IAnimatable {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             boolean bl = this.isOwnedBy(player) || this.isTame() || TEMPT_INGREDIENT.test(stack) && !this.isTame();
             return bl ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
@@ -128,10 +129,10 @@ public class Lizard extends TamableAnimal implements IAnimatable {
             this.navigation.stop();
             this.setTarget(null);
             this.setOrderedToSit(true);
-            this.level.broadcastEntityEvent(this, (byte)7);
+            this.level().broadcastEntityEvent(this, (byte)7);
             return InteractionResult.SUCCESS;
         } else {
-            this.level.broadcastEntityEvent(this, (byte)6);
+            this.level().broadcastEntityEvent(this, (byte)6);
         }
         return InteractionResult.SUCCESS;
     }
@@ -183,13 +184,13 @@ public class Lizard extends TamableAnimal implements IAnimatable {
         if (this.hasTail() && this.getHealth() <= this.getMaxHealth() / 2) {
             this.setHasTail(false);
             this.playSound(SoundEvents.SLIME_SQUISH, 1.0f, 1.0f);
-            LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level);
+            LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level());
             if (lizardTail != null) {
                 lizardTail.setVariant(this.getVariant());
                 lizardTail.setPos(this.getX(), this.getY(), this.getZ());
-                this.level.addFreshEntity(lizardTail);
+                this.level().addFreshEntity(lizardTail);
             }
-            for (Mob mob : this.level.getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(8.0), entity -> entity.getTarget() == this)) {
+            for (Mob mob : this.level().getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(8.0), entity -> entity.getTarget() == this)) {
                 mob.setTarget(lizardTail);
             }
             this.tailRegrowCooldown = 12000;
@@ -200,7 +201,7 @@ public class Lizard extends TamableAnimal implements IAnimatable {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.hasTail() && !this.level.isClientSide()) {
+        if (!this.hasTail() && !this.level().isClientSide()) {
             if (this.tailRegrowCooldown > 0) {
                 --this.tailRegrowCooldown;
             } else {
@@ -226,27 +227,26 @@ public class Lizard extends TamableAnimal implements IAnimatable {
         return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Lizard> PlayState predicate(final AnimationState<E> event) {
         if (this.isInSittingPose()) {
-            event.getController().setAnimation(new AnimationBuilder().loop("sit"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("sit"));
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(new AnimationBuilder().loop("walk"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("walk"));
             event.getController().setAnimationSpeed(2.0D);
             return PlayState.CONTINUE;
         }
-        event.getController().markNeedsReload();
+        // event.getController().markNeedsReload();
         return PlayState.STOP;
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController<>(this, "controller", 0, this::predicate));
-    }
-
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
 
     static class LizardTemptGoal extends TemptGoal {

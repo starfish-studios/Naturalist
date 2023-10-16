@@ -39,19 +39,19 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 
-public class Tortoise extends TamableAnimal implements IAnimatable, HidingAnimal, EggLayingAnimal {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+public class Tortoise extends TamableAnimal implements GeoEntity, HidingAnimal, EggLayingAnimal {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient TEMPT_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS);
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
@@ -158,7 +158,7 @@ public class Tortoise extends TamableAnimal implements IAnimatable, HidingAnimal
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         InteractionResult interactionResult;
         ItemStack itemStack = player.getItemInHand(hand);
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             if (this.isTame() && this.isOwnedBy(player)) {
                 return InteractionResult.SUCCESS;
             }
@@ -188,9 +188,9 @@ public class Tortoise extends TamableAnimal implements IAnimatable, HidingAnimal
             if (this.random.nextInt(3) == 0) {
                 this.tame(player);
                 this.setOrderedToSit(true);
-                this.level.broadcastEntityEvent(this, (byte)7);
+                this.level().broadcastEntityEvent(this, (byte)7);
             } else {
-                this.level.broadcastEntityEvent(this, (byte)6);
+                this.level().broadcastEntityEvent(this, (byte)6);
             }
             this.setPersistenceRequired();
             return InteractionResult.CONSUME;
@@ -206,7 +206,7 @@ public class Tortoise extends TamableAnimal implements IAnimatable, HidingAnimal
         if (this.isTame()) {
             return false;
         }
-        List<Player> players = this.level.getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector(livingEntity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity) && !livingEntity.isDiscrete() && !livingEntity.isHolding(TEMPT_ITEMS)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
+        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector(livingEntity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity) && !livingEntity.isDiscrete() && !livingEntity.isHolding(TEMPT_ITEMS)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
         return !players.isEmpty();
     }
 
@@ -263,36 +263,26 @@ public class Tortoise extends TamableAnimal implements IAnimatable, HidingAnimal
     }
 
     @Override
-    public void animateHurt() {
-        super.animateHurt();
-    }
-
-    @Override
-    public void registerControllers(AnimationData animationData) {
-        animationData.setResetSpeedInTicks(5);
-        animationData.addAnimationController(new AnimationController<>(this, "controller", 5, this::predicate));
-        // hurtPredicate
-        animationData.addAnimationController(new AnimationController<>(this, "hurtController", 5, this::hurtPredicate));
-    }
-
-    @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
         super.playStepSound(pos, state);
     }
 
-    private <T extends IAnimatable> PlayState predicate(AnimationEvent<T> event) {
-        AnimationBuilder builder = new AnimationBuilder();
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <T extends Tortoise> PlayState predicate(final AnimationState<T> event) {
         if (this.isInSittingPose()) {
-            event.getController().setAnimation(builder.loop("tortoise.sit"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("tortoise.sit"));
             return PlayState.CONTINUE;
         } else if (this.canHide()) {
-            event.getController().setAnimation(builder.loop("tortoise.hide"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("tortoise.hide"));
             return PlayState.CONTINUE;
         } else if (this.isLayingEgg())  {
-            event.getController().setAnimation(builder.loop("tortoise.dig"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("tortoise.dig"));
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(builder.loop("tortoise.walk"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("tortoise.walk"));
             if (this.isBaby()) {
                 event.getController().setAnimationSpeed(2.0D);
             } else {
@@ -300,23 +290,25 @@ public class Tortoise extends TamableAnimal implements IAnimatable, HidingAnimal
             }
             return PlayState.CONTINUE;
         }
-        event.getController().markNeedsReload();
+        // event.getController().markNeedsReload();
         return PlayState.STOP;
     }
 
-    private <T extends IAnimatable> PlayState hurtPredicate(AnimationEvent<T> event) {
-        AnimationBuilder builder = new AnimationBuilder();
+    private <T extends Tortoise> PlayState hurtPredicate(final AnimationState<T> event) {
         if(this.hurtTime > 0) {
-            event.getController().setAnimation(builder.loop("tortoise.hurt"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("tortoise.hurt"));
             return PlayState.CONTINUE;
         }
-        event.getController().markNeedsReload();
+        // event.getController().markNeedsReload();
         return PlayState.STOP;
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return factory;
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // TODO: used to be 5
+        // animationData.setResetSpeedInTicks(5);
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new AnimationController<>(this, "hurtController", 5, this::hurtPredicate));
     }
 
     @Override
@@ -368,8 +360,8 @@ public class Tortoise extends TamableAnimal implements IAnimatable, HidingAnimal
     public void aiStep() {
         super.aiStep();
         BlockPos pos = this.blockPosition();
-        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level.getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
-            this.level.levelEvent(2001, pos, Block.getId(this.level.getBlockState(pos.below())));
+        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
+            this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
         }
     }
 }

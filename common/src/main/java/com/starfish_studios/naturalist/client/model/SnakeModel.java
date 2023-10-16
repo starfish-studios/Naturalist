@@ -7,16 +7,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class SnakeModel extends AnimatedGeoModel<Snake> {
+public class SnakeModel extends GeoModel<Snake> {
     @Override
     public ResourceLocation getModelResource(Snake snake) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/snake.geo.json");
@@ -39,24 +37,24 @@ public class SnakeModel extends AnimatedGeoModel<Snake> {
     }
 
     @Override
-    public void setLivingAnimations(Snake snake, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(snake, uniqueID, customPredicate);
+    public void setCustomAnimations(Snake animatable, long instanceId, AnimationState<Snake> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
-        IBone tail2 = this.getAnimationProcessor().getBone("tail2");
-        IBone tail4 = this.getAnimationProcessor().getBone("tail4");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        CoreGeoBone tail2 = this.getAnimationProcessor().getBone("tail2");
+        CoreGeoBone tail4 = this.getAnimationProcessor().getBone("tail4");
 
-        if (!snake.isSleeping()) {
-            head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-            head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
+        if (!animatable.isSleeping()) {
+            head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+            head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         }
-        if (!snake.getMainHandItem().isEmpty()) {
+        if (!animatable.getMainHandItem().isEmpty()) {
             tail2.setScaleX(1.5F);
             tail2.setScaleY(1.5F);
         }
-        tail4.setHidden(!snake.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get()));
+        tail4.setHidden(!animatable.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get()));
     }
 }

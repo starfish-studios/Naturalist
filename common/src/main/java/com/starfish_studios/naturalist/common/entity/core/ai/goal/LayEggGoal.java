@@ -46,7 +46,7 @@ public class LayEggGoal<T extends Animal & EggLayingAnimal> extends MoveToBlockG
             if (this.animal.getLayEggCounter() < 1) {
                 this.animal.setLayingEgg(true);
             } else if (this.animal.getLayEggCounter() > this.adjustedTickDelay(200)) {
-                Level level = this.animal.level;
+                Level level = this.animal.level();
                 level.playSound(null, blockPos, SoundEvents.TURTLE_LAY_EGG, SoundSource.BLOCKS, 0.3f, 0.9f + level.random.nextFloat() * 0.2f);
                 level.setBlock(this.blockPos.above(), this.animal.getEggBlock().defaultBlockState().setValue(TurtleEggBlock.EGGS, this.animal.getRandom().nextInt(4) + 1), 3);
                 this.animal.setHasEgg(false);

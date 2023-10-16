@@ -5,10 +5,10 @@ import com.starfish_studios.naturalist.common.entity.LizardTail;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
 @Environment(EnvType.CLIENT)
-public class LizardTailModel extends AnimatedGeoModel<LizardTail> {
+public class LizardTailModel extends GeoModel<LizardTail> {
     public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[]{
             new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/green_tail.png"),
             new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/brown_tail.png"),

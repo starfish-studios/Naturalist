@@ -34,28 +34,27 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.AnimationState;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class Lion extends Animal implements IAnimatable, SleepingAnimal {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+public class Lion extends Animal implements GeoEntity, SleepingAnimal {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
 
     public Lion(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.maxUpStep = 1.0F;
+        this.setMaxUpStep(1.0f);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -102,7 +101,7 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, true, entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby() && !this.isSleeping() && !this.isBaby() && this.getLevel().isNight()));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, true, entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby() && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
     }
 
     @Override
@@ -147,8 +146,8 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
 
     @Override
     public boolean canSleep() {
-        long dayTime = this.level.getDayTime();
-        if (this.getTarget() != null || this.level.isWaterAt(this.blockPosition())) {
+        long dayTime = this.level().getDayTime();
+        if (this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
             return false;
         } else {
             return dayTime > 6000 && dayTime < 13000;
@@ -159,10 +158,10 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
     public void customServerAiStep() {
         if (this.getMoveControl().hasWanted()) {
             double speedModifier = this.getMoveControl().getSpeedModifier();
-            if (speedModifier < 1.0D && this.isOnGround()) {
+            if (speedModifier < 1.0D && this.onGround()) {
                 this.setPose(Pose.CROUCHING);
                 this.setSprinting(false);
-            } else if (speedModifier >= 1.5D && this.isOnGround()) {
+            } else if (speedModifier >= 1.5D && this.onGround()) {
                 this.setPose(Pose.STANDING);
                 this.setSprinting(true);
             } else {
@@ -215,48 +214,49 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
         return 900;
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
         if (this.isSleeping()) {
-            event.getController().setAnimation(new AnimationBuilder().loop(this.hasMane() || this.isBaby() ? "lion.sleep2" : "lion.sleep"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop(this.hasMane() || this.isBaby() ? "lion.sleep2" : "lion.sleep"));
             event.getController().setAnimationSpeed(1.0F);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("run"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("run"));
                 event.getController().setAnimationSpeed(2.5F);
             } else if (this.isCrouching()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("prey"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("prey"));
                 event.getController().setAnimationSpeed(0.8F);
             } else {
-                event.getController().setAnimation(new AnimationBuilder().loop("walk"));
+                event.getController().setAnimation(RawAnimation.begin().thenLoop("walk"));
                 event.getController().setAnimationSpeed(1.0F);
             }
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
             event.getController().setAnimationSpeed(1.0F);
         }
         return PlayState.CONTINUE;
     }
 
-    private <E extends IAnimatable> PlayState attackPredicate(AnimationEvent<E> event) {
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
-            event.getController().markNeedsReload();
-            event.getController().setAnimation(new AnimationBuilder().playOnce("attack"));
+    private <E extends Lion> PlayState attackPredicate(final AnimationState<E> event) {
+        if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
+            // event.getController().markNeedsReload();
+            event.getController().setAnimation(RawAnimation.begin().thenPlay("attack"));
             this.swinging = false;
         }
         return PlayState.CONTINUE;
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.setResetSpeedInTicks(5);
-        data.addAnimationController(new AnimationController<>(this, "controller", 5, this::predicate));
-        data.addAnimationController(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // TODO: used to be 5
+        // data.setResetSpeedInTicks(5);
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
     }
 
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 
     static class LionFollowLeaderGoal extends Goal {
         private final Lion mob;
@@ -285,7 +285,7 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
             if (this.mob.isBaby() || this.mob.hasMane()) {
                 return false;
             }
-            List<Lion> nearbyLions = this.mob.level.getEntitiesOfClass(Lion.class, this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
+            List<Lion> nearbyLions = this.mob.level().getEntitiesOfClass(Lion.class, this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
             if (!nearbyLions.isEmpty()) {
                 for (Lion lion : nearbyLions) {
                     if (!lion.hasMane()) continue;
@@ -373,7 +373,7 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
             if (this.mob.isBaby()) {
                 return false;
             }
-            long gameTime = this.mob.level.getGameTime();
+            long gameTime = this.mob.level().getGameTime();
             if (gameTime - this.lastCanUseCheck < 20L) {
                 return false;
             }

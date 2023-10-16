@@ -2,6 +2,8 @@ package com.starfish_studios.naturalist.core.registry;
 
 import com.starfish_studios.naturalist.Naturalist;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -30,7 +32,7 @@ public class NaturalistTags {
 
 
         private static TagKey<Block> tag(String name) {
-            return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(Naturalist.MOD_ID, name));
+            return TagKey.create(BuiltInRegistries.BLOCK.key(), new ResourceLocation(Naturalist.MOD_ID, name));
         }
     }
 
@@ -51,7 +53,7 @@ public class NaturalistTags {
         public static final TagKey<Item> DUCK_FOOD_ITEMS = tag("duck_food_items");
 
         private static TagKey<Item> tag(String name) {
-            return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(Naturalist.MOD_ID, name));
+            return TagKey.create(BuiltInRegistries.ITEM.key(), new ResourceLocation(Naturalist.MOD_ID, name));
         }
     }
 
@@ -68,7 +70,7 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> ANIMAL_CRATE_BLACKLISTED = tag("animal_crate_blacklist");
 
         private static TagKey<EntityType<?>> tag(String name) {
-            return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(Naturalist.MOD_ID, name));
+            return TagKey.create(BuiltInRegistries.ENTITY_TYPE.key(), new ResourceLocation(Naturalist.MOD_ID, name));
         }
     }
 
@@ -102,7 +104,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_DUCK = tag("has_duck");
 
         private static TagKey<Biome> tag(String name) {
-            return TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(Naturalist.MOD_ID, name));
+            return TagKey.create(Registries.BIOME, new ResourceLocation(Naturalist.MOD_ID, name));
         }
     }
 }

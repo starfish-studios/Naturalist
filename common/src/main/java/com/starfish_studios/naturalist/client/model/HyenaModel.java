@@ -6,16 +6,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class HyenaModel extends AnimatedGeoModel<Hyena> {
+public class HyenaModel extends GeoModel<Hyena> {
+
     @Override
     public ResourceLocation getModelResource(Hyena hyena) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/hyena.geo.json");
@@ -23,10 +22,6 @@ public class HyenaModel extends AnimatedGeoModel<Hyena> {
 
     @Override
     public ResourceLocation getTextureResource(Hyena hyena) {
-        if (hyena.isBaby()) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/hyena.png");
-        }
-
         return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/hyena.png");
     }
 
@@ -36,23 +31,23 @@ public class HyenaModel extends AnimatedGeoModel<Hyena> {
     }
 
     @Override
-    public void setLivingAnimations(Hyena hyena, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(hyena, uniqueID, customPredicate);
+    public void setCustomAnimations(Hyena animatable, long instanceId, AnimationState<Hyena> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
-        IBone leftEar = this.getAnimationProcessor().getBone("leftEar");
-        IBone rightEar = this.getAnimationProcessor().getBone("rightEar");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        CoreGeoBone leftEar = this.getAnimationProcessor().getBone("leftEar");
+        CoreGeoBone rightEar = this.getAnimationProcessor().getBone("rightEar");
 
-        if (hyena.isBaby()) {
+        if (animatable.isBaby()) {
             head.setScaleX(1.3F); head.setScaleY(1.3F); head.setScaleZ(1.3F);
             leftEar.setScaleX(1.2F); leftEar.setScaleY(1.2F); leftEar.setScaleZ(1.2F);
             rightEar.setScaleX(1.2F); rightEar.setScaleY(1.2F); rightEar.setScaleZ(1.2F);
         }
 
-        head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-        head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
+        head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+        head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
     }
 }

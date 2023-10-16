@@ -6,16 +6,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.util.List;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class LionModel extends AnimatedGeoModel<Lion> {
+public class LionModel extends GeoModel<Lion> {
     @Override
     public ResourceLocation getModelResource(Lion lion) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/lion.geo.json");
@@ -23,20 +21,12 @@ public class LionModel extends AnimatedGeoModel<Lion> {
 
     @Override
     public ResourceLocation getTextureResource(Lion lion) {
-
-        // Sleeping
-    return lion.isSleeping() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_sleep.png") :
-    !lion.hasMane() && lion.isSleeping() || lion.isBaby() &&lion.isSleeping() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_sleep.png") :
-
-        // Lioness & Baby
-    !lion.hasMane() && !lion.isAggressive() || lion.isBaby() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness.png") :
-
-        // Angry
-    lion.isAggressive() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_angry.png") :
-    !lion.hasMane() && lion.isAggressive() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_angry.png") :
-
-    new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion.png");
-
+        return lion.isSleeping() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_sleep.png") :
+                (!lion.hasMane() && lion.isSleeping() || lion.isBaby() && lion.isSleeping()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_sleep.png") :
+                        (!lion.hasMane() && !lion.isAggressive() || lion.isBaby()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness.png") :
+                                (lion.isAggressive()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_angry.png") :
+                                        (!lion.hasMane() && lion.isAggressive()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_angry.png") :
+                                                new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion.png");
     }
 
     @Override
@@ -45,16 +35,16 @@ public class LionModel extends AnimatedGeoModel<Lion> {
     }
 
     @Override
-    public void setLivingAnimations(Lion lion, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(lion, uniqueID, customPredicate);
+    public void setCustomAnimations(Lion animatable, long instanceId, AnimationState<Lion> animationState) {
+        super.setCustomAnimations(animatable, instanceId, animationState);
 
-        if (customPredicate == null) return;
+        if (animationState == null) return;
 
-        List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
-        IBone head = this.getAnimationProcessor().getBone("head");
-        IBone mane = this.getAnimationProcessor().getBone("mane");
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        CoreGeoBone mane = this.getAnimationProcessor().getBone("mane");
 
-        if (lion.isBaby()) {
+        if (animatable.isBaby()) {
             head.setScaleX(1.4F);
             head.setScaleY(1.4F);
             head.setScaleZ(1.4F);
@@ -67,11 +57,11 @@ public class LionModel extends AnimatedGeoModel<Lion> {
             head.setScaleZ(1.0F);
         }
 
-        mane.setHidden(!lion.hasMane() || lion.isBaby());
+        mane.setHidden(!animatable.hasMane() || animatable.isBaby());
 
-        if (!lion.isSleeping()) {
-            head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-            head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
+        if (!animatable.isSleeping()) {
+            head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+            head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         }
     }
 }
