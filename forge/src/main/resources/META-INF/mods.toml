@@ -1,0 +1,36 @@
+modLoader = "javafml"
+loaderVersion = "[41,)"
+issueTrackerURL = "https://github.com/starfish-studios/Naturalist/issues"
+license = "MIT"
+
+[[mods]]
+modId = "naturalist"
+version = "${version}"
+displayName = "Naturalist"
+authors = "Starfish Studios"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/naturalist"
+description = '''
+Enhances the overworld by adding new wildlife with unique behavior!
+'''
+logoFile = "icon.png"
+
+[[dependencies.naturalist]]
+modId = "forge"
+mandatory = true
+versionRange = "[41.0.98,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.naturalist]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.naturalist]]
+modId="geckolib3"
+mandatory=true
+versionRange="[3.1.9,)"
+ordering="NONE"
+side="BOTH"

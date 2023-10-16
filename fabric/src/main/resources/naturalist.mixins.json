@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.starfish_studios.naturalist.mixin.fabric",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+  ],
+  "mixins": [
+    "MobCategoryMixin",
+    "PotionBrewingInvoker",
+    "SpawnPlacementsInvoker"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
