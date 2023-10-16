@@ -1,0 +1,10 @@
+{
+  "values": [
+    "minecraft:salmon",
+    "naturalist:deer",
+    {
+      "id": "alexsmobs:moose",
+      "required": false
+    }
+  ]
+}

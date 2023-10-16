@@ -1,0 +1,17 @@
+{
+  "values": [
+    "minecraft:salmon",
+    "minecraft:cooked_salmon",
+    "minecraft:honeycomb",
+    "minecraft:sweet_berries",
+    "naturalist:venison",
+    {
+      "id": "alexsmobs:raw_moose_ribs",
+      "required": false
+    },
+    {
+      "id": "alexsmobs:cooked_moose_ribs",
+      "required": false
+    }
+  ]
+}
