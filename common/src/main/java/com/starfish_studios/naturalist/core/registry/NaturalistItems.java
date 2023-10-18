@@ -4,10 +4,7 @@ import com.starfish_studios.naturalist.*;
 import com.starfish_studios.naturalist.common.entity.*;
 import com.starfish_studios.naturalist.common.item.*;
 import com.starfish_studios.naturalist.core.platform.*;
-import dev.architectury.registry.registries.DeferredRegister;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.*;
 import net.minecraft.world.effect.*;
 import net.minecraft.world.food.*;
@@ -20,21 +17,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.function.*;
 
-import static com.starfish_studios.naturalist.core.registry.NaturalistCreativeTabs.NATURALIST_TAB;
-
-
-import dev.architectury.extensions.injected.InjectedItemPropertiesExtension;
-import dev.architectury.impl.ItemPropertiesExtensionImpl;
-import dev.architectury.registry.CreativeTabRegistry;
-import dev.architectury.registry.registries.DeferredSupplier;
-
 public class NaturalistItems {
 
 
 
     // public static final Supplier<Item> ANIMAL_CRATE = CommonPlatformHelper.registerItem("animal_crate", () -> new AnimalCrateBlockItem(NaturalistBlocks.ANIMAL_CRATE.get(), new Item.Properties()));
     public static final Supplier<Item> DUCKWEED = CommonPlatformHelper.registerItem("duckweed", () -> new PlaceOnWaterBlockItem(NaturalistBlocks.DUCKWEED.get(), new Item.Properties()));
-    public static final Supplier<Item> CATTAIL_FLUFF = CommonPlatformHelper.registerItem("cattail_fluff", () -> new Item(new Item.Properties().arch$tabs(NATURALIST_TAB)));
+    public static final Supplier<Item> CATTAIL_FLUFF = CommonPlatformHelper.registerItem("cattail_fluff", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> DUCK_EGG = CommonPlatformHelper.registerItem("duck_egg", () -> new DuckEggItem(new Item.Properties()));
     public static final Supplier<Item> COOKED_EGG = CommonPlatformHelper.registerItem("cooked_egg", () -> new Item(new Item.Properties().food(Foods.BREAD)));
     public static final Supplier<Item> ANTLER = CommonPlatformHelper.registerItem("antler", () -> new Item(new Item.Properties()));
@@ -100,5 +89,25 @@ public class NaturalistItems {
     // public static final Supplier<SpawnEggItem> TERMITE_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("termite_spawn_egg", NaturalistEntityTypes.TERMITE, 15116640, 11103550);
 
     public static void init() {
+    }
+    public static void addAllToCreativeTab() {
+        try {
+            Field[] fields = NaturalistItems.class.getDeclaredFields();
+            for (Field field : fields) {
+                ParameterizedType type = (ParameterizedType) field.getGenericType();
+                Type rawType = type.getRawType();
+                Type[] typeArguments = type.getActualTypeArguments();
+
+                if (rawType == Supplier.class) {
+                    if (typeArguments.length == 1) {
+                        Class<?> arg = (Class<?>) typeArguments[0];
+                        if (Item.class.isAssignableFrom(arg) || SpawnEggItem.class.isAssignableFrom(arg)) {
+                            Supplier<?> supplier = (Supplier<?>) field.get(null);
+                            CommonPlatformHelper.acceptItemToCreativeTab(new ItemStack((Item) supplier.get()));
+                        }
+                    }
+                }
+            }
+        } catch (IllegalAccessException ignored) {}
     }
 }
