@@ -2,8 +2,6 @@ package com.starfish_studios.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.starfish_studios.naturalist.client.model.OstrichModel;
-import com.starfish_studios.naturalist.common.entity.Ostrich;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -13,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-@Environment(EnvType.CLIENT)
+/* @Environment(EnvType.CLIENT)
 public class OstrichRenderer extends GeoEntityRenderer<Ostrich> {
     public OstrichRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new OstrichModel());
@@ -35,3 +33,5 @@ public class OstrichRenderer extends GeoEntityRenderer<Ostrich> {
         return RenderType.entityCutoutNoCull(textureLocation);
     }
 }
+
+ */

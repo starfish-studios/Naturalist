@@ -50,6 +50,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.*;
 
+/*
 public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddleable, EggLayingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS);
@@ -79,7 +80,8 @@ public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddlea
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return NaturalistEntityTypes.OSTRICH.get().create(level);
+        // return NaturalistEntityTypes.OSTRICH.get().create(level);
+        return null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -101,7 +103,6 @@ public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddlea
         this.goalSelector.addGoal(3, new EggLayingBreedGoal<>(this, 1.0));
         this.goalSelector.addGoal(3, new LaySingleEggGoal<>(this, 1.0));
         this.goalSelector.addGoal(4, new OstrichAttackGoal(this, 1.4D, true));
-        // TODO: Forge is bullshit
         // this.goalSelector.addGoal(5, new TemptGoal(this, 1.3D, Ingredient.of(NaturalistItems.GRUB_ON_A_STICK.get()), false));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.3D, Ingredient.of(Items.BEETROOT), false));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.3D));
@@ -111,6 +112,10 @@ public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddlea
 
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity) -> {
             if (entity instanceof Ostrich) return false;
+            if (entity instanceof Player player) {
+                if (player.isCreative() || player.isSpectator()) return false;
+                if (this.isTamed() && this.getOwnerUUID() != null && this.getOwnerUUID().equals(player.getUUID())) return false;
+            }
             Iterable<BlockPos> list = BlockPos.betweenClosed(entity.blockPosition().offset(-2, -2, -2), entity.blockPosition().offset(2, 2, 2));
             boolean isEntityNearOstrichEggs = false;
             for (BlockPos pos : list) {
@@ -312,7 +317,6 @@ public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddlea
         } else {
             return false;
         }
-        */
     }
 
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -357,7 +361,7 @@ public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddlea
     public void equipSaddle(@Nullable SoundSource source) {
         this.steering.setSaddle(true);
         if (source != null) {
-            this.level().playSound((Player)null, this, SoundEvents.PIG_SADDLE, source, 0.5F, 1.0F);
+            this.level().playSound(null, this, SoundEvents.PIG_SADDLE, source, 0.5F, 1.0F);
         }
 
     }
@@ -517,7 +521,7 @@ public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddlea
         event.getController().setAnimation(RawAnimation.begin().thenLoop("dance"));
         event.getController().setAnimationSpeed(1.0D);
         return PlayState.CONTINUE;
-    } */
+    }
         if (this.isLayingEgg()) {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("lay_egg"));
             event.getController().setAnimationSpeed(3.5D);
@@ -642,3 +646,4 @@ public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddlea
     }
 
 }
+*/

@@ -50,6 +50,6 @@ public class GiraffeModel extends GeoModel<Giraffe> {
         }
 
         head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-        head.setRotX(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+        head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
     }
 }

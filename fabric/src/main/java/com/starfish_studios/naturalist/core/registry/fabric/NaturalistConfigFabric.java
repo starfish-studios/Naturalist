@@ -15,7 +15,7 @@ public class NaturalistConfigFabric implements ConfigData {
     public int canarySpawnWeight = 8;
     public int cardinalSpawnWeight = 8;
     public int robinSpawnWeight = 8;
-    public int butterflySpawnWeight = 6;
+    public int butterflySpawnWeight = 500;
     public int snailSpawnWeight = 5;
     public int snakeSpawnWeight = 4;
 
@@ -61,4 +61,5 @@ public class NaturalistConfigFabric implements ConfigData {
 
     public boolean removeSavannaFarmAnimals = true;
     public boolean removeSwampFarmAnimals = true;
+    public boolean removeForestPigs = true;
 }

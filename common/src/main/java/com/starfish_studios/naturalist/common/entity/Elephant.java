@@ -1,13 +1,11 @@
 package com.starfish_studios.naturalist.common.entity;
 
-import com.starfish_studios.naturalist.common.entity.core.ElephantContainer;
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.BabyHurtByTargetGoal;
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.BabyPanicGoal;
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.DistancedFollowParentGoal;
 import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import com.starfish_studios.naturalist.core.registry.NaturalistTags;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -15,9 +13,11 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Container;
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -25,38 +25,40 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bee;
-import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
-import java.util.EnumSet;
+import java.util.UUID;
 
-public class Elephant extends AbstractChestedHorse implements GeoEntity {
+public class Elephant extends Animal implements NeutralMob, GeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     // private static final EntityDataAccessor<Integer> DIRTY_TICKS = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DRINKING = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
+    private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
+    private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
+    private int remainingPersistentAngerTime;
+    @org.jetbrains.annotations.Nullable
+    private UUID persistentAngerTarget;
 
-    protected ElephantContainer inventory;
-    @Nullable
-    protected BlockPos waterPos;
-
-    public Elephant(EntityType<? extends AbstractChestedHorse> entityType, Level level) {
+    public Elephant(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.setMaxUpStep(1.0F);
     }
@@ -106,15 +108,17 @@ public class Elephant extends AbstractChestedHorse implements GeoEntity {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bee.class, 8.0f, 1.3, 1.3));
-        this.goalSelector.addGoal(2, new ElephantMeleeAttackGoal(this, 1.3D, false));
-        this.goalSelector.addGoal(3, new BabyPanicGoal(this, 2.0D));
+        this.goalSelector.addGoal(2, new ElephantMeleeAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.3D));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.25D, 24.0D, 6.0D, 12.0D));
-        this.goalSelector.addGoal(5, new ElephantDrinkWaterGoal(this));
-        this.goalSelector.addGoal(6, new ElephantMoveToWaterGoal(this, 1.0D, 8, 4));
+        // this.goalSelector.addGoal(5, new ElephantDrinkWaterGoal(this));
+        // this.goalSelector.addGoal(6, new ElephantMoveToWaterGoal(this, 1.0D, 8, 4));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+        this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
     @Override
@@ -152,20 +156,23 @@ public class Elephant extends AbstractChestedHorse implements GeoEntity {
     protected void defineSynchedData() {
         super.defineSynchedData();
         // this.entityData.define(DIRTY_TICKS, 0);
+        this.entityData.define(REMAINING_ANGER_TIME, 0);
         this.entityData.define(DRINKING, false);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
+        this.addPersistentAngerSaveData(pCompound);
         // pCompound.putInt("DirtyTicks", this.getDirtyTicks());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
+        this.readPersistentAngerSaveData(this.level(), pCompound);
         // this.setDirtyTicks(pCompound.getInt("DirtyTicks"));
-        this.updateContainerEquipment();
+        // this.updateContainerEquipment();
     }
 
     // public void setDirtyTicks(int ticks) {
@@ -180,67 +187,20 @@ public class Elephant extends AbstractChestedHorse implements GeoEntity {
     //     return this.getDirtyTicks() > 0;
     // }
 
-    public void setDrinking(boolean drinking) {
+    /* public void setDrinking(boolean drinking) {
         this.entityData.set(DRINKING, drinking);
     }
 
     public boolean isDrinking() {
         return this.entityData.get(DRINKING);
-    }
-
-    @Override
-    public void positionRider(Entity passenger, MoveFunction callback) {
-        super.positionRider(passenger, callback);
-
-        if (passenger instanceof Mob mob) {
-            this.yBodyRot = mob.yBodyRot;
-        }
-
-        callback.accept(passenger, this.getX(), this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset(), this.getZ());
-
-        if (passenger instanceof LivingEntity livingEntity) {
-            livingEntity.yBodyRot = this.yBodyRot;
-        }
-    }
-
-    public double getPassengersRidingOffset() {
-        return 3.2;
-    }
-
-    protected void playChestEquipsSound() {
-        this.playSound(SoundEvents.LLAMA_CHEST, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-    }
-
-    public int getInventoryColumns() {
-        return 5;
-    }
-
-    protected int getInventorySize() {
-        return this.hasChest() ? 27 : super.getInventorySize();
-    }
-
-    public void openCustomInventoryScreen(Player player) {
-        if (!this.level().isClientSide && (!this.isVehicle() || this.hasPassenger(player)) && this.isTamed()) {
-            player.openHorseInventory(this, this.inventory);
-        }
-
-    }
-
-    public boolean isSaddleable() {
-        return true;
-    }
-
-    public void containerChanged(Container container) {
-        super.containerChanged(container);
-    }
-
-    public boolean canEatGrass() {
-        return false;
-    }
+    } */
 
     @Override
     public void aiStep() {
         super.aiStep();
+        if (!this.level().isClientSide) {
+            this.updatePersistentAnger((ServerLevel)this.level(), true);
+        }
         /* if (this.level instanceof ServerLevel serverLevel) {
             if (this.isDirty()) {
                 this.setDirtyTicks(this.isInWater() ? 0 : Math.max(0, this.getDirtyTicks() - 1));
@@ -255,6 +215,36 @@ public class Elephant extends AbstractChestedHorse implements GeoEntity {
             }
         } */
     }
+
+    // ANGER
+
+    @Override
+    public void startPersistentAngerTimer() {
+        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+    }
+
+    @Override
+    public void setRemainingPersistentAngerTime(int pTime) {
+        this.entityData.set(REMAINING_ANGER_TIME, pTime);
+    }
+
+    @Override
+    public int getRemainingPersistentAngerTime() {
+        return this.entityData.get(REMAINING_ANGER_TIME);
+    }
+
+    @Override
+    public void setPersistentAngerTarget(@Nullable UUID pTarget) {
+        this.persistentAngerTarget = pTarget;
+    }
+
+    @Nullable
+    @Override
+    public UUID getPersistentAngerTarget() {
+        return this.persistentAngerTarget;
+    }
+
+
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
@@ -267,9 +257,9 @@ public class Elephant extends AbstractChestedHorse implements GeoEntity {
                 event.getController().setAnimation(RawAnimation.begin().thenLoop("walk"));
                 event.getController().setAnimationSpeed(0.7F);
             }
-        } else if (this.isDrinking()) {
+        } /*else if (this.isDrinking()) {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("elephant.water"));
-        } else {
+        }*/ else {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
             event.getController().setAnimationSpeed(0.5F);
         }
@@ -303,7 +293,7 @@ public class Elephant extends AbstractChestedHorse implements GeoEntity {
         }
     }
 
-    static class ElephantMoveToWaterGoal extends MoveToBlockGoal {
+    /*static class ElephantMoveToWaterGoal extends MoveToBlockGoal {
         private final Elephant elephant;
 
         public ElephantMoveToWaterGoal(Elephant pathfinderMob, double speedModifier, int searchRange, int verticalSearchRange) {
@@ -313,7 +303,7 @@ public class Elephant extends AbstractChestedHorse implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            return !this.elephant.isBaby() && !this.elephant.isDrinking() && this.elephant.waterPos == null && super.canUse();
+            return !this.elephant.isBaby() && this.elephant.waterPos == null && super.canUse();
         }
 
         @Override
@@ -390,5 +380,5 @@ public class Elephant extends AbstractChestedHorse implements GeoEntity {
             this.elephant.waterPos = null;
             this.elephant.setDrinking(false);
         }
-    }
+    } */
 }

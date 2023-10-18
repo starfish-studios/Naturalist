@@ -94,7 +94,8 @@ public class Hyena extends TamableAnimal implements GeoEntity, NeutralMob {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return NaturalistEntityTypes.HYENA.get().create(level);
+        // return NaturalistEntityTypes.HYENA.get().create(level);
+        return null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {

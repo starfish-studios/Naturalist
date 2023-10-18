@@ -3,9 +3,7 @@ package com.starfish_studios.naturalist.fabric;
 import com.google.common.base.Preconditions;
 import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.common.entity.*;
-import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
-import com.starfish_studios.naturalist.core.registry.NaturalistItems;
-import com.starfish_studios.naturalist.core.registry.NaturalistTags;
+import com.starfish_studios.naturalist.core.registry.*;
 import com.starfish_studios.naturalist.core.registry.fabric.NaturalistConfigFabric;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -24,6 +22,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -80,7 +79,7 @@ public class NaturalistFabric implements ModInitializer {
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.SNAIL.get(), Snail.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.BEAR.get(), Bear.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.BUTTERFLY.get(), Butterfly.createAttributes());
-        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.MOTH.get(), Moth.createAttributes());
+        // FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.MOTH.get(), Moth.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.FIREFLY.get(), Firefly.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.SNAKE.get(), Snake.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.CORAL_SNAKE.get(), Snake.createAttributes());
@@ -107,9 +106,9 @@ public class NaturalistFabric implements ModInitializer {
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.LIZARD_TAIL.get(), LizardTail.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.TORTOISE.get(), Tortoise.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.DUCK.get(), Duck.createAttributes());
-        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.HYENA.get(), Hyena.createAttributes());
-        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.OSTRICH.get(), Ostrich.createAttributes());
-        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.TERMITE.get(), Termite.createAttributes());
+        // FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.HYENA.get(), Hyena.createAttributes());
+        // FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.OSTRICH.get(), Ostrich.createAttributes());
+        // FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.TERMITE.get(), Termite.createAttributes());
     }
 
     void addSpawns() {
@@ -121,7 +120,7 @@ public class NaturalistFabric implements ModInitializer {
         addMobSpawn(NaturalistTags.Biomes.HAS_FIREFLY, MobCategory.AMBIENT, NaturalistEntityTypes.FIREFLY.get(), config.fireflySpawnWeight, 2, 3);
 
 
-        addMobSpawn(NaturalistTags.Biomes.HAS_BUTTERFLY, MobCategory.CREATURE, NaturalistEntityTypes.BUTTERFLY.get(), config.butterflySpawnWeight, 1, 3);
+        addMobSpawn(NaturalistTags.Biomes.HAS_BUTTERFLY, MobCategory.CREATURE, NaturalistEntityTypes.BUTTERFLY.get(), config.butterflySpawnWeight, 3, 5);
         addMobSpawn(NaturalistTags.Biomes.HAS_SNAKE, MobCategory.CREATURE, NaturalistEntityTypes.SNAKE.get(), config.snakeSpawnWeight, 1, 1);
         addMobSpawn(NaturalistTags.Biomes.HAS_RATTLESNAKE, MobCategory.CREATURE, NaturalistEntityTypes.RATTLESNAKE.get(), config.rattlesnakeSpawnWeight, 1, 1);
         addMobSpawn(NaturalistTags.Biomes.HAS_CORAL_SNAKE, MobCategory.CREATURE, NaturalistEntityTypes.CORAL_SNAKE.get(), config.coralSnakeSpawnWeight, 1, 1);
@@ -152,6 +151,9 @@ public class NaturalistFabric implements ModInitializer {
         }
         if (config.removeSwampFarmAnimals) {
             removeSpawn(ConventionalBiomeTags.SWAMP, List.of(EntityType.SHEEP, EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
+        }
+        if (config.removeForestPigs) {
+            removeSpawn(ConventionalBiomeTags.FOREST, List.of(EntityType.PIG));
         }
     }
 

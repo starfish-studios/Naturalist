@@ -216,7 +216,8 @@ public class Moth extends Animal implements GeoEntity, FlyingAnimal, Catchable {
     }
 
     public ItemStack getCaughtItemStack() {
-        return new ItemStack(NaturalistItems.MOTH.get());
+        // return new ItemStack(NaturalistItems.MOTH.get());
+        return null;
     }
 
     @Override

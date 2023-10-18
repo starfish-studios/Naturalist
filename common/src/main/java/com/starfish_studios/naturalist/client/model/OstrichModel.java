@@ -1,7 +1,6 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Ostrich;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +11,7 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
-@Environment(EnvType.CLIENT)
+/* @Environment(EnvType.CLIENT)
 public class OstrichModel extends GeoModel<Ostrich> {
     @Override
     public ResourceLocation getModelResource(Ostrich ostrich) {
@@ -60,3 +59,5 @@ public class OstrichModel extends GeoModel<Ostrich> {
         head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
     }
 }
+
+ */

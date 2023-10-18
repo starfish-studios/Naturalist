@@ -85,6 +85,10 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.MOVEMENT_SPEED, 0.3F);
     }
 
+    public static boolean checkButterflySpawnRules(EntityType<? extends Butterfly> pType, ServerLevelAccessor pLevel, MobSpawnType pReason, BlockPos pPos, RandomSource pRandom) {
+        return pLevel.getBlockState(pPos.below()).is(NaturalistTags.BlockTags.DRAGONFLIES_SPAWNABLE_ON);
+    }
+
     @Override
     protected PathNavigation createNavigation(Level pLevel) {
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, pLevel) {
@@ -179,23 +183,15 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
     @Override
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @org.jetbrains.annotations.Nullable SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable CompoundTag dataTag) {
-        boolean bl = false;
         if (reason == MobSpawnType.BUCKET) {
             return spawnData;
         } else {
             RandomSource randomSource = level.getRandom();
-            if (spawnData instanceof Butterfly.ButterflyGroupData) {
-                if (((Butterfly.ButterflyGroupData)spawnData).getGroupSize() >= 2) {
-                    bl = true;
-                }
-            } else {
+            {
                 spawnData = new Butterfly.ButterflyGroupData(Variant.getCommonSpawnVariant(randomSource), Variant.getCommonSpawnVariant(randomSource));
             }
 
             this.setVariant(((Butterfly.ButterflyGroupData)spawnData).getVariant(randomSource));
-            if (bl) {
-                this.setAge(-24000);
-            }
 
             return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
         }
@@ -434,8 +430,8 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
 
 
     public enum Variant {
-        CABBAGE_WHITE(0, "cabbage_white", true),
-        MONARCH(1, "monarch", true),
+        MONARCH(0, "monarch", true),
+        CABBAGE_WHITE(1, "cabbage_white", true),
         CLOUDED_YELLOW(2, "clouded_yellow", true),
         SWALLOWTAIL(3, "swallowtail", true),
         BLUE_MORPHO(4, "blue_morpho", true);

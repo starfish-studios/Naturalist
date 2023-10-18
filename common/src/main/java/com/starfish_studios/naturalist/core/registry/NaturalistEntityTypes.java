@@ -19,8 +19,8 @@ public class NaturalistEntityTypes {
 
     public static final Supplier<EntityType<Snail>> SNAIL = CommonPlatformHelper.registerEntityType("snail", Snail::new, MobCategory.CREATURE, 0.7F, 0.7F, 10);
     public static final Supplier<EntityType<Bear>> BEAR = CommonPlatformHelper.registerEntityType("bear", Bear::new, MobCategory.CREATURE, 1.4F, 1.7F, 10);
-    public static final Supplier<EntityType<Butterfly>> BUTTERFLY = CommonPlatformHelper.registerEntityType("butterfly", Butterfly::new, MobCategory.CREATURE, 0.7F, 0.6F, 8);
-    public static final Supplier<EntityType<Moth>> MOTH = CommonPlatformHelper.registerEntityType("moth", Moth::new, MobCategory.CREATURE, 0.7F, 0.6F, 8);
+    public static final Supplier<EntityType<Butterfly>> BUTTERFLY = CommonPlatformHelper.registerEntityType("butterfly", Butterfly::new, MobCategory.AMBIENT, 0.7F, 0.6F, 8);
+    // public static final Supplier<EntityType<Moth>> MOTH = CommonPlatformHelper.registerEntityType("moth", Moth::new, MobCategory.CREATURE, 0.7F, 0.6F, 8);
     public static final Supplier<EntityType<Firefly>> FIREFLY = CommonPlatformHelper.registerEntityType("firefly", Firefly::new, MobCategory.AMBIENT, 0.7F, 0.6F, 8);
     public static final Supplier<EntityType<Snake>> SNAKE = CommonPlatformHelper.registerEntityType("snake", Snake::new, MobCategory.CREATURE, 0.6F, 0.7F, 8);
     public static final Supplier<EntityType<Snake>> CORAL_SNAKE = CommonPlatformHelper.registerEntityType("coral_snake", Snake::new, MobCategory.CREATURE, 0.6F, 0.7F, 8);
@@ -48,9 +48,9 @@ public class NaturalistEntityTypes {
     public static final Supplier<EntityType<LizardTail>> LIZARD_TAIL = CommonPlatformHelper.registerEntityType("lizard_tail", LizardTail::new, MobCategory.CREATURE, 0.7f, 0.5f, 10);
     public static final Supplier<EntityType<Tortoise>> TORTOISE = CommonPlatformHelper.registerEntityType("tortoise", Tortoise::new, MobCategory.CREATURE, 1.2F, 0.875F, 10);
     public static final Supplier<EntityType<Duck>> DUCK = CommonPlatformHelper.registerEntityType("duck", Duck::new, MobCategory.CREATURE, 0.6F, 1.0F, 10);
-    public static final Supplier<EntityType<Hyena>> HYENA = CommonPlatformHelper.registerEntityType("hyena", Hyena::new, MobCategory.CREATURE, 1.1F, 1.3F, 10);
-    public static final Supplier<EntityType<Ostrich>> OSTRICH = CommonPlatformHelper.registerEntityType("ostrich", Ostrich::new, MobCategory.CREATURE, 1.0F, 2.0F, 10);
-    public static final Supplier<EntityType<Termite>> TERMITE = CommonPlatformHelper.registerEntityType("termite", Termite::new, MobCategory.CREATURE, 1.0F, 0.7F, 10);
+    // public static final Supplier<EntityType<Hyena>> HYENA = CommonPlatformHelper.registerEntityType("hyena", Hyena::new, MobCategory.CREATURE, 1.1F, 1.3F, 10);
+    // public static final Supplier<EntityType<Ostrich>> OSTRICH = CommonPlatformHelper.registerEntityType("ostrich", Ostrich::new, MobCategory.CREATURE, 1.0F, 2.0F, 10);
+    // public static final Supplier<EntityType<Termite>> TERMITE = CommonPlatformHelper.registerEntityType("termite", Termite::new, MobCategory.CREATURE, 1.0F, 0.7F, 10);
 
 
     public static void init() {}

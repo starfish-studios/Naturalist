@@ -41,6 +41,7 @@ public class NaturalistConfigForge {
     public static final ForgeConfigSpec.IntValue TORTOISE_SPAWN_WEIGHT;
     public static final ForgeConfigSpec.IntValue DUCK_SPAWN_WEIGHT;
 
+
     static {
         ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
         COMMON_BUILDER.comment("A higher spawn weight will make the mob spawn more often.",
@@ -94,6 +95,8 @@ public class NaturalistConfigForge {
         BASS_SPAWN_WEIGHT = COMMON_BUILDER.comment("Bass Spawn Weight").defineInRange("bassSpawnWeight", 8, 0, 1000);
         LIZARD_SPAWN_WEIGHT = COMMON_BUILDER.comment("Lizard Spawn Weight").defineInRange("lizardSpawnWeight", 15, 0, 1000);
         TORTOISE_SPAWN_WEIGHT = COMMON_BUILDER.comment("Tortoise Spawn Weight").defineInRange("tortoiseSpawnWeight", 15, 0, 1000);
+
+
         COMMON_BUILDER.pop();
 
         COMMON_CONFIG = COMMON_BUILDER.build();

@@ -27,7 +27,7 @@ public class NaturalistClient {
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.SNAIL, SnailRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.BEAR, BearRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.BUTTERFLY, ButterflyRenderer::new);
-        ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.MOTH, MothRenderer::new);
+        // ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.MOTH, MothRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.FIREFLY, FireflyRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.SNAKE, SnakeRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.CORAL_SNAKE, SnakeRenderer::new);
@@ -54,41 +54,10 @@ public class NaturalistClient {
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.LIZARD_TAIL, LizardTailRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.TORTOISE, TortoiseRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.DUCK, DuckRenderer::new);
-        ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.HYENA, HyenaRenderer::new);
-        ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.OSTRICH, OstrichRenderer::new);
-        ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.TERMITE, TermiteRenderer::new);
-
-
-        //MenuScreens.register(NaturalistMenus.ELEPHANT_INVENTORY.get(), ElephantInventoryScreen::new);
-
-        copyOldModelsResources();
+        // ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.OSTRICH, OstrichRenderer::new);
 
         // Set<Item> particleMarkerBlocks = new HashSet<>(ClientLevelMixin.getMARKER_PARTICLE_ITEMS());
         // particleMarkerBlocks.add(NaturalistItems.GLOW_GOOP.get());
         // ClientLevelMixin.setMARKER_PARTICLE_ITEMS(particleMarkerBlocks);
-    }
-
-
-
-    private static void copyOldModelsResources() {
-        File dir = new File(".", "resourcepacks");
-        File target = new File(dir, "Naturalist Old Models.zip");
-
-        if(!target.exists())
-            try {
-                dir.mkdirs();
-                InputStream in = Naturalist.class.getResourceAsStream("/assets/naturalist/Naturalist Old Models.zip");
-                FileOutputStream out = new FileOutputStream(target);
-
-                byte[] buf = new byte[16384];
-                int len;
-                while((len = in.read(buf)) > 0)
-                    out.write(buf, 0, len);
-
-                in.close();
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
     }
 }

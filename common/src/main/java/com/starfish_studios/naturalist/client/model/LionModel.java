@@ -21,12 +21,12 @@ public class LionModel extends GeoModel<Lion> {
 
     @Override
     public ResourceLocation getTextureResource(Lion lion) {
-        return lion.isSleeping() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_sleep.png") :
-                (!lion.hasMane() && lion.isSleeping() || lion.isBaby() && lion.isSleeping()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_sleep.png") :
-                        (!lion.hasMane() && !lion.isAggressive() || lion.isBaby()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness.png") :
-                                (lion.isAggressive()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_angry.png") :
-                                        (!lion.hasMane() && lion.isAggressive()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_angry.png") :
-                                                new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion.png");
+        return (lion.isSleeping() && lion.hasMane()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_sleep.png") :
+        (!lion.hasMane() && lion.isSleeping() || lion.isBaby() && lion.isSleeping()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_sleep.png") :
+        (!lion.hasMane() && !lion.isAggressive() || lion.isBaby()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness.png") :
+        (lion.isAggressive()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_angry.png") :
+        (!lion.hasMane() && lion.isAggressive()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_angry.png") :
+        new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion.png");
     }
 
     @Override
@@ -48,9 +48,6 @@ public class LionModel extends GeoModel<Lion> {
             head.setScaleX(1.4F);
             head.setScaleY(1.4F);
             head.setScaleZ(1.4F);
-            head.setScaleX(1.75F);
-            head.setScaleY(1.75F);
-            head.setScaleZ(1.75F);
         } else {
             head.setScaleX(1.0F);
             head.setScaleY(1.0F);

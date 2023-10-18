@@ -1,6 +1,5 @@
 package com.starfish_studios.naturalist.common.block;
 
-import com.starfish_studios.naturalist.common.entity.Ostrich;
 import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
 import net.minecraft.core.BlockPos;
@@ -23,7 +22,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class OstrichEggBlock extends TurtleEggBlock {
+/*public class OstrichEggBlock extends TurtleEggBlock {
 
     private static final VoxelShape EGG_AABB = Block.box(5.0, 0.0, 5.0, 11.0, 8.0, 11.0);
     public OstrichEggBlock(Properties properties) {
@@ -119,3 +118,4 @@ public class OstrichEggBlock extends TurtleEggBlock {
         return EGG_AABB;
     }
 }
+ */

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.*;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.*;
 
-public class AnimalCrateBlock extends Block implements EntityBlock {
+/*public class AnimalCrateBlock extends Block implements EntityBlock {
     public AnimalCrateBlock(Properties properties) {
         super(properties);
     }
@@ -39,3 +39,5 @@ public class AnimalCrateBlock extends Block implements EntityBlock {
         return super.use(state, level, pos, player, hand, ray);
     }
 }
+
+ */

@@ -42,24 +42,18 @@ public class ElephantModel extends GeoModel<Elephant> {
         CoreGeoBone babyTrunk = this.getAnimationProcessor().getBone("trunk4");
         CoreGeoBone leftEar = this.getAnimationProcessor().getBone("left_ear");
         CoreGeoBone rightEar = this.getAnimationProcessor().getBone("right_ear");
-        CoreGeoBone chests = this.getAnimationProcessor().getBone("chests");
-        CoreGeoBone saddle = this.getAnimationProcessor().getBone("saddle");
 
         if (animatable.isBaby()) {
             head.setScaleX(1.3F); head.setScaleY(1.3F); head.setScaleZ(1.3F);
             leftEar.setScaleX(1.2F); leftEar.setScaleY(1.2F); leftEar.setScaleZ(1.2F);
             rightEar.setScaleX(1.2F); rightEar.setScaleY(1.2F); rightEar.setScaleZ(1.2F);
-            head.setScaleX(1.5F);
-            head.setScaleY(1.5F);
-            head.setScaleZ(1.5F);
         } else {
             head.setScaleX(1.0F);
             head.setScaleY(1.0F);
             head.setScaleZ(1.0F);
+            leftEar.setScaleX(1.0F); leftEar.setScaleY(1.0F); leftEar.setScaleZ(1.0F);
+            rightEar.setScaleX(1.0F); rightEar.setScaleY(1.0F); rightEar.setScaleZ(1.0F);
         }
-
-        chests.setHidden(!animatable.hasChest() || animatable.isBaby());
-        saddle.setHidden(!animatable.isSaddled() || animatable.isBaby());
 
         bigTusks.setHidden(animatable.isBaby());
         smallTusks.setHidden(animatable.isBaby());
@@ -67,7 +61,7 @@ public class ElephantModel extends GeoModel<Elephant> {
 
         babyTrunk.setHidden(animatable.isBaby());
 
-//        head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+        head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
         head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
     }
 }

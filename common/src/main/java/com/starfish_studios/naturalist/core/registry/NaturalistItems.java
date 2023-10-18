@@ -4,7 +4,10 @@ import com.starfish_studios.naturalist.*;
 import com.starfish_studios.naturalist.common.entity.*;
 import com.starfish_studios.naturalist.common.item.*;
 import com.starfish_studios.naturalist.core.platform.*;
+import dev.architectury.registry.registries.DeferredRegister;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.*;
 import net.minecraft.world.effect.*;
 import net.minecraft.world.food.*;
@@ -17,11 +20,21 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.function.*;
 
+import static com.starfish_studios.naturalist.core.registry.NaturalistCreativeTabs.NATURALIST_TAB;
+
+
+import dev.architectury.extensions.injected.InjectedItemPropertiesExtension;
+import dev.architectury.impl.ItemPropertiesExtensionImpl;
+import dev.architectury.registry.CreativeTabRegistry;
+import dev.architectury.registry.registries.DeferredSupplier;
+
 public class NaturalistItems {
 
-    public static final Supplier<Item> ANIMAL_CRATE = CommonPlatformHelper.registerItem("animal_crate", () -> new AnimalCrateBlockItem(NaturalistBlocks.ANIMAL_CRATE.get(), new Item.Properties()));
+
+
+    // public static final Supplier<Item> ANIMAL_CRATE = CommonPlatformHelper.registerItem("animal_crate", () -> new AnimalCrateBlockItem(NaturalistBlocks.ANIMAL_CRATE.get(), new Item.Properties()));
     public static final Supplier<Item> DUCKWEED = CommonPlatformHelper.registerItem("duckweed", () -> new PlaceOnWaterBlockItem(NaturalistBlocks.DUCKWEED.get(), new Item.Properties()));
-    public static final Supplier<Item> CATTAIL_FLUFF = CommonPlatformHelper.registerItem("cattail_fluff", () -> new Item(new Item.Properties()));
+    public static final Supplier<Item> CATTAIL_FLUFF = CommonPlatformHelper.registerItem("cattail_fluff", () -> new Item(new Item.Properties().arch$tabs(NATURALIST_TAB)));
     public static final Supplier<Item> DUCK_EGG = CommonPlatformHelper.registerItem("duck_egg", () -> new DuckEggItem(new Item.Properties()));
     public static final Supplier<Item> COOKED_EGG = CommonPlatformHelper.registerItem("cooked_egg", () -> new Item(new Item.Properties().food(Foods.BREAD)));
     public static final Supplier<Item> ANTLER = CommonPlatformHelper.registerItem("antler", () -> new Item(new Item.Properties()));
@@ -33,18 +46,19 @@ public class NaturalistItems {
     public static final Supplier<Item> LIZARD_TAIL = CommonPlatformHelper.registerItem("lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.8F).meat().effect(new MobEffectInstance(MobEffects.POISON, 100, 0), 1.0f).build())));
     public static final Supplier<Item> COOKED_LIZARD_TAIL = CommonPlatformHelper.registerItem("cooked_lizard_tail", () -> new Item(new Item.Properties().food(Foods.BAKED_POTATO)));
     public static final Supplier<Item> BEAR_FUR = CommonPlatformHelper.registerItem("bear_fur", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> REPTILE_HIDE = CommonPlatformHelper.registerItem("reptile_hide", () -> new Item(new Item.Properties()));
+    // public static final Supplier<Item> REPTILE_HIDE = CommonPlatformHelper.registerItem("reptile_hide", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> BUTTERFLY = CommonPlatformHelper.registerCaughtMobItem("butterfly", NaturalistEntityTypes.BUTTERFLY, () -> Fluids.EMPTY, NaturalistSoundEvents.BIRD_FLY, Butterfly.Variant.values().length);
-    public static final Supplier<Item> MOTH = CommonPlatformHelper.registerCaughtMobItem("moth", NaturalistEntityTypes.MOTH, () -> Fluids.EMPTY, NaturalistSoundEvents.BIRD_FLY, Moth.Variant.values().length);
+
+
+    // public static final Supplier<Item> MOTH = CommonPlatformHelper.registerCaughtMobItem("moth", NaturalistEntityTypes.MOTH, () -> Fluids.EMPTY, NaturalistSoundEvents.BIRD_FLY, Moth.Variant.values().length);
     public static final Supplier<Item> CATERPILLAR = CommonPlatformHelper.registerCaughtMobItem("caterpillar", NaturalistEntityTypes.CATERPILLAR, () -> Fluids.EMPTY, NaturalistSoundEvents.BIRD_FLY);
     public static final Supplier<Item> BUG_NET = CommonPlatformHelper.registerItem("bug_net", () -> new Item(new Item.Properties().durability(64)));
     public static final Supplier<Item> SNAIL_BUCKET = CommonPlatformHelper.registerNoFluidMobBucketItem("snail_bucket", NaturalistEntityTypes.SNAIL, () -> Fluids.EMPTY, NaturalistSoundEvents.BUCKET_EMPTY_SNAIL);
     public static final Supplier<Item> SNAIL_SHELL = CommonPlatformHelper.registerItem("snail_shell", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> GRUB = CommonPlatformHelper.registerItem("grub", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0.1F).effect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0), 1.0f).build())));
-    // TODO: forge is bullshiiti
+    // public static final Supplier<Item> GRUB = CommonPlatformHelper.registerItem("grub", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0.1F).effect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0), 1.0f).build())));\
     // public static final Supplier<Item> GRUB_ON_A_STICK = CommonPlatformHelper.registerItem("grub_on_a_stick", () -> new FoodOnAStickItem<>((new Item.Properties()).durability(25), NaturalistEntityTypes.OSTRICH.get(), 7));
-    public static final Supplier<Item> DRUMSTICK = CommonPlatformHelper.registerItem("drumstick", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0.1F).meat().build())));
-    public static final Supplier<Item> COOKED_DRUMSTICK = CommonPlatformHelper.registerItem("cooked_drumstick", () -> new Item(new Item.Properties().food(Foods.COOKED_CHICKEN)));
+    // public static final Supplier<Item> DRUMSTICK = CommonPlatformHelper.registerItem("drumstick", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0.1F).meat().build())));
+    // public static final Supplier<Item> COOKED_DRUMSTICK = CommonPlatformHelper.registerItem("cooked_drumstick", () -> new Item(new Item.Properties().food(Foods.COOKED_CHICKEN)));
     public static final Supplier<Item> CATFISH_BUCKET = CommonPlatformHelper.registerMobBucketItem("catfish_bucket", NaturalistEntityTypes.CATFISH, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH);
     public static final Supplier<Item> CATFISH = CommonPlatformHelper.registerItem("catfish", () -> new Item(new Item.Properties().food(Foods.SALMON)));
     public static final Supplier<Item> COOKED_CATFISH = CommonPlatformHelper.registerItem("cooked_catfish", () -> new Item(new Item.Properties().food(Foods.COOKED_SALMON)));
@@ -81,32 +95,10 @@ public class NaturalistItems {
     public static final Supplier<SpawnEggItem> LIZARD_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("lizard_spawn_egg", NaturalistEntityTypes.LIZARD, 10853166, 15724462);
     public static final Supplier<SpawnEggItem> TORTOISE_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("tortoise_spawn_egg", NaturalistEntityTypes.TORTOISE, 15724462, 11765582);
     public static final Supplier<SpawnEggItem> DUCK_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("duck_spawn_egg", NaturalistEntityTypes.DUCK, 13286315, 2333491);
-    public static final Supplier<SpawnEggItem> HYENA_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("hyena_spawn_egg", NaturalistEntityTypes.HYENA, 15116640, 11103550);
-    public static final Supplier<SpawnEggItem> OSTRICH_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("ostrich_spawn_egg", NaturalistEntityTypes.OSTRICH, 15116640, 11103550);
-    public static final Supplier<SpawnEggItem> TERMITE_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("termite_spawn_egg", NaturalistEntityTypes.TERMITE, 15116640, 11103550);
+    // public static final Supplier<SpawnEggItem> HYENA_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("hyena_spawn_egg", NaturalistEntityTypes.HYENA, 15116640, 11103550);
+    // public static final Supplier<SpawnEggItem> OSTRICH_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("ostrich_spawn_egg", NaturalistEntityTypes.OSTRICH, 15116640, 11103550);
+    // public static final Supplier<SpawnEggItem> TERMITE_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("termite_spawn_egg", NaturalistEntityTypes.TERMITE, 15116640, 11103550);
 
     public static void init() {
-    }
-
-    // Thanks ChatGPT
-    public static void addAllToCreativeTab() {
-        try {
-            Field[] fields = NaturalistItems.class.getDeclaredFields();
-            for (Field field : fields) {
-                ParameterizedType type = (ParameterizedType) field.getGenericType();
-                Type rawType = type.getRawType();
-                Type[] typeArguments = type.getActualTypeArguments();
-
-                if (rawType == Supplier.class) {
-                    if (typeArguments.length == 1) {
-                        Class<?> arg = (Class<?>) typeArguments[0];
-                        if (Item.class.isAssignableFrom(arg) || SpawnEggItem.class.isAssignableFrom(arg)) {
-                            Supplier<?> supplier = (Supplier<?>) field.get(null);
-                            CommonPlatformHelper.acceptItemToCreativeTab(new ItemStack((Item) supplier.get()));
-                        }
-                    }
-                }
-            }
-        } catch (IllegalAccessException ignored) {}
     }
 }

@@ -296,8 +296,6 @@ public class Vulture extends PathfinderMob implements GeoEntity, FlyingAnimal {
             super(mob);
         }
 
-        @Nullable
-        @Override
         protected Vec3 findPos() {
             Vec3 viewVector = mob.getViewVector(0.0F);
             return AirAndWaterRandomPos.getPos(mob, 12, 12, -1, viewVector.x, viewVector.z, Math.PI);

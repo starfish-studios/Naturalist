@@ -55,13 +55,13 @@ public class CaughtMobItem extends NoFluidMobBucketItem {
                 Butterfly.Variant variant = Butterfly.Variant.getTypeById(compoundnbt.getInt("Variant"));
                 tooltip.add((Component.translatable(String.format("tooltip.naturalist.%s", variant.toString().toLowerCase())).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY)));
             }
-        } else if (this.type() == NaturalistEntityTypes.MOTH.get()) {
+        } /* else if (this.type() == NaturalistEntityTypes.MOTH.get()) {
             CompoundTag compoundnbt = stack.getTag();
             if (compoundnbt != null && compoundnbt.contains("Variant", 3)) {
                 Moth.Variant variant = Moth.Variant.getTypeById(compoundnbt.getInt("Variant"));
                 tooltip.add((Component.translatable(String.format("tooltip.naturalist.%s", variant.toString().toLowerCase())).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY)));
             }
-        }
+        } */
     }
 
     private void spawn(ServerLevel serverLevel, ItemStack itemStack, BlockPos pos) {

@@ -1,7 +1,6 @@
 package com.starfish_studios.naturalist.common.item;
 
 import com.starfish_studios.naturalist.*;
-import com.starfish_studios.naturalist.common.block.crate.*;
 import com.starfish_studios.naturalist.core.registry.*;
 import net.minecraft.core.*;
 import net.minecraft.nbt.*;
@@ -18,7 +17,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.phys.*;
 
-public class AnimalCrateBlockItem extends BlockItem {
+/* public class AnimalCrateBlockItem extends BlockItem {
     public AnimalCrateBlockItem(Block block, Properties properties) {
         super(block, properties);
     }
@@ -109,3 +108,4 @@ public class AnimalCrateBlockItem extends BlockItem {
         return hasWeakness && !hasTag;
     }
 }
+    */

@@ -220,7 +220,7 @@ public class Lion extends Animal implements GeoEntity, SleepingAnimal {
 
     private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
         if (this.isSleeping()) {
-            event.getController().setAnimation(RawAnimation.begin().thenLoop(this.hasMane() || this.isBaby() ? "lion.sleep2" : "lion.sleep"));
+            event.getController().setAnimation(RawAnimation.begin().thenLoop(this.hasMane() || this.isBaby() ? "sleep2" : "sleep"));
             event.getController().setAnimationSpeed(1.0F);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {

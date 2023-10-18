@@ -28,25 +28,6 @@
 					]
 				},
 				{
-					"name": "chests",
-					"parent": "body",
-					"pivot": [7, 67, 5],
-					"cubes": [
-						{"origin": [14, 38, -1], "size": [4, 12, 20], "uv": [177, 6]},
-						{"origin": [-18, 38, -1], "size": [4, 12, 20], "uv": [177, 6], "mirror": true}
-					]
-				},
-				{
-					"name": "saddle",
-					"parent": "body",
-					"pivot": [0, 0, -3],
-					"cubes": [
-						{"origin": [-14, 25, -24], "size": [28, 30, 48], "inflate": 0.5, "uv": [0, 123]},
-						{"origin": [-8, 55, -17], "size": [16, 4, 4], "uv": [4, 158]},
-						{"origin": [-8, 55, 13], "size": [16, 4, 4], "uv": [4, 158]}
-					]
-				},
-				{
 					"name": "tail",
 					"parent": "body",
 					"pivot": [0, 44, 24],

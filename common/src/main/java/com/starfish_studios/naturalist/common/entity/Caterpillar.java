@@ -1,5 +1,6 @@
 package com.starfish_studios.naturalist.common.entity;
 
+import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.common.block.ChrysalisBlock;
 import com.starfish_studios.naturalist.common.entity.core.Catchable;
 import com.starfish_studios.naturalist.common.entity.core.ClimbingAnimal;

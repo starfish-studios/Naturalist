@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.*;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.*;
 
-public class AnimalCrateBlockEntity extends BlockEntity {
+/* public class AnimalCrateBlockEntity extends BlockEntity {
 
     public static final String ANIMAL_CRATE_DATA = "stored_animal";
 
@@ -63,3 +63,5 @@ public class AnimalCrateBlockEntity extends BlockEntity {
         return InteractionResult.PASS;
     }
 }
+
+ */
