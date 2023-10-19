@@ -3,7 +3,8 @@ package com.starfish_studios.naturalist.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.starfish_studios.naturalist.client.model.DeerModel;
-import com.starfish_studios.naturalist.common.entity.Deer;
+import com.starfish_studios.naturalist.entity.Deer;
+import com.starfish_studios.naturalist.platform.ClientPlatformHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,10 +25,7 @@ public class DeerRenderer extends GeoEntityRenderer<Deer> {
     public void renderEarly(Deer animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
         super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
         if (animatable.isBaby()) {
-            stackIn.scale(0.6F, 0.6F, 0.6F);
-        }
-        else {
-            stackIn.scale(0.9F, 0.9F, 0.9F);
+            stackIn.scale(0.5F, 0.5F, 0.5F);
         }
     }
 

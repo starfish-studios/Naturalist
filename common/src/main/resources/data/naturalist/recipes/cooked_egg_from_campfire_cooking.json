@@ -1,7 +1,7 @@
 {
   "type": "minecraft:campfire_cooking",
   "ingredient": {
-    "tag": "naturalist:eggs"
+    "item": "minecraft:egg"
   },
   "result": "naturalist:cooked_egg",
   "experience": 0.35,

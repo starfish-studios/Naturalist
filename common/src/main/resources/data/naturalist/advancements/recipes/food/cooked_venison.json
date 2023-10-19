@@ -1,5 +1,10 @@
 {
   "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "naturalist:cooked_venison"
+    ]
+  },
   "criteria": {
     "has_venison": {
       "trigger": "minecraft:inventory_changed",
@@ -14,10 +19,10 @@
       }
     },
     "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
       "conditions": {
         "recipe": "naturalist:cooked_venison"
-      },
-      "trigger": "minecraft:recipe_unlocked"
+      }
     }
   },
   "requirements": [
@@ -25,12 +30,5 @@
       "has_venison",
       "has_the_recipe"
     ]
-  ],
-  "rewards": {
-    "recipes": [
-      "naturalist:cooked_venison",
-      "naturalist:cooked_venison_from_smoking",
-      "naturalist:cooked_venison_from_campfire_cooking"
-    ]
-  }
+  ]
 }

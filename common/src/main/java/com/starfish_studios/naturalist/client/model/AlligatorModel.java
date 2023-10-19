@@ -1,7 +1,7 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Alligator;
+import com.starfish_studios.naturalist.entity.Alligator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -23,9 +23,6 @@ public class AlligatorModel extends AnimatedGeoModel<Alligator> {
 
     @Override
     public ResourceLocation getTextureResource(Alligator alligator) {
-        if (alligator.isBaby()) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/baby_alligator.png");
-        }
         return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/alligator.png");
     }
 

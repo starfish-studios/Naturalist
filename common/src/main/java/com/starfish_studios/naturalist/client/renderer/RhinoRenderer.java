@@ -3,7 +3,8 @@ package com.starfish_studios.naturalist.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.starfish_studios.naturalist.client.model.RhinoModel;
-import com.starfish_studios.naturalist.common.entity.Rhino;
+import com.starfish_studios.naturalist.entity.Rhino;
+import com.starfish_studios.naturalist.platform.ClientPlatformHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -26,7 +27,6 @@ public class RhinoRenderer extends GeoEntityRenderer<Rhino> {
         if (animatable.isBaby()) {
             stackIn.scale(0.5F, 0.5F, 0.5F);
         }
-        stackIn.scale(0.9F, 0.9F, 0.9F);
     }
 
     @Override

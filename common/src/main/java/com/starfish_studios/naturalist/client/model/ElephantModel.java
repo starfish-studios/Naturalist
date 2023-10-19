@@ -1,7 +1,7 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Elephant;
+import com.starfish_studios.naturalist.entity.Elephant;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +23,7 @@ public class ElephantModel extends AnimatedGeoModel<Elephant> {
 
     @Override
     public ResourceLocation getTextureResource(Elephant elephant) {
-        return new ResourceLocation(Naturalist.MOD_ID, /*elephant.isDirty() ? "textures/entity/elephant_dirt.png" :*/ "textures/entity/elephant.png");
+        return new ResourceLocation(Naturalist.MOD_ID, elephant.isDirty() ? "textures/entity/elephant_dirt.png" : "textures/entity/elephant.png");
     }
 
     @Override
@@ -42,15 +42,8 @@ public class ElephantModel extends AnimatedGeoModel<Elephant> {
         IBone bigTusks = this.getAnimationProcessor().getBone("tusks");
         IBone smallTusks = this.getAnimationProcessor().getBone("baby_tusks");
         IBone babyTrunk = this.getAnimationProcessor().getBone("trunk4");
-        IBone leftEar = this.getAnimationProcessor().getBone("left_ear");
-        IBone rightEar = this.getAnimationProcessor().getBone("right_ear");
-        IBone chests = this.getAnimationProcessor().getBone("chests");
-        IBone saddle = this.getAnimationProcessor().getBone("saddle");
 
         if (elephant.isBaby()) {
-            head.setScaleX(1.3F); head.setScaleY(1.3F); head.setScaleZ(1.3F);
-            leftEar.setScaleX(1.2F); leftEar.setScaleY(1.2F); leftEar.setScaleZ(1.2F);
-            rightEar.setScaleX(1.2F); rightEar.setScaleY(1.2F); rightEar.setScaleZ(1.2F);
             head.setScaleX(1.5F);
             head.setScaleY(1.5F);
             head.setScaleZ(1.5F);
@@ -59,9 +52,6 @@ public class ElephantModel extends AnimatedGeoModel<Elephant> {
             head.setScaleY(1.0F);
             head.setScaleZ(1.0F);
         }
-
-        chests.setHidden(!elephant.hasChest() || elephant.isBaby());
-        saddle.setHidden(!elephant.isSaddled() || elephant.isBaby());
 
         bigTusks.setHidden(elephant.isBaby());
         smallTusks.setHidden(elephant.isBaby());

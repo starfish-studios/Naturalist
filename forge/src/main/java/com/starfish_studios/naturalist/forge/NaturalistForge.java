@@ -1,9 +1,9 @@
 package com.starfish_studios.naturalist.forge;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.*;
-import com.starfish_studios.naturalist.core.platform.forge.CommonPlatformHelperImpl;
-import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
+import com.starfish_studios.naturalist.entity.*;
+import com.starfish_studios.naturalist.platform.forge.CommonPlatformHelperImpl;
+import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.registry.forge.NaturalistBiomeModifiers;
 import com.starfish_studios.naturalist.registry.forge.NaturalistConfigForge;
 import net.minecraft.world.entity.animal.AbstractFish;
@@ -47,6 +47,7 @@ public class NaturalistForge {
             Naturalist.registerBrewingRecipes();
             Naturalist.registerCompostables();
             Naturalist.registerSpawnPlacements();
+            Naturalist.registerDispenserBehaviors();
         });
     }
 
@@ -54,7 +55,6 @@ public class NaturalistForge {
         event.put(NaturalistEntityTypes.SNAIL.get(), Snail.createAttributes().build());
         event.put(NaturalistEntityTypes.BEAR.get(), Bear.createAttributes().build());
         event.put(NaturalistEntityTypes.BUTTERFLY.get(), Butterfly.createAttributes().build());
-        event.put(NaturalistEntityTypes.MOTH.get(), Moth.createAttributes().build());
         event.put(NaturalistEntityTypes.FIREFLY.get(), Firefly.createAttributes().build());
         event.put(NaturalistEntityTypes.SNAKE.get(), Snake.createAttributes().build());
         event.put(NaturalistEntityTypes.CORAL_SNAKE.get(), Snake.createAttributes().build());
@@ -81,8 +81,5 @@ public class NaturalistForge {
         event.put(NaturalistEntityTypes.LIZARD_TAIL.get(), LizardTail.createAttributes().build());
         event.put(NaturalistEntityTypes.TORTOISE.get(), Tortoise.createAttributes().build());
         event.put(NaturalistEntityTypes.DUCK.get(), Duck.createAttributes().build());
-        event.put(NaturalistEntityTypes.HYENA.get(), Hyena.createAttributes().build());
-        event.put(NaturalistEntityTypes.OSTRICH.get(), Ostrich.createAttributes().build());
-        event.put(NaturalistEntityTypes.TERMITE.get(), Termite.createAttributes().build());
     }
 }

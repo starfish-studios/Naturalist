@@ -1,7 +1,7 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Boar;
+import com.starfish_studios.naturalist.entity.Boar;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -51,6 +51,6 @@ public class BoarModel extends AnimatedGeoModel<Boar> {
         }
 
         head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);
-        head.setRotationZ(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
+        head.setRotationY(extraDataOfType.get(0).netHeadYaw * Mth.DEG_TO_RAD);
     }
 }

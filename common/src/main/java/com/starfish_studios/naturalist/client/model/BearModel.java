@@ -1,7 +1,7 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Bear;
+import com.starfish_studios.naturalist.entity.Bear;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -18,14 +18,12 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 public class BearModel extends AnimatedGeoModel<Bear> {
     @Override
-    public ResourceLocation getModelResource(Bear bear) {
+    public ResourceLocation getModelResource(Bear crocodile) {
         return new ResourceLocation(Naturalist.MOD_ID, "geo/bear.geo.json");
     }
 
     @Override
     public ResourceLocation getTextureResource(Bear bear) {
-        // BEHAVIOR TEXTURES
-
         if (bear.isAngry()) {
             return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear_angry.png");
         } else if (bear.isSleeping()) {
@@ -36,11 +34,7 @@ public class BearModel extends AnimatedGeoModel<Bear> {
             } else if (bear.getMainHandItem().is(Items.HONEYCOMB)) {
                 return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear_honey.png");
             }
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
         }
-
-        // NORMAL TEXTURE
-
         return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
     }
 

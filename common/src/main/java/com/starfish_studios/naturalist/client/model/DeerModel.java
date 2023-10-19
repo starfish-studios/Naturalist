@@ -1,7 +1,7 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Deer;
+import com.starfish_studios.naturalist.entity.Deer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +24,7 @@ public class DeerModel extends AnimatedGeoModel<Deer> {
     @Override
     public ResourceLocation getTextureResource(Deer deer) {
         if (deer.isBaby()) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/deer.png");
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/fawn.png");
         }
 
         return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/deer.png");
@@ -43,12 +43,10 @@ public class DeerModel extends AnimatedGeoModel<Deer> {
 
         List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
         IBone head = this.getAnimationProcessor().getBone("head");
-        IBone antlers = this.getAnimationProcessor().getBone("antlers");
+        IBone left_antler = this.getAnimationProcessor().getBone("left_antler");
+        IBone right_antler = this.getAnimationProcessor().getBone("right_antler");
 
         if (deer.isBaby()) {
-            head.setScaleX(1.4F);
-            head.setScaleY(1.4F);
-            head.setScaleZ(1.4F);
             head.setScaleX(1.6F);
             head.setScaleY(1.6F);
             head.setScaleZ(1.6F);
@@ -58,7 +56,8 @@ public class DeerModel extends AnimatedGeoModel<Deer> {
             head.setScaleZ(1.0F);
         }
 
-        antlers.setHidden(deer.isBaby());
+        left_antler.setHidden(deer.isBaby());
+        right_antler.setHidden(deer.isBaby());
 
         if (!deer.isEating()) {
             head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);

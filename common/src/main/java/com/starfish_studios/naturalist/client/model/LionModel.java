@@ -1,7 +1,7 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Lion;
+import com.starfish_studios.naturalist.entity.Lion;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -23,20 +23,7 @@ public class LionModel extends AnimatedGeoModel<Lion> {
 
     @Override
     public ResourceLocation getTextureResource(Lion lion) {
-
-        // Sleeping
-    return lion.isSleeping() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_sleep.png") :
-    !lion.hasMane() && lion.isSleeping() || lion.isBaby() &&lion.isSleeping() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_sleep.png") :
-
-        // Lioness & Baby
-    !lion.hasMane() && !lion.isAggressive() || lion.isBaby() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness.png") :
-
-        // Angry
-    lion.isAggressive() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_angry.png") :
-    !lion.hasMane() && lion.isAggressive() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_angry.png") :
-
-    new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion.png");
-
+        return lion.isSleeping() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_sleep.png") : new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion.png");
     }
 
     @Override
@@ -55,9 +42,6 @@ public class LionModel extends AnimatedGeoModel<Lion> {
         IBone mane = this.getAnimationProcessor().getBone("mane");
 
         if (lion.isBaby()) {
-            head.setScaleX(1.4F);
-            head.setScaleY(1.4F);
-            head.setScaleZ(1.4F);
             head.setScaleX(1.75F);
             head.setScaleY(1.75F);
             head.setScaleZ(1.75F);
