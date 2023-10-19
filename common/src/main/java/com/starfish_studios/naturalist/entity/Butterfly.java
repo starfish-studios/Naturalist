@@ -122,7 +122,7 @@ public class Butterfly extends Animal implements IAnimatable, FlyingAnimal, Catc
         return Butterfly.Variant.BY_ID[this.entityData.get(DATA_VARIANT)];
     }
 
-    private void setVariant(Butterfly.Variant variant) {
+    public void setVariant(Butterfly.Variant variant) {
         this.entityData.set(DATA_VARIANT, variant.getId());
     }
 
