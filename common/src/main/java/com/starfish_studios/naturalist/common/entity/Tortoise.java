@@ -290,7 +290,8 @@ public class Tortoise extends TamableAnimal implements GeoEntity, HidingAnimal, 
             }
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 
@@ -299,7 +300,8 @@ public class Tortoise extends TamableAnimal implements GeoEntity, HidingAnimal, 
             event.getController().setAnimation(RawAnimation.begin().thenLoop("tortoise.hurt"));
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

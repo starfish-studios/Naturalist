@@ -15,7 +15,7 @@ public class NaturalistConfigFabric implements ConfigData {
     public int canarySpawnWeight = 8;
     public int cardinalSpawnWeight = 8;
     public int robinSpawnWeight = 8;
-    public int butterflySpawnWeight = 500;
+    public int butterflySpawnWeight = 20;
     public int snailSpawnWeight = 5;
     public int snakeSpawnWeight = 4;
 

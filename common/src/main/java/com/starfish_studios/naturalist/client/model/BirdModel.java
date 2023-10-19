@@ -19,13 +19,17 @@ public class BirdModel extends GeoModel<Bird> {
     @Override
     public ResourceLocation getTextureResource(Bird bird) {
         if (bird.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bluejay.png");
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bird/bluejay.png");
         } else if (bird.getType().equals(NaturalistEntityTypes.CANARY.get())) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/canary.png");
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bird/canary.png");
         } else if (bird.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/cardinal.png");
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bird/cardinal.png");
+        } else if (bird.getType().equals(NaturalistEntityTypes.FINCH.get())) {
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bird/finch.png");
+        } else if (bird.getType().equals(NaturalistEntityTypes.SPARROW.get())) {
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bird/sparrow.png");
         } else {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/robin.png");
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bird/robin.png");
         }
     }
 

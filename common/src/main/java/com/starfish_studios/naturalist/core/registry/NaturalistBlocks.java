@@ -41,4 +41,25 @@ public class NaturalistBlocks {
             CommonPlatformHelper.registerItem(name, () -> new BlockItem(supplier.get(), new Item.Properties()));
             return supplier;
     }
+
+    public static void addAllToCreativeTab() {
+        try {
+            Field[] fields = NaturalistBlocks.class.getDeclaredFields();
+            for (Field field : fields) {
+                ParameterizedType type = (ParameterizedType) field.getGenericType();
+                Type rawType = type.getRawType();
+                Type[] typeArguments = type.getActualTypeArguments();
+
+                if (rawType == Supplier.class) {
+                    if (typeArguments.length == 1) {
+                        Class<?> arg = (Class<?>) typeArguments[0];
+                        if (Block.class.isAssignableFrom(arg)) {
+                            Supplier<?> supplier = (Supplier<?>) field.get(null);
+                            CommonPlatformHelper.acceptItemToCreativeTab(new ItemStack((Block) supplier.get()));
+                        }
+                    }
+                }
+            }
+        } catch (IllegalAccessException ignored) {}
+    }
 }

@@ -1,6 +1,5 @@
 package com.starfish_studios.naturalist.common.entity;
 
-import com.starfish_studios.naturalist.common.entity.core.NaturalistAnimal;
 import com.starfish_studios.naturalist.common.entity.core.EggLayingAnimal;
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.*;
 import com.starfish_studios.naturalist.core.registry.*;
@@ -20,6 +19,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -39,7 +39,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Alligator extends NaturalistAnimal implements GeoEntity, EggLayingAnimal {
+public class Alligator extends Animal implements GeoEntity, EggLayingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.ALLIGATOR_FOOD_ITEMS);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
@@ -49,7 +49,7 @@ public class Alligator extends NaturalistAnimal implements GeoEntity, EggLayingA
     int layEggCounter;
     boolean isDigging;
 
-    public Alligator(EntityType<? extends NaturalistAnimal> entityType, Level level) {
+    public Alligator(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
         this.setMaxUpStep(1.0F);
@@ -98,7 +98,7 @@ public class Alligator extends NaturalistAnimal implements GeoEntity, EggLayingA
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new EggLayingBreedGoal<>(this, 1.0));
         this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
-        this.goalSelector.addGoal(2, new CloseMeleeAttackGoal(this, 1.25D, true)
+        this.goalSelector.addGoal(2, new CloseMeleeAttackGoal(this, 1.0D, true)
         {
             public boolean canUse() {
                 return super.canUse() && !isBaby() && getKillCooldown() == 0;
@@ -245,45 +245,42 @@ public class Alligator extends NaturalistAnimal implements GeoEntity, EggLayingA
     }
 
     protected <E extends Alligator> PlayState predicate(final AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+        /* if (this.isDigging) {
+            event.getController().setAnimation(RawAnimation.begin().thenLoop("dig"));
+            event.getController().forceAnimationReset();
+        } else*/ if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isInWater()) {
                 event.getController().setAnimation(RawAnimation.begin().thenLoop("swim"));
             } else {
                 event.getController().setAnimation(RawAnimation.begin().thenLoop("walk"));
+                if (this.isBaby()) {
+                    event.getController().setAnimationSpeed(1.7D);
+                }
                 event.getController().setAnimationSpeed(1.5D);
             }
         } else {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
+            event.getController().setAnimationSpeed(0.6D);
         }
         return PlayState.CONTINUE;
     }
 
-    protected <E extends Alligator> PlayState attackPredicate(final AnimationState<E> event) {
+     protected <E extends Alligator> PlayState attackPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
             event.getController().setAnimation(RawAnimation.begin().thenPlay("bite"));
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             this.swinging = false;
         }
         return PlayState.CONTINUE;
     }
 
+
+
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
         // data.setResetSpeedInTicks(10);
-        controllers.add(new AnimationController<>(this, "controller", 10, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
-    }
-
-
-    static class AlligatorBreedGoal extends BreedGoal {
-
-        public AlligatorBreedGoal(NaturalistAnimal naturalistAnimal, double d) {
-            super(naturalistAnimal, d);
-        }
-
-        @Override
-        protected void breed() {
-
-        }
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new AnimationController<>(this, "attackController", 2, this::attackPredicate));
     }
 }

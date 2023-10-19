@@ -24,6 +24,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
+import net.minecraft.world.entity.ai.util.HoverRandomPos;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
@@ -296,9 +297,22 @@ public class Vulture extends PathfinderMob implements GeoEntity, FlyingAnimal {
             super(mob);
         }
 
-        protected Vec3 findPos() {
-            Vec3 viewVector = mob.getViewVector(0.0F);
-            return AirAndWaterRandomPos.getPos(mob, 12, 12, -1, viewVector.x, viewVector.z, Math.PI);
+        public void start() {
+            Vec3 vec3 = this.findPos();
+            if (vec3 != null) {
+                mob.getNavigation().moveTo(mob.getNavigation().createPath(BlockPos.containing(vec3), 1), 1.0);
+            }
+
+        }
+
+        @Nullable
+        private Vec3 findPos() {
+            Vec3 vec32;
+            vec32 = mob.getViewVector(0.0F);
+
+            boolean i = true;
+            Vec3 vec33 = HoverRandomPos.getPos(mob, 8, 16, vec32.x, vec32.z, 1.5707964F, 8, 4);
+            return vec33 != null ? vec33 : AirAndWaterRandomPos.getPos(mob, 8, 16, 5, vec32.x, vec32.z, 3);
         }
     }
 

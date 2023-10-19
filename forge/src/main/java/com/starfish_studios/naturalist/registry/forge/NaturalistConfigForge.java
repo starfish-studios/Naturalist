@@ -65,7 +65,7 @@ public class NaturalistConfigForge {
         CANARY_SPAWN_WEIGHT = COMMON_BUILDER.comment("Canary Spawn Weight").defineInRange("canarySpawnWeight", 8, 0, 1000);
         CARDINAL_SPAWN_WEIGHT = COMMON_BUILDER.comment("Cardinal Spawn Weight").defineInRange("cardinalSpawnWeight", 8, 0, 1000);
         ROBIN_SPAWN_WEIGHT = COMMON_BUILDER.comment("Robin Spawn Weight").defineInRange("robinSpawnWeight", 8, 0, 1000);
-        BUTTERFLY_SPAWN_WEIGHT = COMMON_BUILDER.comment("Butterfly Spawn Weight").defineInRange("butterflySpawnWeight", 6, 0, 1000);
+        BUTTERFLY_SPAWN_WEIGHT = COMMON_BUILDER.comment("Butterfly Spawn Weight").defineInRange("butterflySpawnWeight", 20, 0, 1000);
         DUCK_SPAWN_WEIGHT = COMMON_BUILDER.comment("Duck Spawn Weight").defineInRange("duckSpawnWeight", 15, 0, 1000);
 
 

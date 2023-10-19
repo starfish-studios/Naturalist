@@ -12,11 +12,13 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 
 @Environment(EnvType.CLIENT)
 public class AlligatorRenderer extends GeoEntityRenderer<Alligator> {
     public AlligatorRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new AlligatorModel());
+        addRenderLayer(new AutoGlowingGeoLayer<>(this));
         this.shadowRadius = 1.0F;
     }
 

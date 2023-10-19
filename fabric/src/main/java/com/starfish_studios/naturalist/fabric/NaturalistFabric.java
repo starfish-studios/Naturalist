@@ -42,6 +42,7 @@ public class NaturalistFabric implements ModInitializer {
         Naturalist.registerCompostables();
         Naturalist.registerSpawnPlacements();
 
+        NaturalistBlocks.addAllToCreativeTab();
         NaturalistItems.addAllToCreativeTab();
     }
 
@@ -85,10 +86,18 @@ public class NaturalistFabric implements ModInitializer {
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.CORAL_SNAKE.get(), Snake.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.RATTLESNAKE.get(), Snake.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.DEER.get(), Deer.createAttributes());
+
+
+        // BIRDS
+
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.BLUEJAY.get(), Bird.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.CANARY.get(), Bird.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.CARDINAL.get(), Bird.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.ROBIN.get(), Bird.createAttributes());
+        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.FINCH.get(), Bird.createAttributes());
+        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.SPARROW.get(), Bird.createAttributes());
+
+
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.CATERPILLAR.get(), Caterpillar.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.RHINO.get(), Rhino.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.LION.get(), Lion.createAttributes());

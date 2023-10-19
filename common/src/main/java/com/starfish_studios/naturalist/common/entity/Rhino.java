@@ -274,7 +274,8 @@ public class Rhino extends Animal implements GeoEntity {
 
     private <E extends Rhino> PlayState attackPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             event.getController().setAnimation(RawAnimation.begin().thenPlay("attack"));
             event.getController().setAnimationSpeed(0.8F);
             this.swinging = false;

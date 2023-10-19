@@ -242,7 +242,8 @@ public class Lion extends Animal implements GeoEntity, SleepingAnimal {
 
     private <E extends Lion> PlayState attackPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             event.getController().setAnimation(RawAnimation.begin().thenPlay("attack"));
             this.swinging = false;
         }

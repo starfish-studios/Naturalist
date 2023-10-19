@@ -256,7 +256,8 @@ public class Moth extends Animal implements GeoEntity, FlyingAnimal, Catchable {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("butterfly.fly"));
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

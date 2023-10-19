@@ -1,0 +1,10 @@
+{
+  "values": [
+    "minecraft:grass_block",
+    "minecraft:mud",
+    "#minecraft:leaves",
+    "#minecraft:flowers",
+    "minecraft:grass",
+    "minecraft:air"
+  ]
+}

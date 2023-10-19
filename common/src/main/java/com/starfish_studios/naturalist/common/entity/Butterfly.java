@@ -86,7 +86,7 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
     }
 
     public static boolean checkButterflySpawnRules(EntityType<? extends Butterfly> pType, ServerLevelAccessor pLevel, MobSpawnType pReason, BlockPos pPos, RandomSource pRandom) {
-        return pLevel.getBlockState(pPos.below()).is(NaturalistTags.BlockTags.DRAGONFLIES_SPAWNABLE_ON);
+        return pLevel.getBlockState(pPos.below()).is(NaturalistTags.BlockTags.BUTTERFLIES_SPAWNABLE_ON);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
         return Butterfly.Variant.BY_ID[this.entityData.get(DATA_VARIANT)];
     }
 
-    private void setVariant(Butterfly.Variant variant) {
+    public void setVariant(Butterfly.Variant variant) {
         this.entityData.set(DATA_VARIANT, variant.getId());
     }
 
@@ -235,7 +235,7 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
     }
 
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.fromHand() && !this.hasCustomName();
+        return false;
     }
 
     public ItemStack getCaughtItemStack() {
@@ -291,7 +291,8 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
             event.getController().setAnimation(RawAnimation.begin().thenLoop("butterfly.fly"));
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 
@@ -430,8 +431,8 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
 
 
     public enum Variant {
-        MONARCH(0, "monarch", true),
-        CABBAGE_WHITE(1, "cabbage_white", true),
+        CABBAGE_WHITE(0, "cabbage_white", true),
+        MONARCH(1, "monarch", true),
         CLOUDED_YELLOW(2, "clouded_yellow", true),
         SWALLOWTAIL(3, "swallowtail", true),
         BLUE_MORPHO(4, "blue_morpho", true);

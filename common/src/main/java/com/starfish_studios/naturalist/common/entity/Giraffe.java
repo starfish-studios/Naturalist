@@ -379,7 +379,8 @@ public class Giraffe extends Animal implements GeoEntity {
 
     private <E extends Giraffe> PlayState eatPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             event.getController().setAnimation(RawAnimation.begin().thenPlay("giraffe.eat"));
             this.swinging = false;
         }

@@ -18,6 +18,7 @@ public class NaturalistTags {
 
         public static final TagKey<Block> FIREFLIES_SPAWNABLE_ON = tag("fireflies_spawnable_on");
         public static final TagKey<Block> DRAGONFLIES_SPAWNABLE_ON = tag("dragonflies_spawnable_on");
+        public static final TagKey<Block> BUTTERFLIES_SPAWNABLE_ON = tag("butterflies_spawnable_on");
         public static final TagKey<Block> VULTURES_SPAWNABLE_ON = tag("vultures_spawnable_on");
         public static final TagKey<Block> DUCKS_SPAWNABLE_ON = tag("ducks_spawnable_on");
 

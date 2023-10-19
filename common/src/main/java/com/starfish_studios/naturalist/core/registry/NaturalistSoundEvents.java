@@ -23,10 +23,16 @@ public class NaturalistSoundEvents {
     public static final Supplier<SoundEvent> BIRD_DEATH = CommonPlatformHelper.registerSoundEvent("bird_death", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.death")));
     public static final Supplier<SoundEvent> BIRD_EAT = CommonPlatformHelper.registerSoundEvent("bird_eat", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.eat")));
     public static final Supplier<SoundEvent> BIRD_FLY = CommonPlatformHelper.registerSoundEvent("bird_fly", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.fly")));
+
+   // BIRDS
+
     public static final Supplier<SoundEvent> BIRD_AMBIENT_BLUEJAY = CommonPlatformHelper.registerSoundEvent("bird_ambient_bluejay", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.ambient_bluejay")));
     public static final Supplier<SoundEvent> BIRD_AMBIENT_CANARY = CommonPlatformHelper.registerSoundEvent("bird_ambient_canary", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.ambient_canary")));
     public static final Supplier<SoundEvent> BIRD_AMBIENT_ROBIN = CommonPlatformHelper.registerSoundEvent("bird_ambient_robin", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.ambient_robin")));
     public static final Supplier<SoundEvent> BIRD_AMBIENT_CARDINAL = CommonPlatformHelper.registerSoundEvent("bird_ambient_cardinal", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.ambient_cardinal")));
+    public static final Supplier<SoundEvent> BIRD_AMBIENT_FINCH = CommonPlatformHelper.registerSoundEvent("bird_ambient_finch", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.ambient_finch")));
+    public static final Supplier<SoundEvent> BIRD_AMBIENT_SPARROW = CommonPlatformHelper.registerSoundEvent("bird_ambient_sparrow", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.bird.ambient_sparrow")));
+
     public static final Supplier<SoundEvent> FIREFLY_HURT = CommonPlatformHelper.registerSoundEvent("firefly_hurt", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.firefly.hurt")));
     public static final Supplier<SoundEvent> FIREFLY_DEATH = CommonPlatformHelper.registerSoundEvent("firefly_death", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.firefly.death")));
     public static final Supplier<SoundEvent> FIREFLY_HIDE = CommonPlatformHelper.registerSoundEvent("firefly_hide", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.firefly.hide")));

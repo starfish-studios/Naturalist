@@ -543,7 +543,8 @@ public class Ostrich extends Animal implements GeoEntity, ItemSteerable, Saddlea
             event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
             event.getController().setAnimationSpeed(0.5D);
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

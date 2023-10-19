@@ -162,10 +162,13 @@
   "naturalist.subtitles.entity.bird.death": "Bird dies",
   "naturalist.subtitles.entity.bird.eat": "Bird eats",
   "naturalist.subtitles.entity.bird.fly": "Bird flutters",
+
   "naturalist.subtitles.entity.bird.ambient_bluejay": "Bluejay chirps",
   "naturalist.subtitles.entity.bird.ambient_canary": "Canary chirps",
   "naturalist.subtitles.entity.bird.ambient_cardinal": "Cardinal chirps",
   "naturalist.subtitles.entity.bird.ambient_robin": "Robin chirps",
+  "naturalist.subtitles.entity.bird.ambient_finch": "Finch chirps",
+  "naturalist.subtitles.entity.bird.ambient_sparrow": "Sparrow chirps",
 
   "naturalist.subtitles.entity.deer.hurt": "Deer hurts",
   "naturalist.subtitles.entity.deer.ambient": "Deer grunts",

@@ -22,9 +22,6 @@ public class AlligatorModel extends GeoModel<Alligator> {
 
     @Override
     public ResourceLocation getTextureResource(Alligator alligator) {
-        if (alligator.isBaby()) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/baby_alligator.png");
-        }
         return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/alligator.png");
     }
 

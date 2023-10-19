@@ -236,7 +236,8 @@ public class Duck extends Animal implements GeoEntity {
             event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 
@@ -246,7 +247,8 @@ public class Duck extends Animal implements GeoEntity {
             event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

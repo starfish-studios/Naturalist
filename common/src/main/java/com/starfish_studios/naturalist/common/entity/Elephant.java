@@ -268,7 +268,8 @@ public class Elephant extends Animal implements NeutralMob, GeoEntity {
 
     private <E extends Elephant> PlayState swingPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             event.getController().setAnimation(RawAnimation.begin().thenPlay("elephant.swing"));
             this.swinging = false;
         }

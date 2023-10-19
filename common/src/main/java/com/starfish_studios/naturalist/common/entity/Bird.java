@@ -290,7 +290,12 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, GeoEntit
                 return NaturalistSoundEvents.BIRD_AMBIENT_CANARY.get();
             } else if (this.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
                 return NaturalistSoundEvents.BIRD_AMBIENT_CARDINAL.get();
-            } else {
+            } else if (this.getType().equals((NaturalistEntityTypes.FINCH.get()))) {
+                return NaturalistSoundEvents.BIRD_AMBIENT_FINCH.get();
+            } else if (this.getType().equals((NaturalistEntityTypes.SPARROW.get()))) {
+                return NaturalistSoundEvents.BIRD_AMBIENT_SPARROW.get();
+            }
+            else {
                 return NaturalistSoundEvents.BIRD_AMBIENT_ROBIN.get();
             }
         }
@@ -311,7 +316,8 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, GeoEntit
             event.getController().setAnimation(new AnimationBuilder().loop("bird.peck"));
             return PlayState.CONTINUE;
         */
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

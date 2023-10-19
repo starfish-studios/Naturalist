@@ -418,13 +418,15 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
             event.getController().setAnimation(RawAnimation.begin().thenLoop("snake.move"));
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 
     private <E extends Snake> PlayState attackPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             event.getController().setAnimation(RawAnimation.begin().thenPlay("snake.attack"));
             this.swinging = false;
         }
@@ -433,7 +435,8 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
 
     private <E extends Snake> PlayState tonguePredicate(final AnimationState<E> event) {
         if (this.random.nextInt(1000) < this.ambientSoundTime && !this.isSleeping() && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             event.getController().setAnimation(RawAnimation.begin().thenPlay("snake.tongue"));
         }
         return PlayState.CONTINUE;
@@ -444,7 +447,8 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
             event.getController().setAnimation(RawAnimation.begin().thenLoop("snake.rattle"));
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

@@ -240,7 +240,8 @@ public class Lizard extends TamableAnimal implements GeoEntity {
             event.getController().setAnimationSpeed(2.0D);
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

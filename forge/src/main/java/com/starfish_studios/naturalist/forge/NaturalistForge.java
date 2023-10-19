@@ -3,6 +3,7 @@ package com.starfish_studios.naturalist.forge;
 import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.common.entity.*;
 import com.starfish_studios.naturalist.core.platform.forge.CommonPlatformHelperImpl;
+import com.starfish_studios.naturalist.core.registry.NaturalistBlocks;
 import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.core.registry.NaturalistItems;
 import com.starfish_studios.naturalist.registry.forge.NaturalistBiomeModifiers;
@@ -58,6 +59,7 @@ public class NaturalistForge {
     }
 
     private void register(final FMLLoadCompleteEvent event) {
+        NaturalistBlocks.addAllToCreativeTab();
         NaturalistItems.addAllToCreativeTab();
     }
 
@@ -65,7 +67,7 @@ public class NaturalistForge {
         event.put(NaturalistEntityTypes.SNAIL.get(), Snail.createAttributes().build());
         event.put(NaturalistEntityTypes.BEAR.get(), Bear.createAttributes().build());
         event.put(NaturalistEntityTypes.BUTTERFLY.get(), Butterfly.createAttributes().build());
-        event.put(NaturalistEntityTypes.MOTH.get(), Moth.createAttributes().build());
+        // event.put(NaturalistEntityTypes.MOTH.get(), Moth.createAttributes().build());
         event.put(NaturalistEntityTypes.FIREFLY.get(), Firefly.createAttributes().build());
         event.put(NaturalistEntityTypes.SNAKE.get(), Snake.createAttributes().build());
         event.put(NaturalistEntityTypes.CORAL_SNAKE.get(), Snake.createAttributes().build());

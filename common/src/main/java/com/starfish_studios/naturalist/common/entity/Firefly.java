@@ -228,7 +228,8 @@ public class Firefly extends Animal implements FlyingAnimal, GeoEntity {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("firefly.fly"));
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

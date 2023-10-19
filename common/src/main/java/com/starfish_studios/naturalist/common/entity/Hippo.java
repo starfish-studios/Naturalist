@@ -210,7 +210,8 @@ public class Hippo extends Animal implements GeoEntity {
 
     private <E extends Hippo> PlayState attackPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             event.getController().setAnimation(RawAnimation.begin().thenPlay("hippo.bite"));
             this.swinging = false;
         }

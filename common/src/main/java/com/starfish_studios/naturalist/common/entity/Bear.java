@@ -483,7 +483,8 @@ public class Bear extends Animal implements NeutralMob, GeoEntity, SleepingAnima
         } else {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 
@@ -492,13 +493,15 @@ public class Bear extends Animal implements NeutralMob, GeoEntity, SleepingAnima
             event.getController().setAnimation(RawAnimation.begin().thenLoop("sniff"));
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 
     protected <E extends Bear> PlayState attackPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            // event.getController().markNeedsReload();
+            event.getController().forceAnimationReset();
+        
             event.getController().setAnimation(RawAnimation.begin().thenPlay("attack"));
             this.swinging = false;
         }
@@ -510,7 +513,8 @@ public class Bear extends Animal implements NeutralMob, GeoEntity, SleepingAnima
             event.getController().setAnimation(RawAnimation.begin().thenLoop("eat"));
             return PlayState.CONTINUE;
         }
-        // event.getController().markNeedsReload();
+        event.getController().forceAnimationReset();
+        
         return PlayState.STOP;
     }
 

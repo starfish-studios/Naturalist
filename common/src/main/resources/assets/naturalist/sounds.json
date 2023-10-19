@@ -246,6 +246,26 @@
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_robin"
   },
+  "entity.bird.ambient_finch": {
+    "sounds": [
+      "naturalist:entity/bird/finch/idle1",
+      "naturalist:entity/bird/finch/idle2",
+      "naturalist:entity/bird/finch/idle3",
+      "naturalist:entity/bird/finch/song1",
+      "naturalist:entity/bird/finch/song2",
+      "naturalist:entity/bird/finch/song3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.bird.ambient_finch"
+  },
+  "entity.bird.ambient_sparrow": {
+    "sounds": [
+      "naturalist:entity/bird/sparrow/idle1",
+      "naturalist:entity/bird/sparrow/idle2",
+      "naturalist:entity/bird/sparrow/idle3",
+      "naturalist:entity/bird/sparrow/idle4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.bird.ambient_sparrow"
+  },
   "entity.bird.ambient_cardinal": {
     "sounds": [
       "naturalist:cardinal_idle",
