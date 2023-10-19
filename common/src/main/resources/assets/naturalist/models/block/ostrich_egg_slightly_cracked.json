@@ -1,6 +1,0 @@
-{
-	"parent": "naturalist:block/ostrich_egg",
-	"textures": {
-		"all": "naturalist:block/ostrich_egg_slightly_cracked"
-	}
-}

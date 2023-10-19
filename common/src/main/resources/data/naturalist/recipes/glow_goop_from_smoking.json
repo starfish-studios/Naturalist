@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smoking",
-  "ingredient": {
-    "item": "minecraft:glow_berries"
-  },
-  "result": "naturalist:glow_goop",
-  "experience": 0.35,
-  "cookingtime": 200
-}
