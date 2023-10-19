@@ -54,7 +54,7 @@ import java.util.EnumSet;
 
 public class Elephant extends Animal implements IAnimatable {
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
-    private static final EntityDataAccessor<Integer> DIRTY_TICKS = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
+    // private static final EntityDataAccessor<Integer> DIRTY_TICKS = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DRINKING = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
     @Nullable
     protected BlockPos waterPos;
@@ -144,23 +144,23 @@ public class Elephant extends Animal implements IAnimatable {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DIRTY_TICKS, 0);
+        // this.entityData.define(DIRTY_TICKS, 0);
         this.entityData.define(DRINKING, false);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.putInt("DirtyTicks", this.getDirtyTicks());
+        // pCompound.putInt("DirtyTicks", this.getDirtyTicks());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        this.setDirtyTicks(pCompound.getInt("DirtyTicks"));
+        // this.setDirtyTicks(pCompound.getInt("DirtyTicks"));
     }
 
-    public void setDirtyTicks(int ticks) {
+    /* public void setDirtyTicks(int ticks) {
         this.entityData.set(DIRTY_TICKS, ticks);
     }
 
@@ -171,6 +171,8 @@ public class Elephant extends Animal implements IAnimatable {
     public boolean isDirty() {
         return this.getDirtyTicks() > 0;
     }
+
+     */
 
     public void setDrinking(boolean drinking) {
         this.entityData.set(DRINKING, drinking);
@@ -183,28 +185,28 @@ public class Elephant extends Animal implements IAnimatable {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (this.level instanceof ServerLevel serverLevel) {
+        /*if (this.level instanceof ServerLevel serverLevel) {
             if (this.isDirty()) {
                 this.setDirtyTicks(this.isInWater() ? 0 : Math.max(0, this.getDirtyTicks() - 1));
             } else {
                 long dayTime = serverLevel.getDayTime();
                 if (dayTime > 4300 && dayTime < 11000 && this.isOnGround() && this.getRandom().nextFloat() < 0.001f && !this.isDrinking()) {
                     this.swing(InteractionHand.MAIN_HAND);
-                    this.setDirtyTicks(1000);
+                    //this.setDirtyTicks(1000);
                     serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()), this.getX(), this.getY(), this.getZ(),
                             200, 0.5, 3.0, 0.5, 10);
                 }
             }
-        }
+        }*/
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(new AnimationBuilder().loop("elephant.walk"));
+            event.getController().setAnimation(new AnimationBuilder().loop("walk"));
         } else if (this.isDrinking()) {
             event.getController().setAnimation(new AnimationBuilder().loop("elephant.water"));
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("elephant.idle"));
+            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
         }
         return PlayState.CONTINUE;
     }

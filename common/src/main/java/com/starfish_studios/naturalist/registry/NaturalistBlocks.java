@@ -2,6 +2,7 @@ package com.starfish_studios.naturalist.registry;
 
 import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.block.ChrysalisBlock;
+import com.starfish_studios.naturalist.block.GlowGoopBlock;
 import com.starfish_studios.naturalist.platform.CommonPlatformHelper;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
 public class NaturalistBlocks {
     public static final Supplier<Block> CHRYSALIS = CommonPlatformHelper.registerBlock("chrysalis", () -> new ChrysalisBlock(BlockBehaviour.Properties.of(Material.PLANT).randomTicks().strength(0.2F, 3.0F).sound(SoundType.GRASS).noOcclusion().noCollission()));
     public static final Supplier<Block> DUCKWEED = CommonPlatformHelper.registerBlock("duckweed", () -> new WaterlilyBlock(BlockBehaviour.Properties.of(Material.REPLACEABLE_PLANT).noCollission().randomTicks().instabreak().sound(SoundType.SMALL_DRIPLEAF)));
+    public static final Supplier<Block> GLOW_GOOP = CommonPlatformHelper.registerBlock("glow_goop", () -> new GlowGoopBlock(BlockBehaviour.Properties.of(Material.AIR).strength(0.5F).noOcclusion().lightLevel(GlowGoopBlock.LIGHT_EMISSION).sound(SoundType.HONEY_BLOCK)));
 
     public static void init() {
     }

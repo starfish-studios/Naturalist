@@ -14,6 +14,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -21,12 +23,15 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -93,12 +98,15 @@ public class Caterpillar extends ClimbingAnimal implements IAnimatable {
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        if (!(event.getLimbSwingAmount() > -0.05F && event.getLimbSwingAmount() < 0.05F)) {
-            event.getController().setAnimation(new AnimationBuilder().loop("caterpillar.move"));
+        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+            {
+                event.getController().setAnimation(new AnimationBuilder().loop("crawl"));
+                return PlayState.CONTINUE;
+            }
+        } else {
+            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
             return PlayState.CONTINUE;
         }
-        event.getController().markNeedsReload();
-        return PlayState.STOP;
     }
 
     @Override
@@ -110,6 +118,35 @@ public class Caterpillar extends ClimbingAnimal implements IAnimatable {
     @Override
     public AnimationFactory getFactory() {
         return factory;
+    }
+
+
+    public ItemStack getHandItemStack() {
+        return new ItemStack(NaturalistRegistry.CATERPILLAR.get());
+    }
+
+    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
+        return Catchable.netCaterpillarPickup(player, hand, this).orElse(super.mobInteract(player, hand));
+    }
+
+    public void saveToHandTag(ItemStack stack) {
+        Catchable.saveDefaultDataToHandTag(this, stack);
+        CompoundTag compoundTag = stack.getOrCreateTag();
+        compoundTag.putInt("Age", this.getAge());
+
+    }
+
+    public void loadFromHandTag(CompoundTag tag) {
+        Catchable.loadDefaultDataFromHandTag(this, tag);
+
+        if (tag.contains("Age")) {
+            this.setAge(tag.getInt("Age"));
+        }
+
+        if (tag.contains("HuntingCooldown")) {
+            this.getBrain().setMemoryWithExpiry(MemoryModuleType.HAS_HUNTING_COOLDOWN, true, tag.getLong("HuntingCooldown"));
+        }
+
     }
 
     private static class CocoonGoal extends MoveToBlockGoal {
@@ -157,7 +194,7 @@ public class Caterpillar extends ClimbingAnimal implements IAnimatable {
             Level level = caterpillar.level;
             if (this.isValidTarget(level, caterpillar.blockPosition())) {
                 if (!level.isClientSide) {
-                    ((ServerLevel)level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, NaturalistBlocks.CHRYSALIS.get().defaultBlockState()), caterpillar.getX(), caterpillar.getY(), caterpillar.getZ(), 50, caterpillar.getBbWidth() / 4.0F, caterpillar.getBbHeight() / 4.0F, caterpillar.getBbWidth() / 4.0F, 0.05D);
+                    ((ServerLevel) level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, NaturalistBlocks.CHRYSALIS.get().defaultBlockState()), caterpillar.getX(), caterpillar.getY(), caterpillar.getZ(), 50, caterpillar.getBbWidth() / 4.0F, caterpillar.getBbHeight() / 4.0F, caterpillar.getBbWidth() / 4.0F, 0.05D);
                 }
                 caterpillar.discard();
                 level.setBlockAndUpdate(caterpillar.blockPosition(), NaturalistBlocks.CHRYSALIS.get().defaultBlockState().setValue(ChrysalisBlock.FACING, facing));

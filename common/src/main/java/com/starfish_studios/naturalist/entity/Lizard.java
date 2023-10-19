@@ -228,10 +228,10 @@ public class Lizard extends TamableAnimal implements IAnimatable {
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (this.isInSittingPose()) {
-            event.getController().setAnimation(new AnimationBuilder().loop("lizard.sit"));
+            event.getController().setAnimation(new AnimationBuilder().loop("sit"));
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(new AnimationBuilder().loop("lizard.walk"));
+            event.getController().setAnimation(new AnimationBuilder().loop("walk"));
             event.getController().setAnimationSpeed(2.0D);
             return PlayState.CONTINUE;
         }

@@ -240,20 +240,20 @@ public class Alligator extends Animal implements IAnimatable, EggLayingAnimal {
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isInWater()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("alligator.swim"));
+                event.getController().setAnimation(new AnimationBuilder().loop("swim"));
             } else {
-                event.getController().setAnimation(new AnimationBuilder().loop("alligator.walk"));
+                event.getController().setAnimation(new AnimationBuilder().loop("walk"));
                 event.getController().setAnimationSpeed(1.5D);
             }
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("alligator.idle"));
+            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
         }
         return PlayState.CONTINUE;
     }
 
     private <E extends IAnimatable> PlayState attackPredicate(AnimationEvent<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
-            event.getController().setAnimation(new AnimationBuilder().playOnce("alligator.bite"));
+            event.getController().setAnimation(new AnimationBuilder().playOnce("bite"));
             event.getController().markNeedsReload();
             this.swinging = false;
         }

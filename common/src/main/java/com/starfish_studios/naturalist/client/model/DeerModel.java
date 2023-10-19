@@ -43,8 +43,7 @@ public class DeerModel extends AnimatedGeoModel<Deer> {
 
         List<EntityModelData> extraDataOfType = customPredicate.getExtraDataOfType(EntityModelData.class);
         IBone head = this.getAnimationProcessor().getBone("head");
-        IBone left_antler = this.getAnimationProcessor().getBone("left_antler");
-        IBone right_antler = this.getAnimationProcessor().getBone("right_antler");
+        IBone antlers = this.getAnimationProcessor().getBone("antlers");
 
         if (deer.isBaby()) {
             head.setScaleX(1.6F);
@@ -56,8 +55,7 @@ public class DeerModel extends AnimatedGeoModel<Deer> {
             head.setScaleZ(1.0F);
         }
 
-        left_antler.setHidden(deer.isBaby());
-        right_antler.setHidden(deer.isBaby());
+        antlers.setHidden(deer.isBaby());
 
         if (!deer.isEating()) {
             head.setRotationX(extraDataOfType.get(0).headPitch * Mth.DEG_TO_RAD);

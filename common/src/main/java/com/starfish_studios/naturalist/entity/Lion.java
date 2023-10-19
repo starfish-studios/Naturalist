@@ -211,21 +211,21 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (this.isSleeping()) {
-            event.getController().setAnimation(new AnimationBuilder().loop(this.hasMane() || this.isBaby() ? "lion.sleep2" : "lion.sleep"));
+            event.getController().setAnimation(new AnimationBuilder().loop(this.hasMane() || this.isBaby() ? "sleep2" : "sleep"));
             event.getController().setAnimationSpeed(1.0F);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("lion.run"));
+                event.getController().setAnimation(new AnimationBuilder().loop("run"));
                 event.getController().setAnimationSpeed(2.5F);
             } else if (this.isCrouching()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("lion.prey"));
+                event.getController().setAnimation(new AnimationBuilder().loop("prey"));
                 event.getController().setAnimationSpeed(0.8F);
             } else {
-                event.getController().setAnimation(new AnimationBuilder().loop("lion.walk"));
+                event.getController().setAnimation(new AnimationBuilder().loop("walk"));
                 event.getController().setAnimationSpeed(1.0F);
             }
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("lion.idle"));
+            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
             event.getController().setAnimationSpeed(1.0F);
         }
         return PlayState.CONTINUE;
@@ -234,7 +234,7 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
     private <E extends IAnimatable> PlayState attackPredicate(AnimationEvent<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
             event.getController().markNeedsReload();
-            event.getController().setAnimation(new AnimationBuilder().playOnce("lion.swing"));
+            event.getController().setAnimation(new AnimationBuilder().playOnce("swing"));
             this.swinging = false;
         }
         return PlayState.CONTINUE;
