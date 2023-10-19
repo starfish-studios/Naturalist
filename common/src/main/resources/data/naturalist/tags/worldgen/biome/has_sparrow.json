@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:plains",
+    {
+      "id": "#forge:is_plains",
+      "required": false
+    },
+    {
+      "id": "#c:plains",
+      "required": false
+    }
+  ]
+}

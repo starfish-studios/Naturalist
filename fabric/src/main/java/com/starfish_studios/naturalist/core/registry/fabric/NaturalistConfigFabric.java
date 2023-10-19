@@ -11,10 +11,16 @@ public class NaturalistConfigFabric implements ConfigData {
     // MISC ANIMALS
 
     public int fireflySpawnWeight = 500;
+
+
     public int bluejaySpawnWeight = 8;
     public int canarySpawnWeight = 8;
     public int cardinalSpawnWeight = 8;
     public int robinSpawnWeight = 8;
+    public int finchSpawnWeight = 8;
+    public int sparrowSpawnWeight = 8;
+
+
     public int butterflySpawnWeight = 20;
     public int snailSpawnWeight = 5;
     public int snakeSpawnWeight = 4;

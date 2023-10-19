@@ -18,10 +18,14 @@ public class NaturalistConfigForge {
     public static final ForgeConfigSpec.IntValue BEAR_SPAWN_WEIGHT;
     public static final ForgeConfigSpec.IntValue DEER_SPAWN_WEIGHT;
     public static final ForgeConfigSpec.IntValue FIREFLY_SPAWN_WEIGHT;
+
     public static final ForgeConfigSpec.IntValue BLUEJAY_SPAWN_WEIGHT;
     public static final ForgeConfigSpec.IntValue CANARY_SPAWN_WEIGHT;
     public static final ForgeConfigSpec.IntValue CARDINAL_SPAWN_WEIGHT;
     public static final ForgeConfigSpec.IntValue ROBIN_SPAWN_WEIGHT;
+    public static final ForgeConfigSpec.IntValue FINCH_SPAWN_WEIGHT;
+    public static final ForgeConfigSpec.IntValue SPARROW_SPAWN_WEIGHT;
+
     public static final ForgeConfigSpec.IntValue BUTTERFLY_SPAWN_WEIGHT;
     public static final ForgeConfigSpec.IntValue FOREST_RABBIT_SPAWN_WEIGHT;
     public static final ForgeConfigSpec.IntValue FOREST_FOX_SPAWN_WEIGHT;
@@ -61,10 +65,16 @@ public class NaturalistConfigForge {
         CORAL_SNAKE_SPAWN_WEIGHT = COMMON_BUILDER.comment("Coral Snake Spawn Weight").defineInRange("coralSnakeSpawnWeight", 4, 0, 1000);
         RATTLESNAKE_SPAWN_WEIGHT = COMMON_BUILDER.comment("Rattlesnake Spawn Weight").defineInRange("rattlesnakeSpawnWeight", 4, 0, 1000);
         FIREFLY_SPAWN_WEIGHT = COMMON_BUILDER.comment("Firefly Spawn Weight").defineInRange("fireflySpawnWeight", 8, 0, 1000);
+
+
         BLUEJAY_SPAWN_WEIGHT = COMMON_BUILDER.comment("Bluejay Spawn Weight").defineInRange("bluejaySpawnWeight", 8, 0, 1000);
         CANARY_SPAWN_WEIGHT = COMMON_BUILDER.comment("Canary Spawn Weight").defineInRange("canarySpawnWeight", 8, 0, 1000);
         CARDINAL_SPAWN_WEIGHT = COMMON_BUILDER.comment("Cardinal Spawn Weight").defineInRange("cardinalSpawnWeight", 8, 0, 1000);
         ROBIN_SPAWN_WEIGHT = COMMON_BUILDER.comment("Robin Spawn Weight").defineInRange("robinSpawnWeight", 8, 0, 1000);
+        FINCH_SPAWN_WEIGHT = COMMON_BUILDER.comment("Finch Spawn Weight").defineInRange("finchSpawnWeight", 8, 0, 1000);
+        SPARROW_SPAWN_WEIGHT = COMMON_BUILDER.comment("Sparrow Spawn Weight").defineInRange("sparrowSpawnWeight", 8, 0, 1000);
+
+
         BUTTERFLY_SPAWN_WEIGHT = COMMON_BUILDER.comment("Butterfly Spawn Weight").defineInRange("butterflySpawnWeight", 20, 0, 1000);
         DUCK_SPAWN_WEIGHT = COMMON_BUILDER.comment("Duck Spawn Weight").defineInRange("duckSpawnWeight", 15, 0, 1000);
 

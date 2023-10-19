@@ -84,10 +84,16 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_SNAKE = tag("has_snake");
         public static final TagKey<Biome> HAS_RATTLESNAKE = tag("has_rattlesnake");
         public static final TagKey<Biome> HAS_CORAL_SNAKE = tag("has_coral_snake");
+
+
         public static final TagKey<Biome> HAS_BLUEJAY = tag("has_bluejay");
         public static final TagKey<Biome> HAS_CANARY = tag("has_canary");
         public static final TagKey<Biome> HAS_CARDINAL = tag("has_cardinal");
         public static final TagKey<Biome> HAS_ROBIN = tag("has_robin");
+        public static final TagKey<Biome> HAS_FINCH = tag("has_finch");
+        public static final TagKey<Biome> HAS_SPARROW = tag("has_sparrow");
+
+
         public static final TagKey<Biome> HAS_RHINO = tag("has_rhino");
         public static final TagKey<Biome> HAS_LION = tag("has_lion");
         public static final TagKey<Biome> HAS_ELEPHANT = tag("has_elephant");
