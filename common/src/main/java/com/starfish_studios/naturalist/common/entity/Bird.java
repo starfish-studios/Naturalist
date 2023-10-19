@@ -6,6 +6,7 @@ import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
 import com.starfish_studios.naturalist.core.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
@@ -300,6 +301,17 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, GeoEntit
             }
         }
     }
+
+    @Override
+    public void playAmbientSound() {
+        super.playAmbientSound();
+        if (this.level() instanceof ServerLevel serverLevel && !this.level().isNight()) {
+            float f = (float)level().getRandom().nextInt(4) / 24.0f;
+            serverLevel.sendParticles(ParticleTypes.NOTE, this.getX(), this.getY() + 1, this.getZ(), 0, f, 0.0, 0.0, 1.0);
+        }
+    }
+
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
