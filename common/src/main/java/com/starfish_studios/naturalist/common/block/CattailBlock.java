@@ -59,18 +59,6 @@ public class CattailBlock extends DoublePlantBlock implements SimpleWaterloggedB
         return SHAPE;
     }
 
-    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient) {
-        return true;
-    }
-
-    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
-        return true;
-    }
-
-    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
-        popResource(level, pos, new ItemStack(this));
-    }
-
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(NaturalistTags.BlockTags.CATTAIL_PLACEABLE) || level.getFluidState(pos.above()).isSourceOfType(Fluids.WATER) && super.mayPlaceOn(state, level, pos);
     }
