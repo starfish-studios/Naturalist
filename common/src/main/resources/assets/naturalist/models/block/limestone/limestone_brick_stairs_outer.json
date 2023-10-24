@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/outer_stairs",
-  "textures": {
-    "bottom": "naturalist:block/limestone_bricks",
-    "side": "naturalist:block/limestone_bricks",
-    "top": "naturalist:block/limestone_bricks"
-  }
-}

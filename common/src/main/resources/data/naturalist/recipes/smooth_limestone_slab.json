@@ -5,11 +5,11 @@
   ],
   "key": {
     "#": {
-      "item": "naturalist:smooth_limestone"
+      "item": "naturalist:smooth_shellstone"
     }
   },
   "result": {
-    "item": "naturalist:smooth_limestone_slab",
+    "item": "naturalist:smooth_shellstone_slab",
     "count": 6
   }
 }

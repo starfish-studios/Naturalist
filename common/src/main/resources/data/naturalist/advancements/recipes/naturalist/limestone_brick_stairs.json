@@ -1,13 +1,13 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_limestone_bricks": {
+    "has_shellstone_bricks": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "naturalist:limestone_bricks"
+              "naturalist:shellstone_bricks"
             ]
           }
         ]
@@ -16,19 +16,19 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "naturalist:limestone_brick_stairs"
+        "recipe": "naturalist:shellstone_brick_stairs"
       }
     }
   },
   "requirements": [
     [
-      "has_limestone_bricks",
+      "has_shellstone_bricks",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "naturalist:limestone_brick_stairs"
+      "naturalist:shellstone_brick_stairs"
     ]
   },
   "sends_telemetry_event": false

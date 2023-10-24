@@ -6,10 +6,10 @@
   ],
   "key": {
     "#": {
-      "item": "naturalist:limestone_slab"
+      "item": "naturalist:shellstone_slab"
     }
   },
   "result": {
-    "item": "naturalist:cut_limestone"
+    "item": "naturalist:cut_shellstone"
   }
 }

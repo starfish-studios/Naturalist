@@ -6,11 +6,11 @@
   ],
   "key": {
     "#": {
-      "item": "naturalist:limestone"
+      "item": "naturalist:shellstone"
     }
   },
   "result": {
-    "item": "naturalist:limestone_wall",
+    "item": "naturalist:shellstone_wall",
     "count": 6
   }
 }

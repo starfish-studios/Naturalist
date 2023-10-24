@@ -1,13 +1,13 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_cut_limestone": {
+    "has_cut_shellstone": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "naturalist:cut_limestone"
+              "naturalist:cut_shellstone"
             ]
           }
         ]
@@ -16,19 +16,19 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "naturalist:cut_limestone_slab"
+        "recipe": "naturalist:cut_shellstone_slab"
       }
     }
   },
   "requirements": [
     [
-      "has_cut_limestone",
+      "has_cut_shellstone",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "naturalist:cut_limestone_slab"
+      "naturalist:cut_shellstone_slab"
     ]
   },
   "sends_telemetry_event": false

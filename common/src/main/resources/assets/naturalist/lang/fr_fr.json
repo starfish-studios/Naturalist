@@ -97,10 +97,10 @@
   "item.naturalist.cattail_fluff": "Ouate de roseau",
   "block.naturalist.duckweed": "Lentilles d'eau",
 
-  "block.naturalist.limestone": "Calcaire",
-  "block.naturalist.limestone_bricks": "Briques de calcaire",
-  "block.naturalist.cut_limestone": "Calcaire taillée",
-  "block.naturalist.smooth_limestone": "Calcaire lisse",
+  "block.naturalist.shellstone": "Calcaire",
+  "block.naturalist.shellstone_bricks": "Briques de calcaire",
+  "block.naturalist.cut_shellstone": "Calcaire taillée",
+  "block.naturalist.smooth_shellstone": "Calcaire lisse",
 
 
 

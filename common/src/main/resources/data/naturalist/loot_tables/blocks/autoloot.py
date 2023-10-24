@@ -2,22 +2,22 @@ import json
 
 blacklist_substrings=["azure_froglass, crimson_froglass, verdant_froglass, alligator_egg, cattail, chrysalis, glow_goop, duckweed, teddy_bear, tortoise_egg"]
 
-theitems = """naturalist:limestone
-naturalist:limestone_stairs
-naturalist:limestone_slab
-naturalist:limestone_wall
-naturalist:smooth_limestone
-naturalist:smooth_limestone_stairs
-naturalist:smooth_limestone_slab
-naturalist:smooth_limestone_wall
-naturalist:cut_limestone
-naturalist:cut_limestone_stairs
-naturalist:cut_limestone_slab
-naturalist:cut_limestone_wall
-naturalist:limestone_bricks
-naturalist:limestone_brick_stairs
-naturalist:limestone_brick_slab
-naturalist:limestone_brick_wall""".split("\n")
+theitems = """naturalist:shellstone
+naturalist:shellstone_stairs
+naturalist:shellstone_slab
+naturalist:shellstone_wall
+naturalist:smooth_shellstone
+naturalist:smooth_shellstone_stairs
+naturalist:smooth_shellstone_slab
+naturalist:smooth_shellstone_wall
+naturalist:cut_shellstone
+naturalist:cut_shellstone_stairs
+naturalist:cut_shellstone_slab
+naturalist:cut_shellstone_wall
+naturalist:shellstone_bricks
+naturalist:shellstone_brick_stairs
+naturalist:shellstone_brick_slab
+naturalist:shellstone_brick_wall""".split("\n")
 
 
 for itemname in theitems:

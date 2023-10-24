@@ -16,7 +16,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "naturalist:limestone"
+        "recipe": "naturalist:shellstone"
       }
     }
   },
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "naturalist:limestone"
+      "naturalist:shellstone"
     ]
   },
   "sends_telemetry_event": false

@@ -6,11 +6,11 @@
   ],
   "key": {
     "#": {
-      "item": "naturalist:limestone_bricks"
+      "item": "naturalist:shellstone_bricks"
     }
   },
   "result": {
-    "item": "naturalist:limestone_brick_wall",
+    "item": "naturalist:shellstone_brick_wall",
     "count": 6
   }
 }

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "naturalist:block/smooth_shellstone",
+    "side": "naturalist:block/smooth_shellstone",
+    "top": "naturalist:block/smooth_shellstone"
+  }
+}

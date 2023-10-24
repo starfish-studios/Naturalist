@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    {"id": "naturalist:shellstone", "required": false},
+    {"id": "naturalist:shellstone_stairs", "required": false},
+    {"id": "naturalist:shellstone_slab", "required": false},
+    {"id": "naturalist:shellstone_wall", "required": false},
+    {"id": "naturalist:shellstone_bricks", "required": false},
+    {"id": "naturalist:shellstone_brick_stairs", "required": false},
+    {"id": "naturalist:shellstone_brick_slab", "required": false},
+    {"id": "naturalist:shellstone_brick_wall", "required": false},
+    {"id": "naturalist:cut_shellstone", "required": false},
+    {"id": "naturalist:cut_shellstone_stairs", "required": false},
+    {"id": "naturalist:cut_shellstone_slab", "required": false},
+    {"id": "naturalist:cut_shellstone_wall", "required": false},
+    {"id": "naturalist:smooth_shellstone", "required": false},
+    {"id": "naturalist:smooth_shellstone_stairs", "required": false},
+    {"id": "naturalist:smooth_shellstone_slab", "required": false},
+    {"id": "naturalist:smooth_shellstone_wall", "required": false}
+  ]
+}
