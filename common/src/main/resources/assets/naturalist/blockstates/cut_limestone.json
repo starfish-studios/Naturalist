@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "naturalist:block/cut_limestone"
+      "model": "naturalist:block/limestone/cut_limestone"
     }
   }
 }

@@ -17,11 +17,30 @@
   "tooltip.naturalist.polyphemus": "Polyphemus",
 
 
+  "entity.naturalist.snail": "Snail",
+
+  "tooltip.naturalist.white": "White",
+  "tooltip.naturalist.black": "Black",
+  "tooltip.naturalist.red": "Red",
+  "tooltip.naturalist.orange": "Orange",
+  "tooltip.naturalist.yellow": "Yellow",
+  "tooltip.naturalist.green": "Green",
+  "tooltip.naturalist.blue": "Blue",
+  "tooltip.naturalist.purple": "Purple",
+  "tooltip.naturalist.brown": "Brown",
+  "tooltip.naturalist.pink": "Pink",
+  "tooltip.naturalist.gray": "Gray",
+  "tooltip.naturalist.light_gray": "Light Gray",
+  "tooltip.naturalist.cyan": "Cyan",
+  "tooltip.naturalist.lime": "Lime",
+  "tooltip.naturalist.light_blue": "Light Blue",
+  "tooltip.naturalist.magenta": "Magenta",
+
+
   "item.naturalist.caterpillar": "Caterpillar",
   "entity.naturalist.caterpillar": "Caterpillar",
   "entity.naturalist.dragonfly": "Dragonfly",
   "entity.naturalist.firefly": "Firefly",
-  "entity.naturalist.snail": "Snail",
 
   "entity.naturalist.snake": "Snake",
   "entity.naturalist.rattlesnake": "Rattlesnake",
@@ -99,10 +118,26 @@
   "item.naturalist.cattail_fluff": "Cattail Fluff",
   "block.naturalist.duckweed": "Duckweed",
 
+
   "block.naturalist.limestone": "Limestone",
+  "block.naturalist.limestone_stairs": "Limestone Stairs",
+  "block.naturalist.limestone_slab": "Limestone Slab",
+  "block.naturalist.limestone_wall": "Limestone Wall",
+
   "block.naturalist.limestone_bricks": "Limestone Bricks",
+  "block.naturalist.limestone_brick_stairs": "Limestone Brick Stairs",
+  "block.naturalist.limestone_brick_slab": "Limestone Brick Slab",
+  "block.naturalist.limestone_brick_wall": "Limestone Brick Wall",
+
   "block.naturalist.cut_limestone": "Cut Limestone",
+  "block.naturalist.cut_limestone_stairs": "Cut Limestone Stairs",
+  "block.naturalist.cut_limestone_slab": "Cut Limestone Slab",
+  "block.naturalist.cut_limestone_wall": "Cut Limestone Wall",
+
   "block.naturalist.smooth_limestone": "Smooth Limestone",
+  "block.naturalist.smooth_limestone_stairs": "Smooth Limestone Stairs",
+  "block.naturalist.smooth_limestone_slab": "Smooth Limestone Slab",
+  "block.naturalist.smooth_limestone_wall": "Smooth Limestone Wall",
 
   
   "item.minecraft.tipped_arrow.effect.forest_dasher": "Arrow of the Forest Dasher",

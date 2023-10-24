@@ -68,6 +68,10 @@ public class CommonPlatformHelperImpl {
         return ITEMS.register(name, () -> new NoFluidMobBucketItem(entitySupplier, fluidSupplier, soundSupplier, new Item.Properties().stacksTo(1)));
     }
 
+    public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, int color) {
+        return ITEMS.register(name, () -> new NoFluidMobBucketWithVariantsItem(entitySupplier, fluidSupplier, soundSupplier, new Item.Properties().stacksTo(1), color));
+    }
+
     public static Supplier<Item> registerMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
         return ITEMS.register(name, () -> new MobBucketItem(entitySupplier, fluidSupplier, soundSupplier, new Item.Properties().stacksTo(1)));
     }

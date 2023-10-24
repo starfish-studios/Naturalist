@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "naturalist:smooth_limestone"
+    }
+  },
+  "result": {
+    "item": "naturalist:smooth_limestone_slab",
+    "count": 6
+  }
+}

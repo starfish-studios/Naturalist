@@ -25,9 +25,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -40,12 +38,12 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.core.animation.AnimationState;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, HidingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    private static EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_COLOR;
 
     public Snail(EntityType<? extends Animal> type, Level level) {
         super(type, level);
@@ -102,6 +100,10 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
         return false;
     }
 
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromBucket();
+    }
+
     @Override
     public void aiStep() {
         super.aiStep();
@@ -113,6 +115,7 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(FROM_BUCKET, false);
+        this.entityData.define(DATA_COLOR, Color.BROWN.getId());
     }
 
     @Override
@@ -129,18 +132,100 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putBoolean("FromBucket", this.fromBucket());
+        pCompound.putByte("Color", (byte)this.getSnailColor().getId());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.setFromBucket(pCompound.getBoolean("FromBucket"));
+        this.setSnailColor(Color.BY_ID[pCompound.getInt("Color")]);
+    }
+
+
+    public Color getSnailColor() {
+        return Snail.Color.BY_ID[this.entityData.get(DATA_COLOR)];
+    }
+
+    public void setSnailColor(Snail.Color color) {
+        this.entityData.set(DATA_COLOR, color.getId());
+    }
+
+    public DyeColor getColor() {
+        return DyeColor.byId(this.entityData.get(DATA_COLOR));
+    }
+
+    public void setColor(DyeColor color) {
+        this.entityData.set(DATA_COLOR, color.getId());
+    }
+
+    public enum Color {
+        WHITE(0, "white", true),
+        ORANGE(1, "orange", true),
+        MAGENTA(2, "magenta", true),
+        LIGHT_BLUE(3, "light_blue", true),
+        YELLOW(4, "yellow", true),
+        LIME(5, "lime", true),
+        PINK(6, "pink", true),
+        GRAY(7, "gray", true),
+        LIGHT_GRAY(8, "light_gray", true),
+        CYAN(9, "cyan", true),
+        PURPLE(10, "purple", true),
+        BLUE(11, "blue", true),
+        BROWN(12, "brown", true),
+        GREEN(13, "green", true),
+        RED(14, "red", true),
+        BLACK(15, "black", true);
+
+        public static final Snail.Color[] BY_ID = Arrays.stream(values()).sorted(Comparator.comparingInt(Snail.Color::getId)).toArray(Snail.Color[]::new);
+        private final int id;
+        private final String name;
+
+        private Color(int j, String string2, boolean bl) {
+            this.id = j;
+            this.name = string2;
+        }
+
+        public int getId() {
+            return this.id;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public static Snail.Color getTypeById(int id) {
+            for (Snail.Color type : values()) {
+                if (type.id == id) return type;
+            }
+            return Snail.Color.BROWN;
+        }
     }
 
     @Override
     public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
+        ItemStack itemStack = pPlayer.getItemInHand(pHand);
+        Item item = itemStack.getItem();
+        label90: {
+                if (!(item instanceof DyeItem)) {
+                    break label90;
+                }
+
+                DyeItem dyeItem = (DyeItem)item;
+
+                DyeColor dyeColor = dyeItem.getDyeColor();
+                if (dyeColor != this.getColor()) {
+                    this.setColor(dyeColor);
+                    if (!pPlayer.getAbilities().instabuild) {
+                        itemStack.shrink(1);
+                    }
+
+                    return InteractionResult.SUCCESS;
+                }
+            }
         return bucketMobPickup(pPlayer, pHand, this).orElse(super.mobInteract(pPlayer, pHand));
     }
+
 
     static <T extends LivingEntity & Bucketable> Optional<InteractionResult> bucketMobPickup(Player player, InteractionHand hand, T entity) {
         ItemStack stack = player.getItemInHand(hand);
@@ -164,12 +249,18 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
 
     @Override
     public void saveToBucketTag(ItemStack stack) {
+        CompoundTag compoundTag = stack.getOrCreateTag();
         Bucketable.saveDefaultDataToBucketTag(this, stack);
+        compoundTag.putInt("Color", this.getSnailColor().getId());
     }
 
     @Override
     public void loadFromBucketTag(CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
+        int i = tag.getInt("Color");
+        if (i >= 0 && i < Snail.Color.BY_ID.length) {
+            this.setSnailColor(Snail.Color.BY_ID[i]);
+        }
     }
 
     @Override
@@ -232,8 +323,6 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        // TODO: used to be 5
-        // data.setResetSpeedInTicks(5);
         AnimationController<Snail> controller = new AnimationController<>(this, "controller", 5, this::predicate);
         controller.setSoundKeyframeHandler(this::soundListener);
         controllers.add(controller);
@@ -246,5 +335,10 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
             this.forceTrigger = true;
             this.interval = 1;
         }
+    }
+
+    static {
+        DATA_COLOR = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.INT);
+        FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     }
 }

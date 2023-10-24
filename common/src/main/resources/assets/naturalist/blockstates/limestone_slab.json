@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "naturalist:block/limestone/limestone_slab"
+    },
+    "type=double": {
+      "model": "naturalist:block/limestone/limestone"
+    },
+    "type=top": {
+      "model": "naturalist:block/limestone/limestone_slab_top"
+    }
+  }
+}

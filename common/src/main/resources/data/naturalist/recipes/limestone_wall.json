@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "naturalist:limestone"
+    }
+  },
+  "result": {
+    "item": "naturalist:limestone_wall",
+    "count": 6
+  }
+}

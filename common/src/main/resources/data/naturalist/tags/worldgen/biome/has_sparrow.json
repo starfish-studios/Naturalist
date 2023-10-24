@@ -1,6 +1,7 @@
 {
   "values": [
     "minecraft:plains",
+    "minecraft:cherry_grove",
     {
       "id": "#forge:is_plains",
       "required": false

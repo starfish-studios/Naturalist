@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "naturalist:cut_limestone"
+    }
+  },
+  "result": {
+    "item": "naturalist:cut_limestone_stairs",
+    "count": 4
+  }
+}

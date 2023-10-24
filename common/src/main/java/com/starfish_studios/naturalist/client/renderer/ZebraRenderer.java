@@ -1,5 +1,6 @@
 package com.starfish_studios.naturalist.client.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.client.model.ZebraModel;
 import com.starfish_studios.naturalist.common.entity.Zebra;
@@ -21,5 +22,16 @@ public class ZebraRenderer extends AbstractHorseRenderer<Zebra, ZebraModel> {
     @Override
     public ResourceLocation getTextureLocation(Zebra entity) {
         return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/zebra.png");
+    }
+
+    @Override
+    public void render(Zebra animatable, float entityYaw, float partialTick, PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource bufferSource, int packedLight) {
+        if (animatable.isBaby()) {
+            poseStack.scale(0.8F, 0.8F, 0.8F);
+        }
+        else {
+            poseStack.scale(0.8F, 0.8F, 0.8F);
+        }
+        super.render(animatable, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }

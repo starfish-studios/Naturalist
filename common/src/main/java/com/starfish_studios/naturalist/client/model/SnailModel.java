@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.DyeColor;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;
@@ -21,6 +22,10 @@ public class SnailModel extends GeoModel<Snail> {
 
     @Override
     public ResourceLocation getTextureResource(Snail snail) {
+        if (snail.getSnailColor() != null) {
+            int color = snail.getSnailColor().getId();
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snail/" + DyeColor.byId(color).getName() + ".png");
+        }
         return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snail.png");
     }
 

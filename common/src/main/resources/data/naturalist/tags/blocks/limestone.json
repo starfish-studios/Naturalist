@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    {"id": "naturalist:limestone", "required": false},
+    {"id": "naturalist:limestone_stairs", "required": false},
+    {"id": "naturalist:limestone_slab", "required": false},
+    {"id": "naturalist:limestone_wall", "required": false},
+    {"id": "naturalist:limestone_bricks", "required": false},
+    {"id": "naturalist:limestone_brick_stairs", "required": false},
+    {"id": "naturalist:limestone_brick_slab", "required": false},
+    {"id": "naturalist:limestone_brick_wall", "required": false},
+    {"id": "naturalist:cut_limestone", "required": false},
+    {"id": "naturalist:cut_limestone_stairs", "required": false},
+    {"id": "naturalist:cut_limestone_slab", "required": false},
+    {"id": "naturalist:cut_limestone_wall", "required": false},
+    {"id": "naturalist:smooth_limestone", "required": false},
+    {"id": "naturalist:smooth_limestone_stairs", "required": false},
+    {"id": "naturalist:smooth_limestone_slab", "required": false},
+    {"id": "naturalist:smooth_limestone_wall", "required": false}
+  ]
+}

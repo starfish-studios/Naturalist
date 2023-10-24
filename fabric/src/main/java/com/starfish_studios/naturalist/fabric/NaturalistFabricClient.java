@@ -27,6 +27,14 @@ public class NaturalistFabricClient implements ClientModInitializer {
             return 0.2F;
         });
 
+        ItemProperties.register(NaturalistItems.SNAIL_BUCKET.get(), new ResourceLocation("color"), (stack, world, entity, num) -> {
+            CompoundTag compoundTag = stack.getTag();
+            if (compoundTag != null && compoundTag.contains("Color")) {
+                return (float)compoundTag.getInt("Color") / 15;
+            }
+            return 0.8F;
+        });
+
         /* ItemProperties.register(NaturalistItems.MOTH.get(), new ResourceLocation("variant"), (stack, world, entity, num) -> {
             CompoundTag compoundTag = stack.getTag();
             if (compoundTag != null && compoundTag.contains("Variant")) {

@@ -8,7 +8,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MobBucketItem;
 import net.minecraft.world.level.ClipContext;
@@ -17,11 +16,9 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
-import java.util.function.Supplier;
-
 public class NoFluidMobBucketItem extends MobBucketItem {
-    public NoFluidMobBucketItem(Supplier<? extends EntityType<?>> entitySupplier, Fluid fluid, SoundEvent emptyingSound, Item.Properties settings) {
-        super(entitySupplier.get(), fluid, emptyingSound, settings);
+    public NoFluidMobBucketItem(EntityType<?> entitySupplier, Fluid fluid, SoundEvent emptyingSound, Properties settings) {
+        super(entitySupplier, fluid, emptyingSound, settings);
     }
 
     @Override
