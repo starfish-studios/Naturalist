@@ -23,7 +23,9 @@ public class SnailModel extends GeoModel<Snail> {
 
     @Override
     public ResourceLocation getTextureResource(Snail snail) {
-        if (snail.getSnailColor() != null) {
+        if (snail.getName().getString().contains("Gary")) {
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snail/gary.png");
+        } else if (snail.getSnailColor() != null) {
             int color = snail.getSnailColor().getId();
             return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snail/" + DyeColor.byId(color).getName() + ".png");
         }

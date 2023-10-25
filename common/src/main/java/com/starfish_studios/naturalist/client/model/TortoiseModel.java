@@ -22,13 +22,11 @@ public class TortoiseModel extends GeoModel<Tortoise> {
 
     @Override
     public ResourceLocation getTextureResource(Tortoise tortoise) {
-        switch (tortoise.getVariant()) {
-            case 1:
-                return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/green.png");
-            case 2:
-                return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/black.png");
-        }
-        return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/brown.png");
+        return switch (tortoise.getVariant()) {
+            case 1 -> new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/green.png");
+            case 2 -> new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/black.png");
+            default -> new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/brown.png");
+        };
     }
 
     @Override
