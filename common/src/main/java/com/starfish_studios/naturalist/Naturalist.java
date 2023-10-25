@@ -5,16 +5,24 @@ import com.starfish_studios.naturalist.entity.projectile.ThrownDuckEgg;
 import com.starfish_studios.naturalist.platform.CommonPlatformHelper;
 import com.starfish_studios.naturalist.registry.*;
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.AbstractProjectileDispenseBehavior;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DispensibleContainerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
@@ -53,6 +61,54 @@ public class Naturalist {
                 return Util.make(new ThrownDuckEgg(level, position.x(), position.y(), position.z()), (thrownDuckEgg) -> {
                     thrownDuckEgg.setItem(stack);
                 });
+            }
+        });
+
+        DispenseItemBehavior dispenseItemBehavior = new DefaultDispenseItemBehavior() {
+            private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
+
+            public ItemStack execute(BlockSource source, ItemStack stack) {
+                DispensibleContainerItem dispensibleContainerItem = (DispensibleContainerItem)stack.getItem();
+                BlockPos blockPos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
+                Level level = source.getLevel();
+                if (dispensibleContainerItem.emptyContents(null, level, blockPos, null)) {
+                    dispensibleContainerItem.checkExtraContent(null, level, stack, blockPos);
+                    return new ItemStack(Items.BUCKET);
+                } else {
+                    return this.defaultDispenseItemBehavior.dispense(source, stack);
+                }
+            }
+        };
+        DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET.get(), dispenseItemBehavior);
+        DispenserBlock.registerBehavior(NaturalistRegistry.BASS_BUCKET.get(), dispenseItemBehavior);
+        DispenserBlock.registerBehavior(NaturalistRegistry.CATFISH_BUCKET.get(), dispenseItemBehavior);
+
+
+        DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET.get(), new DefaultDispenseItemBehavior() {
+            public ItemStack execute(BlockSource source, ItemStack stack) {
+                Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
+                BlockPos blockPos = source.getPos().relative(direction);
+                ServerLevel serverLevel = source.getLevel();
+                Snail snail = (Snail) NaturalistEntityTypes.SNAIL.get().spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
+                if (snail != null) {
+                    stack.shrink(1);
+                    return new ItemStack(Items.BUCKET);
+                }
+                return stack;
+            }
+        });
+        DispenserBlock.registerBehavior(NaturalistRegistry.BUTTERFLY.get(), new DefaultDispenseItemBehavior() {
+            public ItemStack execute(BlockSource source, ItemStack stack) {
+                Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
+                BlockPos blockPos = source.getPos().relative(direction);
+                ServerLevel serverLevel = source.getLevel();
+                Butterfly butterfly = (Butterfly) NaturalistEntityTypes.BUTTERFLY.get().spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
+                if (butterfly != null) {
+                    butterfly.setVariant(Butterfly.Variant.getTypeById(stack.getOrCreateTag().getInt("Variant")));
+                    stack.shrink(1);
+                }
+
+                return stack;
             }
         });
     }

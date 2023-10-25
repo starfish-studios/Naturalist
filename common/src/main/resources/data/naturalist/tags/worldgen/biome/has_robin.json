@@ -3,6 +3,7 @@
     "#minecraft:is_forest",
     "#minecraft:is_mountain",
     "minecraft:plains",
+    "minecraft:cherry_grove",
     {
       "id": "#forge:is_forest",
       "required": false

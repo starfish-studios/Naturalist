@@ -1,8 +1,17 @@
 package com.starfish_studios.naturalist.entity;
 
+import com.starfish_studios.naturalist.Naturalist;
+import com.starfish_studios.naturalist.common.entity.core.ClimbingAnimal;
+import com.starfish_studios.naturalist.common.entity.core.EggLayingAnimal;
+import com.starfish_studios.naturalist.common.entity.core.HidingAnimal;
+import com.starfish_studios.naturalist.common.entity.core.ai.goal.EggLayingBreedGoal;
+import com.starfish_studios.naturalist.common.entity.core.ai.goal.HideGoal;
+import com.starfish_studios.naturalist.common.entity.core.ai.goal.LayEggGoal;
+import com.starfish_studios.naturalist.core.registry.*;
+import com.starfish_studios.naturalist.entity.ai.goal.EggLayingBreedGoal;
 import com.starfish_studios.naturalist.entity.ai.goal.HideGoal;
-import com.starfish_studios.naturalist.registry.NaturalistRegistry;
-import com.starfish_studios.naturalist.registry.NaturalistSoundEvents;
+import com.starfish_studios.naturalist.entity.ai.goal.LayEggGoal;
+import com.starfish_studios.naturalist.registry.*;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -11,40 +20,45 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
-
-import java.util.List;
-import java.util.Optional;
-
-public class Snail extends Animal implements IAnimatable, Bucketable, HidingAnimal {
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
-    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.*;
+
+public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, HidingAnimal, EggLayingAnimal {
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEETROOT);
+    private static EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_COLOR;
+    private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    int layEggCounter;
 
     public Snail(EntityType<? extends Animal> type, Level level) {
         super(type, level);
@@ -53,35 +67,116 @@ public class Snail extends Animal implements IAnimatable, Bucketable, HidingAnim
     // ATTRIBUTES/BREEDING/AI
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 2.0D).add(Attributes.MOVEMENT_SPEED, 0.06F);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 2.0D).add(Attributes.MOVEMENT_SPEED, 0.1F);
     }
 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(0, new HideGoal(this));
-        this.goalSelector.addGoal(1, new SnailStrollGoal(this, 1.0D, 0.0F));
+        this.goalSelector.addGoal(0, new HideGoal<>(this));
+        this.goalSelector.addGoal(1, new EggLayingBreedGoal<>(this, 1.0));
+        this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
+        this.goalSelector.addGoal(2, new SnailStrollGoal(this, 0.9D, 0.0F));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+    }
+
+    @Override
+    public void knockback(double strength, double x, double z) {
+        super.knockback(this.canHide() ? strength / 4 : strength, x, z);
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
+    }
+
+
+    @Override
+    public boolean canBreatheUnderwater() {
+        return true;
+    }
+
+    @Override
+    public boolean hasEgg() {
+        return this.entityData.get(HAS_EGG);
+    }
+
+    @Override
+    public void setHasEgg(boolean hasEgg) {
+        this.entityData.set(HAS_EGG, hasEgg);
+    }
+
+    @Override
+    public Block getEggBlock() {
+        return NaturalistBlocks.SNAIL_EGGS.get();
+    }
+
+    @Override
+    public TagKey<Block> getEggLayableBlockTag() {
+        return NaturalistTags.BlockTags.ALLIGATOR_EGG_LAYABLE_ON;
+    }
+
+    @Override
+    public boolean isLayingEgg() {
+        return this.entityData.get(LAYING_EGG);
+    }
+
+    @Override
+    public void setLayingEgg(boolean isLayingEgg) {
+        this.layEggCounter = isLayingEgg ? 1 : 0;
+        this.entityData.set(LAYING_EGG, isLayingEgg);
+    }
+
+
+    @Override
+    public int getLayEggCounter() {
+        return this.layEggCounter;
+    }
+
+    @Override
+    public void setLayEggCounter(int layEggCounter) {
+        this.layEggCounter = layEggCounter;
+    }
+
+    @Override
+    public boolean canFallInLove() {
+        return super.canFallInLove() && !this.hasEgg();
+    }
+
+    @Override
+    public float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
+        return 0.3F;
+    }
+
+    @Override
+    protected float getClimbSpeedMultiplier() {
+        return 0.5F;
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return null;
+        return NaturalistEntityTypes.SNAIL.get().create(level);
     }
 
     @Override
-    public boolean isFood(ItemStack pStack) {
-        return false;
+    public boolean isFood(@NotNull ItemStack stack) {
+        return FOOD_ITEMS.test(stack);
+    }
+
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromBucket();
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
-        for (Player player : level.getEntitiesOfClass(Player.class, this.getBoundingBox())) {
-            if (!player.isOnGround() && EnchantmentHelper.getEnchantmentLevel(Enchantments.FALL_PROTECTION, player) == 0 && !this.hasCustomName()) {
-                this.hurt(DamageSource.playerAttack(player), 5.0F);
-            }
-        }
+
+        /* BlockPos pos = this.blockPosition();
+        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
+            this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
+        } */
     }
 
     // BUCKETING
@@ -90,6 +185,9 @@ public class Snail extends Animal implements IAnimatable, Bucketable, HidingAnim
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(FROM_BUCKET, false);
+        this.entityData.define(DATA_COLOR, Color.BROWN.getId());
+        this.entityData.define(HAS_EGG, false);
+        this.entityData.define(LAYING_EGG, false);
     }
 
     @Override
@@ -106,18 +204,102 @@ public class Snail extends Animal implements IAnimatable, Bucketable, HidingAnim
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putBoolean("FromBucket", this.fromBucket());
+        pCompound.putByte("Color", (byte)this.getSnailColor().getId());
+        pCompound.putBoolean("HasEgg", this.hasEgg());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.setFromBucket(pCompound.getBoolean("FromBucket"));
+        this.setSnailColor(Color.BY_ID[pCompound.getInt("Color")]);
+        this.setHasEgg(pCompound.getBoolean("HasEgg"));
+    }
+
+
+    public Color getSnailColor() {
+        return Snail.Color.BY_ID[this.entityData.get(DATA_COLOR)];
+    }
+
+    public void setSnailColor(Snail.Color color) {
+        this.entityData.set(DATA_COLOR, color.getId());
+    }
+
+    public DyeColor getColor() {
+        return DyeColor.byId(this.entityData.get(DATA_COLOR));
+    }
+
+    public void setColor(DyeColor color) {
+        this.entityData.set(DATA_COLOR, color.getId());
+    }
+
+    public enum Color {
+        WHITE(0, "white", true),
+        ORANGE(1, "orange", true),
+        MAGENTA(2, "magenta", true),
+        LIGHT_BLUE(3, "light_blue", true),
+        YELLOW(4, "yellow", true),
+        LIME(5, "lime", true),
+        PINK(6, "pink", true),
+        GRAY(7, "gray", true),
+        LIGHT_GRAY(8, "light_gray", true),
+        CYAN(9, "cyan", true),
+        PURPLE(10, "purple", true),
+        BLUE(11, "blue", true),
+        BROWN(12, "brown", true),
+        GREEN(13, "green", true),
+        RED(14, "red", true),
+        BLACK(15, "black", true);
+
+        public static final Snail.Color[] BY_ID = Arrays.stream(values()).sorted(Comparator.comparingInt(Snail.Color::getId)).toArray(Snail.Color[]::new);
+        private final int id;
+        private final String name;
+
+        private Color(int j, String string2, boolean bl) {
+            this.id = j;
+            this.name = string2;
+        }
+
+        public int getId() {
+            return this.id;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public static Snail.Color getTypeById(int id) {
+            for (Snail.Color type : values()) {
+                if (type.id == id) return type;
+            }
+            return Snail.Color.BROWN;
+        }
     }
 
     @Override
     public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
+        ItemStack itemStack = pPlayer.getItemInHand(pHand);
+        Item item = itemStack.getItem();
+        label90: {
+            if (!(item instanceof DyeItem)) {
+                break label90;
+            }
+
+            DyeItem dyeItem = (DyeItem)item;
+
+            DyeColor dyeColor = dyeItem.getDyeColor();
+            if (dyeColor != this.getColor()) {
+                this.setColor(dyeColor);
+                if (!pPlayer.getAbilities().instabuild) {
+                    itemStack.shrink(1);
+                }
+
+                return InteractionResult.SUCCESS;
+            }
+        }
         return bucketMobPickup(pPlayer, pHand, this).orElse(super.mobInteract(pPlayer, pHand));
     }
+
 
     static <T extends LivingEntity & Bucketable> Optional<InteractionResult> bucketMobPickup(Player player, InteractionHand hand, T entity) {
         ItemStack stack = player.getItemInHand(hand);
@@ -141,12 +323,18 @@ public class Snail extends Animal implements IAnimatable, Bucketable, HidingAnim
 
     @Override
     public void saveToBucketTag(ItemStack stack) {
+        CompoundTag compoundTag = stack.getOrCreateTag();
         Bucketable.saveDefaultDataToBucketTag(this, stack);
+        compoundTag.putInt("Color", this.getSnailColor().getId());
     }
 
     @Override
     public void loadFromBucketTag(CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
+        int i = tag.getInt("Color");
+        if (i >= 0 && i < Snail.Color.BY_ID.length) {
+            this.setSnailColor(Snail.Color.BY_ID[i]);
+        }
     }
 
     @Override
@@ -215,5 +403,10 @@ public class Snail extends Animal implements IAnimatable, Bucketable, HidingAnim
             this.forceTrigger = true;
             this.interval = 1;
         }
+    }
+
+    static {
+        DATA_COLOR = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.INT);
+        FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     }
 }

@@ -84,7 +84,18 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-        return state.getValue(GOOP) < MAX_GOOP;
+        if (!useContext.getItemInHand().is(this.asItem())) {
+            BlockPos pos = useContext.getClickedPos();
+            Level level = useContext.getLevel();
+            if (!level.isClientSide()) {
+                this.decreaseGoop(level, pos, state);
+                int goop = state.getValue(GOOP);
+                for (int i = 0; i < goop; i++) {
+                    popResource(level, pos, new ItemStack(NaturalistRegistry.GLOW_GOOP.get()));
+                }
+            }
+        }
+        return !useContext.isSecondaryUseActive() && useContext.getItemInHand().is(this.asItem()) && state.getValue(GOOP) < MAX_GOOP || super.canBeReplaced(state, useContext);
     }
 
 

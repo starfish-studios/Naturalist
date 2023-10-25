@@ -4,6 +4,7 @@
     "minecraft:mud",
     "#minecraft:leaves",
     "#minecraft:flowers",
-    "minecraft:grass"
+    "minecraft:grass",
+    "minecraft:air"
   ]
 }

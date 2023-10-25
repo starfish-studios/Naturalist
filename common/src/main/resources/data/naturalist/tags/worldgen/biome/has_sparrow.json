@@ -1,13 +1,13 @@
 {
   "values": [
-    "#minecraft:is_forest",
+    "minecraft:plains",
     "minecraft:cherry_grove",
     {
-      "id": "#forge:is_forest",
+      "id": "#forge:is_plains",
       "required": false
     },
     {
-      "id": "#c:forest",
+      "id": "#c:plains",
       "required": false
     }
   ]
