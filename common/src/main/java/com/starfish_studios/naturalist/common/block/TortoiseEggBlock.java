@@ -4,6 +4,7 @@ import com.starfish_studios.naturalist.common.entity.Alligator;
 import com.starfish_studios.naturalist.common.entity.Tortoise;
 import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
+import com.starfish_studios.naturalist.core.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -84,13 +85,15 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     private boolean canDestroyEgg(Level level, Entity entity) {
-        if (entity instanceof Alligator) {
+        if (!(entity instanceof Tortoise) && !(entity.getType().is(NaturalistTags.EntityTypes.SAFE_EGG_WALKERS))) {
+            if (!(entity instanceof LivingEntity)) {
+                return false;
+            } else {
+                return entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+            }
+        } else {
             return false;
         }
-        if (entity instanceof LivingEntity) {
-            return entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-        }
-        return false;
     }
 
     private void decreaseEggs(Level level, BlockPos pos, BlockState state) {

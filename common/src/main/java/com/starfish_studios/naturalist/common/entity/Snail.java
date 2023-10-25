@@ -1,8 +1,11 @@
 package com.starfish_studios.naturalist.common.entity;
 
 import com.starfish_studios.naturalist.common.entity.core.ClimbingAnimal;
+import com.starfish_studios.naturalist.common.entity.core.EggLayingAnimal;
 import com.starfish_studios.naturalist.common.entity.core.HidingAnimal;
+import com.starfish_studios.naturalist.common.entity.core.ai.goal.EggLayingBreedGoal;
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.HideGoal;
+import com.starfish_studios.naturalist.common.entity.core.ai.goal.LayEggGoal;
 import com.starfish_studios.naturalist.core.registry.*;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
@@ -12,6 +15,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -26,7 +30,10 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -40,10 +47,14 @@ import software.bernie.geckolib.core.animation.AnimationState;
 
 import java.util.*;
 
-public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, HidingAnimal {
+public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, HidingAnimal, EggLayingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEETROOT);
     private static EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_COLOR;
+    private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    int layEggCounter;
 
     public Snail(EntityType<? extends Animal> type, Level level) {
         super(type, level);
@@ -59,9 +70,11 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new HideGoal<>(this));
-        this.goalSelector.addGoal(1, new SnailStrollGoal(this, 0.9D, 0.0F));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new EggLayingBreedGoal<>(this, 1.0));
+        this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
+        this.goalSelector.addGoal(2, new SnailStrollGoal(this, 0.9D, 0.0F));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
     }
 
     @Override
@@ -74,9 +87,57 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
         return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
     }
 
+
     @Override
     public boolean canBreatheUnderwater() {
         return true;
+    }
+
+    @Override
+    public boolean hasEgg() {
+        return this.entityData.get(HAS_EGG);
+    }
+
+    @Override
+    public void setHasEgg(boolean hasEgg) {
+        this.entityData.set(HAS_EGG, hasEgg);
+    }
+
+    @Override
+    public Block getEggBlock() {
+        return NaturalistBlocks.SNAIL_EGGS.get();
+    }
+
+    @Override
+    public TagKey<Block> getEggLayableBlockTag() {
+        return NaturalistTags.BlockTags.ALLIGATOR_EGG_LAYABLE_ON;
+    }
+
+    @Override
+    public boolean isLayingEgg() {
+        return this.entityData.get(LAYING_EGG);
+    }
+
+    @Override
+    public void setLayingEgg(boolean isLayingEgg) {
+        this.layEggCounter = isLayingEgg ? 1 : 0;
+        this.entityData.set(LAYING_EGG, isLayingEgg);
+    }
+
+
+    @Override
+    public int getLayEggCounter() {
+        return this.layEggCounter;
+    }
+
+    @Override
+    public void setLayEggCounter(int layEggCounter) {
+        this.layEggCounter = layEggCounter;
+    }
+
+    @Override
+    public boolean canFallInLove() {
+        return super.canFallInLove() && !this.hasEgg();
     }
 
     @Override
@@ -92,12 +153,12 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return null;
+        return NaturalistEntityTypes.SNAIL.get().create(level);
     }
 
     @Override
-    public boolean isFood(ItemStack pStack) {
-        return false;
+    public boolean isFood(@NotNull ItemStack stack) {
+        return FOOD_ITEMS.test(stack);
     }
 
     public boolean requiresCustomPersistence() {
@@ -107,6 +168,11 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
     @Override
     public void aiStep() {
         super.aiStep();
+
+        /* BlockPos pos = this.blockPosition();
+        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
+            this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
+        } */
     }
 
     // BUCKETING
@@ -116,6 +182,8 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
         super.defineSynchedData();
         this.entityData.define(FROM_BUCKET, false);
         this.entityData.define(DATA_COLOR, Color.BROWN.getId());
+        this.entityData.define(HAS_EGG, false);
+        this.entityData.define(LAYING_EGG, false);
     }
 
     @Override
@@ -133,6 +201,7 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
         super.addAdditionalSaveData(pCompound);
         pCompound.putBoolean("FromBucket", this.fromBucket());
         pCompound.putByte("Color", (byte)this.getSnailColor().getId());
+        pCompound.putBoolean("HasEgg", this.hasEgg());
     }
 
     @Override
@@ -140,6 +209,7 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
         super.readAdditionalSaveData(pCompound);
         this.setFromBucket(pCompound.getBoolean("FromBucket"));
         this.setSnailColor(Color.BY_ID[pCompound.getInt("Color")]);
+        this.setHasEgg(pCompound.getBoolean("HasEgg"));
     }
 
 

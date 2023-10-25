@@ -13,7 +13,7 @@
 			"bones": [
 				{
 					"name": "root",
-					"pivot": [0.5, 1.6248, -0.42652]
+					"pivot": [0, 0, 0]
 				},
 				{
 					"name": "shell",

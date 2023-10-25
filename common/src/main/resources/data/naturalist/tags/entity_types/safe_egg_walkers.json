@@ -1,0 +1,18 @@
+{
+  "values": [
+    "naturalist:butterfly",
+    "naturalist:cardinal",
+    "naturalist:bluejay",
+    "naturalist:sparrow",
+    "naturalist:finch",
+    "naturalist:robin",
+    "naturalist:canary",
+    "naturalist:dragonfly",
+    "naturalist:firefly",
+    "minecraft:bat",
+    {
+      "id": "alexsmobs:shoebill",
+      "required": false
+    }
+  ]
+}

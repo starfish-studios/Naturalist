@@ -2,6 +2,7 @@ package com.starfish_studios.naturalist.common.block;
 
 import com.starfish_studios.naturalist.core.registry.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -86,13 +87,19 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-        return state.getValue(GOOP) < MAX_GOOP;
+        if (!useContext.getItemInHand().is(this.asItem())) {
+            BlockPos pos = useContext.getClickedPos();
+            Level level = useContext.getLevel();
+            if (!level.isClientSide()) {
+                this.decreaseGoop(level, pos, state);
+                int goop = state.getValue(GOOP);
+                for (int i = 0; i < goop; i++) {
+                    popResource(level, pos, new ItemStack(NaturalistItems.GLOW_GOOP.get()));
+                }
+            }
+        }
+        return !useContext.isSecondaryUseActive() && useContext.getItemInHand().is(this.asItem()) && state.getValue(GOOP) < MAX_GOOP || super.canBeReplaced(state, useContext);
     }
-
-
-
-    /** MISCELLANEOUS THINGS */
-    // These are tidbits that are used around the class but not super prominent or frequently touched individually.
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

@@ -59,6 +59,7 @@ public class NaturalistTags {
     }
 
     public static class EntityTypes {
+        public static final TagKey<EntityType<?>> SAFE_EGG_WALKERS = tag("safe_egg_walkers");
         public static final TagKey<EntityType<?>> OSTRICH_PREDATORS = tag("ostrich_predators");
         public static final TagKey<EntityType<?>> BEAR_HOSTILES = tag("bear_hostiles");
         public static final TagKey<EntityType<?>> SNAKE_HOSTILES = tag("snake_hostiles");

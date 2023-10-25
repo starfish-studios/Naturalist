@@ -10,7 +10,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -44,8 +48,9 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Caterpillar extends ClimbingAnimal implements GeoEntity {
+public class Caterpillar extends ClimbingAnimal implements GeoEntity, Catchable {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private static final EntityDataAccessor<Boolean> FROM_HAND;
 
     public Caterpillar(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -53,6 +58,13 @@ public class Caterpillar extends ClimbingAnimal implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 5.0D).add(Attributes.MOVEMENT_SPEED, 0.1F);
+    }
+
+
+    @Override
+    @NotNull
+    public MobType getMobType() {
+        return MobType.ARTHROPOD;
     }
 
     @Override
@@ -117,8 +129,6 @@ public class Caterpillar extends ClimbingAnimal implements GeoEntity {
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        // TODO: this was five
-        // data.setResetSpeedInTicks(5);
         controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
     }
 
@@ -126,8 +136,22 @@ public class Caterpillar extends ClimbingAnimal implements GeoEntity {
         return new ItemStack(NaturalistItems.CATERPILLAR.get());
     }
 
-    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
-        return Catchable.netCaterpillarPickup(player, hand, this).orElse(super.mobInteract(player, hand));
+
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(FROM_HAND, false);
+    }
+
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putBoolean("FromHand", this.fromHand());
+    }
+
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.setFromHand(compound.getBoolean("FromHand"));
     }
 
     public void saveToHandTag(ItemStack stack) {
@@ -143,12 +167,37 @@ public class Caterpillar extends ClimbingAnimal implements GeoEntity {
         if (tag.contains("Age")) {
             this.setAge(tag.getInt("Age"));
         }
-
-        if (tag.contains("HuntingCooldown")) {
-            this.getBrain().setMemoryWithExpiry(MemoryModuleType.HAS_HUNTING_COOLDOWN, true, tag.getLong("HuntingCooldown"));
-        }
-
     }
+
+    public boolean fromHand() {
+        return this.entityData.get(FROM_HAND);
+    }
+
+    public void setFromHand(boolean fromHand) {
+        this.entityData.set(FROM_HAND, fromHand);
+    }
+
+    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
+        return Catchable.catchAnimal(player, hand, this, true).orElse(super.mobInteract(player, hand));
+    }
+
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromHand();
+    }
+
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    public ItemStack getCaughtItemStack() {
+        return new ItemStack(NaturalistItems.CATERPILLAR.get());
+    }
+
+    @Override
+    public SoundEvent getPickupSound() {
+        return null;
+    }
+
 
     private static class CocoonGoal extends MoveToBlockGoal {
         private final Caterpillar caterpillar;
@@ -164,6 +213,7 @@ public class Caterpillar extends ClimbingAnimal implements GeoEntity {
         public boolean canUse() {
             return !caterpillar.isBaby() && super.canUse();
         }
+
 
         @Override
         protected boolean isValidTarget(LevelReader pLevel, BlockPos pPos) {
@@ -212,5 +262,10 @@ public class Caterpillar extends ClimbingAnimal implements GeoEntity {
         protected BlockPos getMoveToTarget() {
             return logPos.above();
         }
+    }
+
+
+    static {
+        FROM_HAND = SynchedEntityData.defineId(Caterpillar.class, EntityDataSerializers.BOOLEAN);
     }
 }

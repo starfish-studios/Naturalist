@@ -1,19 +1,23 @@
 package com.starfish_studios.naturalist.common.entity.core.ai.goal;
 
+import com.starfish_studios.naturalist.common.entity.Alligator;
+import com.starfish_studios.naturalist.common.entity.Snail;
+import com.starfish_studios.naturalist.common.entity.Tortoise;
 import com.starfish_studios.naturalist.common.entity.core.EggLayingAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.TurtleEggBlock;
 
 public class LayEggGoal<T extends Animal & EggLayingAnimal> extends MoveToBlockGoal {
     private final T animal;
-
     public LayEggGoal(T animal, double speedModifier) {
         super(animal, speedModifier, 16);
         this.animal = animal;
@@ -45,10 +49,15 @@ public class LayEggGoal<T extends Animal & EggLayingAnimal> extends MoveToBlockG
         if (!this.animal.isInWater() && this.isReachedTarget()) {
             if (this.animal.getLayEggCounter() < 1) {
                 this.animal.setLayingEgg(true);
-            } else if (this.animal.getLayEggCounter() > this.adjustedTickDelay(200)) {
+            } else if (this.animal.getLayEggCounter() > this.adjustedTickDelay(60)) {
                 Level level = this.animal.level();
                 level.playSound(null, blockPos, SoundEvents.TURTLE_LAY_EGG, SoundSource.BLOCKS, 0.3f, 0.9f + level.random.nextFloat() * 0.2f);
-                level.setBlock(this.blockPos.above(), this.animal.getEggBlock().defaultBlockState().setValue(TurtleEggBlock.EGGS, this.animal.getRandom().nextInt(4) + 1), 3);
+                if (this.animal instanceof Alligator || this.animal instanceof Tortoise) {
+                    level.setBlock(this.blockPos.above(), this.animal.getEggBlock().defaultBlockState().setValue(TurtleEggBlock.EGGS, this.animal.getRandom().nextInt(4) + 1), 3);
+                }
+                else if (this.animal instanceof Snail) {
+                    level.setBlock(this.blockPos.above(), this.animal.getEggBlock().defaultBlockState(), 3);
+                }
                 this.animal.setHasEgg(false);
                 this.animal.setLayingEgg(false);
                 this.animal.setInLoveTime(600);

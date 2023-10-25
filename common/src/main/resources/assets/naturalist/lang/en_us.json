@@ -18,6 +18,7 @@
 
 
   "entity.naturalist.snail": "Snail",
+  "block.naturalist.snail_eggs": "Snail Eggs",
 
   "tooltip.naturalist.white": "White",
   "tooltip.naturalist.black": "Black",
@@ -84,6 +85,9 @@
   "block.naturalist.azure_froglass": "Azure Froglass",
   "block.naturalist.verdant_froglass": "Verdant Froglass",
   "block.naturalist.crimson_froglass": "Crimson Froglass",
+  "block.naturalist.azure_froglass_pane": "Azure Froglass Pane",
+  "block.naturalist.verdant_froglass_pane": "Verdant Froglass Pane",
+  "block.naturalist.crimson_froglass_pane": "Crimson Froglass Pane",
   "item.naturalist.cooked_venison": "Cooked Venison",
   "item.naturalist.bass": "Raw Bass",
   "item.naturalist.cooked_bass": "Cooked Bass",

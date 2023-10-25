@@ -23,6 +23,7 @@ public class NaturalistClient {
         ClientPlatformHelper.setRenderLayer(NaturalistBlocks.VERDANT_FROGLASS_PANE, RenderType.translucent());
         ClientPlatformHelper.setRenderLayer(NaturalistBlocks.CRIMSON_FROGLASS, RenderType.translucent());
         ClientPlatformHelper.setRenderLayer(NaturalistBlocks.CRIMSON_FROGLASS_PANE, RenderType.translucent());
+        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.SNAIL_EGGS, RenderType.cutout());
 
         ClientPlatformHelper.setRenderLayer(NaturalistBlocks.CATTAIL, RenderType.cutout());
         ClientPlatformHelper.setRenderLayer(NaturalistBlocks.DUCKWEED, RenderType.cutout());

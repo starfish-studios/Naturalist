@@ -41,6 +41,7 @@ public class NaturalistFabric implements ModInitializer {
         Naturalist.registerBrewingRecipes();
         Naturalist.registerCompostables();
         Naturalist.registerSpawnPlacements();
+        Naturalist.registerDispenserBehaviors();
 
         NaturalistBlocks.addAllToCreativeTab();
         NaturalistItems.addAllToCreativeTab();

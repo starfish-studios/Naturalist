@@ -1,6 +1,7 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
+import com.starfish_studios.naturalist.common.entity.Alligator;
 import com.starfish_studios.naturalist.common.entity.Snail;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -41,8 +42,20 @@ public class SnailModel extends GeoModel<Snail> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+
         CoreGeoBone leftEye = this.getAnimationProcessor().getBone("left_eye");
         CoreGeoBone rightEye = this.getAnimationProcessor().getBone("right_eye");
+        CoreGeoBone eyes = this.getAnimationProcessor().getBone("eyes");
+
+        if (animatable.isBaby()) {
+            eyes.setScaleX(1.5F);
+            eyes.setScaleY(1.5F);
+            eyes.setScaleZ(1.5F);
+        } else {
+            eyes.setScaleX(1.0F);
+            eyes.setScaleY(1.0F);
+            eyes.setScaleZ(1.0F);
+        }
 
         if (!animatable.isClimbing() || !animatable.canHide()) {
             leftEye.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
