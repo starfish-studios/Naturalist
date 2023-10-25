@@ -1,6 +1,9 @@
 package com.starfish_studios.naturalist.entity.ai.goal;
 
+import com.starfish_studios.naturalist.entity.Alligator;
 import com.starfish_studios.naturalist.entity.EggLayingAnimal;
+import com.starfish_studios.naturalist.entity.Snail;
+import com.starfish_studios.naturalist.entity.Tortoise;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -48,7 +51,12 @@ public class LayEggGoal<T extends Animal & EggLayingAnimal> extends MoveToBlockG
             } else if (this.animal.getLayEggCounter() > this.adjustedTickDelay(200)) {
                 Level level = this.animal.level;
                 level.playSound(null, blockPos, SoundEvents.TURTLE_LAY_EGG, SoundSource.BLOCKS, 0.3f, 0.9f + level.random.nextFloat() * 0.2f);
-                level.setBlock(this.blockPos.above(), this.animal.getEggBlock().defaultBlockState().setValue(TurtleEggBlock.EGGS, this.animal.getRandom().nextInt(4) + 1), 3);
+                if (this.animal instanceof Alligator || this.animal instanceof Tortoise) {
+                    level.setBlock(this.blockPos.above(), this.animal.getEggBlock().defaultBlockState().setValue(TurtleEggBlock.EGGS, this.animal.getRandom().nextInt(4) + 1), 3);
+                }
+                else if (this.animal instanceof Snail) {
+                    level.setBlock(this.blockPos.above(), this.animal.getEggBlock().defaultBlockState(), 3);
+                }
                 this.animal.setHasEgg(false);
                 this.animal.setLayingEgg(false);
                 this.animal.setInLoveTime(600);

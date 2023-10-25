@@ -4,6 +4,7 @@ import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.item.fabric.CaughtMobItem;
 import com.starfish_studios.naturalist.item.fabric.CaughtMobWithVariantsItem;
 import com.starfish_studios.naturalist.item.fabric.NoFluidMobBucketItem;
+import com.starfish_studios.naturalist.item.fabric.NoFluidMobBucketWithVariantsItem;
 import com.starfish_studios.naturalist.mixin.fabric.PotionBrewingInvoker;
 import com.starfish_studios.naturalist.mixin.fabric.SpawnPlacementsInvoker;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -39,6 +40,10 @@ public class CommonPlatformHelperImpl {
 
     public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
         return registerItem(name, () ->  new NoFluidMobBucketItem(entitySupplier, fluidSupplier.get(), soundSupplier.get(), new Item.Properties().tab(Naturalist.TAB).stacksTo(1)));
+    }
+
+    public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, int color) {
+        return registerItem(name, () ->  new NoFluidMobBucketWithVariantsItem(entitySupplier, fluidSupplier.get(), soundSupplier.get(), color, new Item.Properties().tab(Naturalist.TAB).stacksTo(1)));
     }
 
     public static Supplier<Item> registerMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {

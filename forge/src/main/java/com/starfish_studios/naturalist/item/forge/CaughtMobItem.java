@@ -2,6 +2,7 @@ package com.starfish_studios.naturalist.item.forge;
 
 import com.starfish_studios.naturalist.entity.Butterfly;
 import com.starfish_studios.naturalist.entity.Catchable;
+import com.starfish_studios.naturalist.entity.Snail;
 import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;

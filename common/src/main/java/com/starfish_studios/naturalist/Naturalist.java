@@ -92,6 +92,7 @@ public class Naturalist {
                 Snail snail = (Snail) NaturalistEntityTypes.SNAIL.get().spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
                 if (snail != null) {
                     stack.shrink(1);
+                    snail.setSnailColor(Snail.Color.getTypeById(stack.getOrCreateTag().getInt("Color")));
                     return new ItemStack(Items.BUCKET);
                 }
                 return stack;

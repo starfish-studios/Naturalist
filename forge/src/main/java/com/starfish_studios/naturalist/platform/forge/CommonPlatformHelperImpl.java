@@ -4,6 +4,7 @@ import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.item.forge.CaughtMobItem;
 import com.starfish_studios.naturalist.item.forge.CaughtMobWithVariantsItem;
 import com.starfish_studios.naturalist.item.forge.NoFluidMobBucketItem;
+import com.starfish_studios.naturalist.item.forge.NoFluidMobBucketWithVariantsItem;
 import com.starfish_studios.naturalist.util.forge.NaturalistBrewingRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -43,6 +44,10 @@ public class CommonPlatformHelperImpl {
 
     public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
         return ITEMS.register(name, () -> new NoFluidMobBucketItem(entitySupplier, fluidSupplier, soundSupplier, new Item.Properties().tab(Naturalist.TAB).stacksTo(1)));
+    }
+
+    public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, int color) {
+        return ITEMS.register(name, () -> new NoFluidMobBucketWithVariantsItem(entitySupplier, fluidSupplier, soundSupplier, new Item.Properties().tab(Naturalist.TAB).stacksTo(1), color));
     }
 
     public static Supplier<Item> registerMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {

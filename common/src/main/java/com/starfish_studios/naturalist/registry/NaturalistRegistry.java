@@ -60,6 +60,8 @@ public class NaturalistRegistry {
         public static final Supplier<Item> CATTAIL_FLUFF = CommonPlatformHelper.registerItem("cattail_fluff", () -> new Item(new Item.Properties().tab(Naturalist.TAB)));
         public static final Supplier<Block> TORTOISE_EGG = registerBlock("tortoise_egg", () -> new TortoiseEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
         public static final Supplier<Block> ALLIGATOR_EGG = registerBlock("alligator_egg", () -> new AlligatorEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
+        // Snail Egg
+        public static final Supplier<Block> SNAIL_EGGS = registerBlock("snail_eggs", () -> new SnailEggBlock(BlockBehaviour.Properties.copy(Blocks.FROGSPAWN)));
         public static final Supplier<Item> DUCK_EGG = CommonPlatformHelper.registerItem("duck_egg", () -> new DuckEggItem(new Item.Properties().tab(Naturalist.TAB)));
         public static final Supplier<Item> COOKED_EGG = CommonPlatformHelper.registerItem("cooked_egg", () -> new Item(new Item.Properties().tab(Naturalist.TAB).food(Foods.BREAD)));
         public static final Supplier<Item> ANTLER = CommonPlatformHelper.registerItem("antler", () -> new Item(new Item.Properties().tab(Naturalist.TAB)));

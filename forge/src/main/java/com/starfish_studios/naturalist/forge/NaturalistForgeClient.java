@@ -30,6 +30,14 @@ public class NaturalistForgeClient {
             }
             return 0.2F;
         });
+
+        ItemProperties.register(NaturalistRegistry.SNAIL_BUCKET.get(), new ResourceLocation("color"), (stack, world, entity, num) -> {
+            CompoundTag compoundTag = stack.getTag();
+            if (compoundTag != null && compoundTag.contains("Color")) {
+                return (float)compoundTag.getInt("Color") / 15;
+            }
+            return 0.8F;
+        });
     }
 
     @SubscribeEvent

@@ -1,17 +1,12 @@
 package com.starfish_studios.naturalist.entity;
 
-import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.core.ClimbingAnimal;
-import com.starfish_studios.naturalist.common.entity.core.EggLayingAnimal;
-import com.starfish_studios.naturalist.common.entity.core.HidingAnimal;
-import com.starfish_studios.naturalist.common.entity.core.ai.goal.EggLayingBreedGoal;
-import com.starfish_studios.naturalist.common.entity.core.ai.goal.HideGoal;
-import com.starfish_studios.naturalist.common.entity.core.ai.goal.LayEggGoal;
-import com.starfish_studios.naturalist.core.registry.*;
 import com.starfish_studios.naturalist.entity.ai.goal.EggLayingBreedGoal;
 import com.starfish_studios.naturalist.entity.ai.goal.HideGoal;
 import com.starfish_studios.naturalist.entity.ai.goal.LayEggGoal;
-import com.starfish_studios.naturalist.registry.*;
+import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
+import com.starfish_studios.naturalist.registry.NaturalistRegistry;
+import com.starfish_studios.naturalist.registry.NaturalistSoundEvents;
+import com.starfish_studios.naturalist.registry.NaturalistTags;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -40,19 +35,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+
+public class Snail extends ClimbingAnimal implements IAnimatable, Bucketable, HidingAnimal, EggLayingAnimal {
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.*;
-
-public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, HidingAnimal, EggLayingAnimal {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEETROOT);
     private static EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_COLOR;
@@ -109,7 +109,7 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
 
     @Override
     public Block getEggBlock() {
-        return NaturalistBlocks.SNAIL_EGGS.get();
+        return NaturalistRegistry.SNAIL_EGGS.get();
     }
 
     @Override
