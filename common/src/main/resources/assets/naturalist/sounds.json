@@ -241,11 +241,30 @@
   },
   "entity.bird.ambient_robin": {
     "sounds": [
-      "naturalist:entity/bird/robin/idle1",
-      "naturalist:entity/bird/robin/idle2",
-      "naturalist:entity/bird/robin/idle3"
+      "naturalist:robin_idle",
+      "naturalist:robin_song"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_robin"
+  },
+  "entity.bird.ambient_finch": {
+    "sounds": [
+      "naturalist:entity/bird/finch/idle1",
+      "naturalist:entity/bird/finch/idle2",
+      "naturalist:entity/bird/finch/idle3",
+      "naturalist:entity/bird/finch/song1",
+      "naturalist:entity/bird/finch/song2",
+      "naturalist:entity/bird/finch/song3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.bird.ambient_finch"
+  },
+  "entity.bird.ambient_sparrow": {
+    "sounds": [
+      "naturalist:entity/bird/sparrow/idle1",
+      "naturalist:entity/bird/sparrow/idle2",
+      "naturalist:entity/bird/sparrow/idle3",
+      "naturalist:entity/bird/sparrow/idle4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.bird.ambient_sparrow"
   },
   "entity.bird.ambient_cardinal": {
     "sounds": [
@@ -598,5 +617,66 @@
         "naturalist:entity/duck/rubber_ducky/hurt2"
         ],
         "subtitle": "naturalist.subtitles.entity.duck.hurt"
-    }
+    },
+  "entity.hyena.ambient": {
+    "sounds": [
+      "naturalist:entity/hyena/idle1",
+      "naturalist:entity/hyena/idle2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.hyena.ambient"
+  },
+    "entity.hyena.hurt": {
+        "sounds": [
+        "naturalist:entity/hyena/hurt1"
+        ],
+        "subtitle": "naturalist.subtitles.entity.hyena.hurt"
+    },
+  "entity.ostrich.ambient": {
+    "sounds": [
+      "naturalist:entity/ostrich/idle1",
+      "naturalist:entity/ostrich/idle2",
+      "naturalist:entity/ostrich/idle3",
+      "naturalist:entity/ostrich/idle4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.ambient"
+  },
+    "entity.ostrich.hurt": {
+        "sounds": [
+        "naturalist:entity/ostrich/hurt1",
+        "naturalist:entity/ostrich/hurt2"
+        ],
+        "subtitle": "naturalist.subtitles.entity.ostrich.hurt"
+    },
+    "entity.ostrich.death": {
+        "sounds": [
+        "naturalist:entity/ostrich/hurt1",
+        "naturalist:entity/ostrich/hurt2"
+        ],
+        "subtitle": "naturalist.subtitles.entity.ostrich.death"
+    },
+  "entity.ostrich.egg_break": {
+    "sounds": [
+      "mob/turtle/egg/egg_break1",
+      "mob/turtle/egg/egg_break2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.egg_break"
+  },
+  "entity.ostrich.egg_crack": {
+    "sounds": [
+      "mob/turtle/egg/egg_crack1",
+      "mob/turtle/egg/egg_crack2",
+      "mob/turtle/egg/egg_crack3",
+      "mob/turtle/egg/egg_crack4",
+      "mob/turtle/egg/egg_crack5"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.egg_crack"
+  },
+  "entity.ostrich.egg_hatch": {
+    "sounds": [
+      "mob/turtle/baby/egg_hatched1",
+      "mob/turtle/baby/egg_hatched2",
+      "mob/turtle/baby/egg_hatched3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.egg_hatch"
+  }
 }
