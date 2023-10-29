@@ -80,7 +80,7 @@ public class Vulture extends PathfinderMob implements GeoEntity, FlyingAnimal {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new VultureAttackGoal(this, 1.2F, true));
         this.goalSelector.addGoal(2, new VultureSearchForFoodGoal(this, 1.2F, FOOD_ITEMS, 12, 24));
-        this.goalSelector.addGoal(3, new VultureWanderGoal(this));
+        this.goalSelector.addGoal(3, new FlyingWanderGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Monster.class, 10, false, false, entity -> entity.getType().is(NaturalistTags.EntityTypes.VULTURE_HOSTILES) && !FOOD_ITEMS.test(this.getMainHandItem())));
@@ -259,7 +259,6 @@ public class Vulture extends PathfinderMob implements GeoEntity, FlyingAnimal {
     }
 
     private <E extends Vulture> PlayState predicate(final AnimationState<E> event) {
-        // If the entity is flying and is moving upwards, play the fly animation.
         if (this.isFlying() && this.getDeltaMovement().y > 0) {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("fly2"));
             event.getController().setAnimationSpeed(1.5F);
@@ -289,30 +288,6 @@ public class Vulture extends PathfinderMob implements GeoEntity, FlyingAnimal {
         @Override
         public boolean isStableDestination(BlockPos pos) {
             return super.isStableDestination(pos) && this.mob.level().getBlockState(pos).is(NaturalistTags.BlockTags.VULTURE_PERCH_BLOCKS);
-        }
-    }
-
-    static class VultureWanderGoal extends FlyingWanderGoal {
-        public VultureWanderGoal(PathfinderMob mob) {
-            super(mob);
-        }
-
-        public void start() {
-            Vec3 vec3 = this.findPos();
-            if (vec3 != null) {
-                mob.getNavigation().moveTo(mob.getNavigation().createPath(BlockPos.containing(vec3), 1), 1.0);
-            }
-
-        }
-
-        @Nullable
-        private Vec3 findPos() {
-            Vec3 vec32;
-            vec32 = mob.getViewVector(0.0F);
-
-            boolean i = true;
-            Vec3 vec33 = HoverRandomPos.getPos(mob, 8, 16, vec32.x, vec32.z, 1.5707964F, 8, 4);
-            return vec33 != null ? vec33 : AirAndWaterRandomPos.getPos(mob, 8, 16, 5, vec32.x, vec32.z, 3);
         }
     }
 

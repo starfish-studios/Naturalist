@@ -33,6 +33,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -69,7 +70,7 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(0, new HideGoal<>(this));
+        // this.goalSelector.addGoal(0, new HideGoal<>(this));
         this.goalSelector.addGoal(1, new EggLayingBreedGoal<>(this, 1.0));
         this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
         this.goalSelector.addGoal(2, new SnailStrollGoal(this, 0.9D, 0.0F));
@@ -166,9 +167,22 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
     }
 
     @Override
-    public void aiStep() {
-        super.aiStep();
+    public void travel(Vec3 vec3) {
+        if (this.canHide()) {
+            this.setDeltaMovement(this.getDeltaMovement().multiply(0, 1, 0));
+            vec3 = vec3.multiply(0, 1, 0);
+        }
+        super.travel(vec3);
+    }
 
+    @Override
+    public void aiStep() {
+        if (this.canHide() || this.isImmobile()) {
+            this.jumping = false;
+            this.xxa = 0.0F;
+            this.zza = 0.0F;
+        }
+        super.aiStep();
         /* BlockPos pos = this.blockPosition();
         if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
             this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
@@ -393,7 +407,7 @@ public class Snail extends ClimbingAnimal implements GeoEntity, Bucketable, Hidi
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        AnimationController<Snail> controller = new AnimationController<>(this, "controller", 5, this::predicate);
+        AnimationController<Snail> controller = new AnimationController<>(this, "controller", 2, this::predicate);
         controller.setSoundKeyframeHandler(this::soundListener);
         controllers.add(controller);
     }

@@ -44,7 +44,6 @@ public class Alligator extends Animal implements GeoEntity, EggLayingAnimal {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.ALLIGATOR_FOOD_ITEMS);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> KILL_COOLDOWN = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.INT);
 
     int layEggCounter;
     boolean isDigging;
@@ -98,17 +97,7 @@ public class Alligator extends Animal implements GeoEntity, EggLayingAnimal {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new EggLayingBreedGoal<>(this, 1.0));
         this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
-        this.goalSelector.addGoal(2, new CloseMeleeAttackGoal(this, 1.0D, true)
-        {
-            public boolean canUse() {
-                return super.canUse() && !isBaby() && getKillCooldown() == 0;
-            }
-
-            public void stop() {
-                super.stop();
-                setKillCooldown(2400);
-            }
-        });
+        this.goalSelector.addGoal(2, new CloseMeleeAttackGoal(this, 1.0D, true));
         this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.2D));
         this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0D, 10));
@@ -189,29 +178,18 @@ public class Alligator extends Animal implements GeoEntity, EggLayingAnimal {
         super.defineSynchedData();
         this.entityData.define(HAS_EGG, false);
         this.entityData.define(LAYING_EGG, false);
-        this.entityData.define(KILL_COOLDOWN, 0);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("HasEgg", this.hasEgg());
-        compound.putInt("KillCooldown", this.getKillCooldown());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setHasEgg(compound.getBoolean("HasEgg"));
-        this.setKillCooldown(compound.getInt("KillCooldown"));
-    }
-
-    public void setKillCooldown(int ticks) {
-        this.entityData.set(KILL_COOLDOWN, ticks);
-    }
-
-    public int getKillCooldown() {
-        return this.entityData.get(KILL_COOLDOWN);
     }
 
     @Override
@@ -236,7 +214,6 @@ public class Alligator extends Animal implements GeoEntity, EggLayingAnimal {
         if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
             this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
         }
-        this.setKillCooldown(Math.max(0, this.getKillCooldown() - 1));
     }
 
     @Override
