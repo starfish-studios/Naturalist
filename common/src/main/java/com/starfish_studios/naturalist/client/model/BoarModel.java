@@ -16,7 +16,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class BoarModel extends GeoModel<Boar> {
     @Override
     public ResourceLocation getModelResource(Boar boar) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/boar.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/boar.geo.json");
     }
 
     @Override
@@ -26,7 +26,7 @@ public class BoarModel extends GeoModel<Boar> {
 
     @Override
     public ResourceLocation getAnimationResource(Boar boar) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/boar.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/boar.animation.json");
     }
 
     @Override

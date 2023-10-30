@@ -17,7 +17,7 @@ public class AlligatorModel extends GeoModel<Alligator> {
 
     @Override
     public ResourceLocation getModelResource(Alligator alligator) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/alligator.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/alligator.geo.json");
     }
 
     @Override
@@ -27,7 +27,7 @@ public class AlligatorModel extends GeoModel<Alligator> {
 
     @Override
     public ResourceLocation getAnimationResource(Alligator alligator) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/alligator.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/alligator.animation.json");
     }
 
     @Override

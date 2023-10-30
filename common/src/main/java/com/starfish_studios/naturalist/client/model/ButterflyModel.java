@@ -11,7 +11,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class ButterflyModel extends GeoModel<Butterfly> {
     @Override
     public ResourceLocation getModelResource(Butterfly butterfly) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/butterfly.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/butterfly.geo.json");
     }
 
     @Override
@@ -34,6 +34,6 @@ public class ButterflyModel extends GeoModel<Butterfly> {
 
     @Override
     public ResourceLocation getAnimationResource(Butterfly butterfly) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/butterfly.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/butterfly.animation.json");
     }
 }

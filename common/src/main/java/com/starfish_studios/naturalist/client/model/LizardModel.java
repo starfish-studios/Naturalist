@@ -23,7 +23,7 @@ public class LizardModel extends GeoModel<Lizard> {
 
     @Override
     public ResourceLocation getModelResource(Lizard lizard) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/lizard.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/lizard.geo.json");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class LizardModel extends GeoModel<Lizard> {
 
     @Override
     public ResourceLocation getAnimationResource(Lizard lizard) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/lizard.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/lizard.animation.json");
     }
 
     @Override

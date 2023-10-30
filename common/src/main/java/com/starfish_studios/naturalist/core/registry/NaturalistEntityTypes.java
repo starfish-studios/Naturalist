@@ -10,9 +10,11 @@ import java.util.function.Supplier;
 
 public class NaturalistEntityTypes {
 
+    // TROPICS
+    public static final Supplier<EntityType<Whale>> WHALE = CommonPlatformHelper.registerEntityType("whale", Whale::new, MobCategory.WATER_CREATURE, 0.9F, 0.6F, 16);
+
+
     // PROJECTILES
-
-
     public static final Supplier<EntityType<ThrownDuckEgg>> DUCK_EGG = CommonPlatformHelper.registerEntityType("duck_egg", ThrownDuckEgg::new, MobCategory.MISC, 0.25F, 0.25F, 16);
 
     // MOBS

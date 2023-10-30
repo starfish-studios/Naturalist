@@ -16,7 +16,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class GiraffeModel extends GeoModel<Giraffe> {
     @Override
     public ResourceLocation getModelResource(Giraffe giraffe) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/giraffe.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/giraffe.geo.json");
     }
 
     @Override
@@ -26,7 +26,7 @@ public class GiraffeModel extends GeoModel<Giraffe> {
 
     @Override
     public ResourceLocation getAnimationResource(Giraffe giraffe) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/giraffe.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/giraffe.animation.json");
     }
 
     @Override

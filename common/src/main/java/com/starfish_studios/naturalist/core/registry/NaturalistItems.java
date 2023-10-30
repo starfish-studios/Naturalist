@@ -19,6 +19,8 @@ import java.util.function.*;
 
 public class NaturalistItems {
 
+    public static final Supplier<SpawnEggItem> WHALE_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("whale_spawn_egg", NaturalistEntityTypes.WHALE, 0x000000, 0xFFFFFF);
+
 
 
     // public static final Supplier<Item> ANIMAL_CRATE = CommonPlatformHelper.registerItem("animal_crate", () -> new AnimalCrateBlockItem(NaturalistBlocks.ANIMAL_CRATE.get(), new Item.Properties()));

@@ -35,12 +35,12 @@ public class BirdModel extends GeoModel<Bird> {
 
     @Override
     public ResourceLocation getModelResource(Bird bird) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/bird.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/bird.geo.json");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Bird bird) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/bird.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/bird.animation.json");
     }
 
     @Override

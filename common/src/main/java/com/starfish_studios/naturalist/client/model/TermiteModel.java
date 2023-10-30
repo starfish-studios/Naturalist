@@ -11,7 +11,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class TermiteModel extends GeoModel<Termite> {
     @Override
     public ResourceLocation getModelResource(Termite object) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/termite.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/termite.geo.json");
     }
 
     @Override
@@ -21,6 +21,6 @@ public class TermiteModel extends GeoModel<Termite> {
 
     @Override
     public ResourceLocation getAnimationResource(Termite animatable) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/termite.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/termite.animation.json");
     }
 }

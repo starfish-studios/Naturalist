@@ -17,7 +17,7 @@ public class TortoiseModel extends GeoModel<Tortoise> {
 
     @Override
     public ResourceLocation getModelResource(Tortoise tortoise) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/tortoise.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/tortoise.geo.json");
     }
 
     @Override
@@ -31,7 +31,7 @@ public class TortoiseModel extends GeoModel<Tortoise> {
 
     @Override
     public ResourceLocation getAnimationResource(Tortoise tortoise) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/tortoise.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/tortoise.animation.json");
     }
 
     @Override

@@ -17,7 +17,7 @@ public class HyenaModel extends GeoModel<Hyena> {
 
     @Override
     public ResourceLocation getModelResource(Hyena hyena) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/hyena.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/hyena.geo.json");
     }
 
     @Override
@@ -27,7 +27,7 @@ public class HyenaModel extends GeoModel<Hyena> {
 
     @Override
     public ResourceLocation getAnimationResource(Hyena hyena) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/hyena.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/hyena.animation.json");
     }
 
     @Override

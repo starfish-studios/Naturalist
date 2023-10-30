@@ -15,7 +15,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class OstrichModel extends GeoModel<Ostrich> {
     @Override
     public ResourceLocation getModelResource(Ostrich ostrich) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/ostrich.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/ostrich.geo.json");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class OstrichModel extends GeoModel<Ostrich> {
 
     @Override
     public ResourceLocation getAnimationResource(Ostrich ostrich) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/ostrich.animation.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "animations/entity/ostrich.animation.json");
     }
 
     @Override
