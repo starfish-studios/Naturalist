@@ -97,27 +97,18 @@ public class Duck extends Animal implements GeoEntity {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        if (this.getName().getString().equals("Ducky")) {
-            return NaturalistSoundEvents.RUBBER_DUCKY_AMBIENT.get();
-        }
         return NaturalistSoundEvents.DUCK_AMBIENT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        if (this.getName().getString().equals("Ducky")) {
-            return NaturalistSoundEvents.RUBBER_DUCKY_HURT.get();
-        }
         return NaturalistSoundEvents.DUCK_HURT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        if (this.getName().getString().equals("Ducky")) {
-            return NaturalistSoundEvents.RUBBER_DUCKY_DEATH.get();
-        }
         return NaturalistSoundEvents.DUCK_DEATH.get();
     }
 

@@ -97,7 +97,7 @@ public class Zebra extends AbstractChestedHorse {
 
     @Override
     public double getPassengersRidingOffset() {
-        return super.getPassengersRidingOffset() + 0.25;
+        return super.getPassengersRidingOffset() + 0;
     }
 
     @Override

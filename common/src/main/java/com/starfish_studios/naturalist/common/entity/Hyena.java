@@ -52,7 +52,7 @@ public class Hyena extends TamableAnimal implements GeoEntity, NeutralMob {
     public Hyena(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
     }
-
+/*
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
@@ -64,6 +64,8 @@ public class Hyena extends TamableAnimal implements GeoEntity, NeutralMob {
     protected SoundEvent getAmbientSound() {
         return NaturalistSoundEvents.HYENA_AMBIENT.get();
     }
+
+ */
 
     // GOALS/ATTRIBUTES/BREEDING
 

@@ -1,5 +1,6 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "forge:mod_loaded",
+  "modid": "alexsmobs",
   "pattern": [
     "HHH",
     "HCH",

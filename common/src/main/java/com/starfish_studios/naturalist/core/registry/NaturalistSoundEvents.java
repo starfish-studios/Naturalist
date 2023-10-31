@@ -83,6 +83,8 @@ public class NaturalistSoundEvents {
     public static final Supplier<SoundEvent> BOAR_AMBIENT = CommonPlatformHelper.registerSoundEvent("boar_ambient", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.boar.ambient")));
     public static final Supplier<SoundEvent> BOAR_HURT = CommonPlatformHelper.registerSoundEvent("boar_hurt", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.boar.hurt")));
     public static final Supplier<SoundEvent> BOAR_DEATH = CommonPlatformHelper.registerSoundEvent("boar_death", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.boar.death")));
+
+   /*
     public static final Supplier<SoundEvent> HYENA_AMBIENT = CommonPlatformHelper.registerSoundEvent("hyena_ambient", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.hyena.ambient")));
     public static final Supplier<SoundEvent> HYENA_HURT = CommonPlatformHelper.registerSoundEvent("hyena_hurt", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.hyena.hurt")));
 
@@ -94,6 +96,8 @@ public class NaturalistSoundEvents {
     public static final Supplier<SoundEvent> OSTRICH_EGG_CRACK = CommonPlatformHelper.registerSoundEvent("ostrich_egg_crack", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.ostrich.egg_crack")));
     public static final Supplier<SoundEvent> OSTRICH_EGG_HATCH = CommonPlatformHelper.registerSoundEvent("ostrich_egg_hatch", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Naturalist.MOD_ID, "entity.ostrich.egg_hatch")));
 
+
+    */
 
 
     // SWAMP SOUNDS
