@@ -24,11 +24,11 @@ public class DuckModel extends AnimatedGeoModel<Duck> {
 
     @Override
     public ResourceLocation getTextureResource(Duck animal) {
-        if (animal.getName().getString().equals("Queso")) {
+        if (animal.getName().getString().equalsIgnoreCase("Queso")) {
             return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/duck/queso.png");
         }
-        else if (animal.getName().getString().equals("Ducky")) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/duck/rubber_ducky.png");
+        else if (animal.getName().getString().equalsIgnoreCase("Donald")) {
+            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/duck/donald.png");
         }
         return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/duck/duck.png");
     }

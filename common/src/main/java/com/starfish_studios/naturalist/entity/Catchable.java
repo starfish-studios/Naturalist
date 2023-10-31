@@ -123,8 +123,14 @@ public interface Catchable {
         if ((needsNet ? itemStack.getItem().equals(NaturalistRegistry.BUG_NET.get()) : itemStack.isEmpty()) && entity.isAlive()) {
             ItemStack caughtItemStack = entity.getCaughtItemStack();
             entity.saveToHandTag(caughtItemStack);
-            if (player.getItemInHand(otherHand).isEmpty()) {
-                player.setItemInHand(otherHand, caughtItemStack);
+            if (needsNet) {
+                itemStack.hurtAndBreak(1, player, (playerEntity) -> {
+                    playerEntity.broadcastBreakEvent(hand);
+                });
+            }
+            if (player.getInventory().add(caughtItemStack)) {
+                entity.discard();
+                return Optional.of(InteractionResult.SUCCESS);
             }
             else {
                 ItemHelper.spawnItemOnEntity(player, caughtItemStack);

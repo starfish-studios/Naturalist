@@ -33,6 +33,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -79,6 +80,15 @@ public class Snail extends ClimbingAnimal implements IAnimatable, Bucketable, Hi
         this.goalSelector.addGoal(2, new SnailStrollGoal(this, 0.9D, 0.0F));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+    }
+
+    @Override
+    public void travel(Vec3 vec3) {
+        if (this.canHide()) {
+            this.setDeltaMovement(this.getDeltaMovement().multiply(0, 1, 0));
+            vec3 = vec3.multiply(0, 1, 0);
+        }
+        super.travel(vec3);
     }
 
     @Override

@@ -237,21 +237,21 @@ public class Rhino extends Animal implements IAnimatable {
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (this.stunnedTick > 0) {
-            event.getController().setAnimation(new AnimationBuilder().loop("rhino.stunned"));
+            event.getController().setAnimation(new AnimationBuilder().loop("stunned"));
             event.getController().setAnimationSpeed(1.0F);
         } else if (event.isMoving()) {
             if (this.isSprinting()) {
-                event.getController().setAnimation(new AnimationBuilder().loop("rhino.run"));
+                event.getController().setAnimation(new AnimationBuilder().loop("run"));
                 event.getController().setAnimationSpeed(3.0F);
             } else {
-                event.getController().setAnimation(new AnimationBuilder().loop("rhino.walk"));
+                event.getController().setAnimation(new AnimationBuilder().loop("walk"));
                 event.getController().setAnimationSpeed(1.0F);
             }
         } else if (this.hasChargeCooldown() && this.hasTarget()) {
-            event.getController().setAnimation(new AnimationBuilder().loop("rhino.foot"));
+            event.getController().setAnimation(new AnimationBuilder().loop("foot"));
             event.getController().setAnimationSpeed(1.0F);
         } else {
-            event.getController().setAnimation(new AnimationBuilder().loop("rhino.idle"));
+            event.getController().setAnimation(new AnimationBuilder().loop("idle"));
             event.getController().setAnimationSpeed(1.0F);
         }
         return PlayState.CONTINUE;

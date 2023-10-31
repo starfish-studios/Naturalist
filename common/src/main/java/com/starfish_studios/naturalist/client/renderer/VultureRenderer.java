@@ -32,12 +32,12 @@ public class VultureRenderer extends GeoEntityRenderer<Vulture> {
 
     @Override
     public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        if (bone.getName().equals("head")) {
+        if (bone.getName().equals("held_item")) {
             stack.pushPose();
             stack.mulPose(Vector3f.XP.rotationDegrees(-90));
             stack.mulPose(Vector3f.YP.rotationDegrees(0));
             stack.mulPose(Vector3f.ZP.rotationDegrees(0));
-            stack.translate(0.0D, 0.6D, 0.2D);
+            stack.translate(0.0D, 1.1D, 0.25D);
 //            stack.scale(1.0F,1.0F,1.0F);
             Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, ItemTransforms.TransformType.GROUND, packedLightIn, packedOverlayIn, stack, this.rtb, 0);
             stack.popPose();

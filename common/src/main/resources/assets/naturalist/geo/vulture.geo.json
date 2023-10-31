@@ -39,6 +39,14 @@
 					]
 				},
 				{
+					"name": "held_item",
+					"parent": "head",
+					"pivot": [-0.5, 0, -2],
+					"cubes": [
+						{"origin": [0, 3, -21], "size": [0, 0, 0], "uv": [20, 37]}
+					]
+				},
+				{
 					"name": "right_wing",
 					"parent": "body",
 					"pivot": [-3.5, 5, -8],
