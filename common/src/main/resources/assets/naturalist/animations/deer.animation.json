@@ -116,9 +116,6 @@
 				"tail": {
 					"rotation": [-10, 0, "Math.cos((query.anim_time - 0.2) * 360) * 6"]
 				},
-				"head": {
-					"rotation": [0, 0, "Math.cos((query.anim_time - 0.0) * 360) * -3"]
-				},
 				"left_arm": {
 					"rotation": ["Math.cos((query.anim_time - 0.2) * 360) * 22.5", 0, 0],
 					"position": {
@@ -238,6 +235,9 @@
 						"0.9583": [0.2, -0.1, 0.3],
 						"1.0": [0.2, -0.1, 0.3]
 					}
+				},
+				"head_rot": {
+					"rotation": [0, 0, "Math.cos((query.anim_time - 0.0) * 360) * -3"]
 				}
 			}
 		},
