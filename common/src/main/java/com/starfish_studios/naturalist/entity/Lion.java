@@ -66,7 +66,7 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
         AgeableMobGroupData ageableMobGroupData;
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(true);
-            this.setHasMane(true);
+            this.setHasMane(this.getRandom().nextBoolean());
         }
         if ((ageableMobGroupData = (AgeableMobGroupData)spawnData).getGroupSize() > 2) {
             this.setAge(-24000);

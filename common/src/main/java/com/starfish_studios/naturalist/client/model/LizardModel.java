@@ -20,7 +20,8 @@ public class LizardModel extends AnimatedGeoModel<Lizard> {
     public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[]{
             new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/green.png"),
             new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/brown.png"),
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/pink.png")
+            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/beardie.png"),
+            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/leopard_gecko.png")
     };
 
     @Override

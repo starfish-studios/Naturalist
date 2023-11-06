@@ -8,7 +8,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -42,7 +46,8 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class Caterpillar extends ClimbingAnimal implements IAnimatable {
+public class Caterpillar extends ClimbingAnimal implements IAnimatable, Catchable {
+    private static final EntityDataAccessor<Boolean> FROM_HAND;
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     public Caterpillar(EntityType<? extends Animal> entityType, Level level) {
@@ -59,6 +64,73 @@ public class Caterpillar extends ClimbingAnimal implements IAnimatable {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new CocoonGoal(this, 1.0F, 5, 2));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0F));
+    }
+
+
+    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
+        return Catchable.catchAnimal(player, hand, this, true).orElse(super.mobInteract(player, hand));
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(FROM_HAND, false);
+    }
+
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putBoolean("FromHand", this.fromHand());
+    }
+
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.setFromHand(compound.getBoolean("FromHand"));
+    }
+
+    public ItemStack getCaughtItemStack() {
+        return new ItemStack(NaturalistRegistry.CATERPILLAR.get());
+    }
+
+    @Override
+    public SoundEvent getPickupSound() {
+        return null;
+    }
+
+    public boolean fromHand() {
+        return this.entityData.get(FROM_HAND);
+    }
+
+    public void setFromHand(boolean fromHand) {
+        this.entityData.set(FROM_HAND, fromHand);
+    }
+
+
+    public void saveToHandTag(ItemStack stack) {
+        Catchable.saveDefaultDataToHandTag(this, stack);
+        CompoundTag compoundTag = stack.getOrCreateTag();
+        compoundTag.putInt("Age", this.getAge());
+
+    }
+
+    public void loadFromHandTag(CompoundTag tag) {
+        Catchable.loadDefaultDataFromHandTag(this, tag);
+
+        if (tag.contains("Age")) {
+            this.setAge(tag.getInt("Age"));
+        }
+
+        if (tag.contains("HuntingCooldown")) {
+            this.getBrain().setMemoryWithExpiry(MemoryModuleType.HAS_HUNTING_COOLDOWN, true, tag.getLong("HuntingCooldown"));
+        }
+
+    }
+
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromHand();
+    }
+
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return !this.fromHand() && !this.hasCustomName();
     }
 
     @Override
@@ -125,30 +197,6 @@ public class Caterpillar extends ClimbingAnimal implements IAnimatable {
         return new ItemStack(NaturalistRegistry.CATERPILLAR.get());
     }
 
-    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
-        return Catchable.netCaterpillarPickup(player, hand, this).orElse(super.mobInteract(player, hand));
-    }
-
-    public void saveToHandTag(ItemStack stack) {
-        Catchable.saveDefaultDataToHandTag(this, stack);
-        CompoundTag compoundTag = stack.getOrCreateTag();
-        compoundTag.putInt("Age", this.getAge());
-
-    }
-
-    public void loadFromHandTag(CompoundTag tag) {
-        Catchable.loadDefaultDataFromHandTag(this, tag);
-
-        if (tag.contains("Age")) {
-            this.setAge(tag.getInt("Age"));
-        }
-
-        if (tag.contains("HuntingCooldown")) {
-            this.getBrain().setMemoryWithExpiry(MemoryModuleType.HAS_HUNTING_COOLDOWN, true, tag.getLong("HuntingCooldown"));
-        }
-
-    }
-
     private static class CocoonGoal extends MoveToBlockGoal {
         private final Caterpillar caterpillar;
         private Direction facing = Direction.NORTH;
@@ -211,5 +259,9 @@ public class Caterpillar extends ClimbingAnimal implements IAnimatable {
         protected BlockPos getMoveToTarget() {
             return logPos.above();
         }
+    }
+
+    static {
+        FROM_HAND = SynchedEntityData.defineId(Caterpillar.class, EntityDataSerializers.BOOLEAN);
     }
 }

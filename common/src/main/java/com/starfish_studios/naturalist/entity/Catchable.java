@@ -95,30 +95,9 @@ public interface Catchable {
         if (tag.contains("Health", 99)) {
             mob.setHealth(tag.getFloat("Health"));
         }
-
-    }
-    //TODO: make Caterpillar implement Catchable and get rid of this method
-    static <T extends LivingEntity & Catchable> Optional<InteractionResult> netCaterpillarPickup(Player player, InteractionHand hand, Caterpillar entity) {
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (itemStack.getItem() == Items.AIR && entity.isAlive()) {
-            ItemStack itemStack2 = entity.getHandItemStack();
-            entity.saveToHandTag(itemStack2);
-            ItemStack itemStack3 = ItemUtils.createFilledResult(itemStack, player, itemStack2, false);
-            player.setItemInHand(hand, itemStack3);
-            player.playSound(SoundEvents.ITEM_PICKUP, 0.3F, 1.0F);
-            Level level = entity.level;
-            if (!level.isClientSide) {
-                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, itemStack2);
-            }
-            entity.discard();
-            return Optional.of(InteractionResult.sidedSuccess(level.isClientSide));
-        } else {
-            return Optional.empty();
-        }
     }
 
     static <T extends LivingEntity & Catchable> Optional<InteractionResult> catchAnimal(Player player, InteractionHand hand, T entity, boolean needsNet) {
-        InteractionHand otherHand = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         ItemStack itemStack = player.getItemInHand(hand);
         if ((needsNet ? itemStack.getItem().equals(NaturalistRegistry.BUG_NET.get()) : itemStack.isEmpty()) && entity.isAlive()) {
             ItemStack caughtItemStack = entity.getCaughtItemStack();
