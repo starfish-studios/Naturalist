@@ -12,7 +12,8 @@ public class LizardTailModel extends GeoModel<LizardTail> {
     public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[]{
             new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/green_tail.png"),
             new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/brown_tail.png"),
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/pink_tail.png")
+            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/beardie_tail.png"),
+            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/leopard_gecko_tail.png"),
     };
 
     @Override

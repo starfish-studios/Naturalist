@@ -40,6 +40,7 @@ public class NoFluidMobBucketWithVariantsItem extends MobBucketItem {
         this.typeSup = entitySupplier;
     }
 
+    /*
     public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
         for (int i = 0; i < colorCount; i++) {
             ItemStack colorStack = new ItemStack(this);
@@ -49,6 +50,7 @@ public class NoFluidMobBucketWithVariantsItem extends MobBucketItem {
             items.add(colorStack);
         }
     }
+    */
 
     @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flagIn) {

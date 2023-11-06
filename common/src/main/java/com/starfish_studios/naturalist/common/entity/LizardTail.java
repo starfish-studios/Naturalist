@@ -34,7 +34,7 @@ public class LizardTail extends Mob implements GeoEntity {
     }
 
     public int getVariant() {
-        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 2);
+        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 3);
     }
 
     public void setVariant(int variant) {
