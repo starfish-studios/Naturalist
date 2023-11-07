@@ -210,9 +210,10 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        if (this.isSleeping()) {
-            event.getController().setAnimation(new AnimationBuilder().loop(this.hasMane() || this.isBaby() ? "sleep2" : "sleep"));
-            event.getController().setAnimationSpeed(1.0F);
+        if (this.isSleeping() && this.hasMane()) {
+            event.getController().setAnimation(new AnimationBuilder().loop("sleep2"));
+        } else if (this.isSleeping() && !this.hasMane()) {
+            event.getController().setAnimation(new AnimationBuilder().loop("sleep"));
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
                 event.getController().setAnimation(new AnimationBuilder().loop("run"));

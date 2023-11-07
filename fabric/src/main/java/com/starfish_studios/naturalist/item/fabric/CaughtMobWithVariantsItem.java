@@ -17,6 +17,7 @@ public class CaughtMobWithVariantsItem extends CaughtMobItem {
         this.variantCount = variantCount;
     }
 
+    /*
     @Override
     public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
         for (int i = 0; i < variantCount; i++) {
@@ -27,4 +28,5 @@ public class CaughtMobWithVariantsItem extends CaughtMobItem {
             items.add(variantStack);
         }
     }
+    */
 }
