@@ -26,7 +26,7 @@ public class LionModel extends AnimatedGeoModel<Lion> {
         return (lion.isSleeping() && lion.hasMane()) && !lion.isBaby() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_sleep.png") :
                 (!lion.hasMane() && lion.isSleeping() || lion.isBaby() && lion.isSleeping()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_sleep.png") :
                 (!lion.hasMane() && !lion.isAggressive() || lion.isBaby()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness.png") :
-                (lion.isAggressive()) && !lion.isBaby() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_angry.png") :
+                (lion.isAggressive()) && !lion.isBaby() && lion.hasMane() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion_angry.png") :
                 (!lion.hasMane() && lion.isAggressive()) || lion.isBaby() && lion.isAggressive() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lioness_angry.png") :
         new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion.png");
     }

@@ -269,7 +269,7 @@ public class Rhino extends Animal implements IAnimatable {
     private <E extends IAnimatable> PlayState attackPredicate(AnimationEvent<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
             event.getController().markNeedsReload();
-            event.getController().setAnimation(new AnimationBuilder().playOnce("rhino.attack"));
+            event.getController().setAnimation(new AnimationBuilder().playOnce("attack"));
             this.swinging = false;
         }
         return PlayState.CONTINUE;

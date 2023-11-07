@@ -235,7 +235,7 @@ public class Lion extends Animal implements IAnimatable, SleepingAnimal {
     private <E extends IAnimatable> PlayState attackPredicate(AnimationEvent<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
             event.getController().markNeedsReload();
-            event.getController().setAnimation(new AnimationBuilder().playOnce("swing"));
+            event.getController().setAnimation(new AnimationBuilder().playOnce("attack"));
             this.swinging = false;
         }
         return PlayState.CONTINUE;
