@@ -112,18 +112,27 @@ public class Boar extends Animal implements NeutralMob, GeoEntity {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
+        if (this.isBaby()) {
+            return NaturalistSoundEvents.BOAR_AMBIENT_BABY.get();
+        }
         return NaturalistSoundEvents.BOAR_AMBIENT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
+        if (this.isBaby()) {
+            return NaturalistSoundEvents.BOAR_HURT_BABY.get();
+        }
         return NaturalistSoundEvents.BOAR_HURT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
+        if (this.isBaby()) {
+            return NaturalistSoundEvents.BOAR_DEATH_BABY.get();
+        }
         return NaturalistSoundEvents.BOAR_DEATH.get();
     }
 
@@ -133,8 +142,18 @@ public class Boar extends Animal implements NeutralMob, GeoEntity {
     }
 
     @Override
+    public boolean doHurtTarget(Entity target) {
+        boolean bl = target.hurt(this.damageSources().mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
+        if (bl) {
+            this.playSound(NaturalistSoundEvents.BOAR_ATTACK.get(), 1.0F, 1.0F);
+        }
+
+        return bl;
+    }
+
+    @Override
     public float getVoicePitch() {
-        return this.isBaby() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.75F : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F;
+        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F;
     }
 
     @Override
