@@ -1,20 +1,20 @@
 {
   "itemGroup.naturalist.tab": "Естествовед",
 
-  "item.naturalist.bug_net": "Сачок для насекомых",
+  "item.naturalist.bug_net": "Сачок",
 
   "entity.naturalist.butterfly": "Бабочка",
   "item.naturalist.butterfly": "Бабочка",
   "entity.naturalist.moth": "Мотылёк",
   "item.naturalist.moth": "Мотылёк",
 
-  "tooltip.naturalist.cabbage_white": "Капуста белокочанная",
+  "tooltip.naturalist.cabbage_white": "Белянка капустная",
   "tooltip.naturalist.monarch": "Монарх",
-  "tooltip.naturalist.clouded_yellow": "Затуманенный желтый",
-  "tooltip.naturalist.swallowtail": "Ласточкин хвост",
-  "tooltip.naturalist.blue_morpho": "Синий Морфо",
-  "tooltip.naturalist.domestic_silk": "Домашний шёлк",
-  "tooltip.naturalist.polyphemus": "Полифем",
+  "tooltip.naturalist.clouded_yellow": "Желтушка шафрановая",
+  "tooltip.naturalist.swallowtail": "Парусник",
+  "tooltip.naturalist.blue_morpho": "Морфо",
+  "tooltip.naturalist.domestic_silk": "Тутовый шелкопряд",
+  "tooltip.naturalist.polyphemus": "Полифемовая",
 
 
   "entity.naturalist.snail": "Улитка",
@@ -34,7 +34,7 @@
   "tooltip.naturalist.light_gray": "Светло-серая",
   "tooltip.naturalist.cyan": "Бирюзовая",
   "tooltip.naturalist.lime": "Лаймовая",
-  "tooltip.naturalist.light_blue": "Светло-синяя",
+  "tooltip.naturalist.light_blue": "Голубая",
   "tooltip.naturalist.magenta": "Пурпурная",
 
 
@@ -88,7 +88,7 @@
   "block.naturalist.azure_froglass_pane": "Лазурная лягушачья стеклянная панель",
   "block.naturalist.verdant_froglass_pane": "Малахитовая лягушачья стеклянная панель",
   "block.naturalist.crimson_froglass_pane": "Багровая лягушачья стеклянная панель",
-  "item.naturalist.cooked_venison": "Приготовленная оленина",
+  "item.naturalist.cooked_venison": "Жареная оленина",
   "item.naturalist.bass": "Сырой окунь",
   "item.naturalist.cooked_bass": "Жареный окунь",
   "item.naturalist.glow_goop": "Светящаяся слизь",
@@ -135,7 +135,7 @@
 
   "block.naturalist.cut_shellstone": "Резной ракушечник",
   "block.naturalist.cut_shellstone_stairs": "Резные ракушечные ступеньки",
-  "block.naturalist.cut_shellstone_slab": "Резная ракуушечная плита",
+  "block.naturalist.cut_shellstone_slab": "Резная ракушечная плита",
   "block.naturalist.cut_shellstone_wall": "Резная ракушечная ограда",
 
   "block.naturalist.smooth_shellstone": "Гладкий ракушечник",
@@ -157,8 +157,8 @@
   "advancements.husbandry.ride_giraffe_with_map.title": "Целый новый мир",
   "advancements.husbandry.ride_giraffe_with_map.description": "Используйте карту во время катания на жирафе",
   "advancements.husbandry.feed_hippo_melon.title": "Голодные бегемоты",
-  "advancements.husbandry.feed_hippo_melon.description": "Скормите дыню бегемоту",
-  "advancements.husbandry.feed_bear_honeycomb.title": "О, черт возьми",
+  "advancements.husbandry.feed_hippo_melon.description": "Скормите арбуз бегемоту",
+  "advancements.husbandry.feed_bear_honeycomb.title": "О, чёрт",
   "advancements.husbandry.feed_bear_honeycomb.description": "Скормите пчелиные соты медведю",
 
 
