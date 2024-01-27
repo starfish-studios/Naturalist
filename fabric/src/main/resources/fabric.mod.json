@@ -31,7 +31,7 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.20.1",
-    "geckolib": ">=4.0.0"
+    "minecraft": ">=1.20.4",
+    "geckolib": ">=4.4.2"
   }
 }
