@@ -191,75 +191,58 @@
   },
   "entity.bird.hurt": {
     "sounds": [
-      "naturalist:entity/bird/hurt1",
-      "naturalist:entity/bird/hurt2",
-      "naturalist:entity/bird/hurt3",
-      "naturalist:entity/bird/hurt4",
-      "naturalist:entity/bird/hurt5"
+      "minecraft:mob/parrot/hurt1",
+      "minecraft:mob/parrot/hurt2"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.hurt"
   },
   "entity.bird.death": {
     "sounds": [
-      "naturalist:entity/bird/death1",
-      "naturalist:entity/bird/death2",
-      "naturalist:entity/bird/death3"
+      "minecraft:mob/parrot/death1",
+      "minecraft:mob/parrot/death2",
+      "minecraft:mob/parrot/death3",
+      "minecraft:mob/parrot/death4"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.death"
   },
   "entity.bird.eat": {
     "sounds": [
-      "naturalist:entity/bird/eat1",
-      "naturalist:entity/bird/eat2",
-      "naturalist:entity/bird/eat3",
-        "naturalist:entity/bird/eat4"
+      "minecraft:mob/parrot/eat1",
+      "minecraft:mob/parrot/eat2",
+      "minecraft:mob/parrot/eat3"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.eat"
   },
   "entity.bird.fly": {
     "sounds": [
-      "naturalist:entity/bird/fly1",
-      "naturalist:entity/bird/fly2",
-      "naturalist:entity/bird/fly3",
-      "naturalist:entity/bird/fly4",
-      "naturalist:entity/bird/fly5",
-      "naturalist:entity/bird/fly6"
+      "minecraft:mob/parrot/fly1",
+      "minecraft:mob/parrot/fly2",
+      "minecraft:mob/parrot/fly3",
+      "minecraft:mob/parrot/fly4",
+      "minecraft:mob/parrot/fly5",
+      "minecraft:mob/parrot/fly6",
+      "minecraft:mob/parrot/fly7"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.fly"
   },
   "entity.bird.ambient_bluejay": {
     "sounds": [
-      "naturalist:entity/bird/bluejay/idle1",
-      "naturalist:entity/bird/robin/idle2",
-      "naturalist:entity/bird/robin/idle3",
-      "naturalist:entity/bird/robin/idle4",
-      "naturalist:entity/bird/robin/idle5",
-      "naturalist:entity/bird/robin/idle6",
-      "naturalist:entity/bird/robin/idle7"
+      "naturalist:bluejay_idle_1",
+      "naturalist:bluejay_idle_2"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_bluejay"
   },
   "entity.bird.ambient_canary": {
     "sounds": [
-      "naturalist:entity/bird/canary/idle1",
-      "naturalist:entity/bird/canary/idle2",
-      "naturalist:entity/bird/canary/idle3",
-      "naturalist:entity/bird/canary/idle4",
-      "naturalist:entity/bird/canary/idle5",
-      "naturalist:entity/bird/canary/song6",
-      "naturalist:entity/bird/canary/song7"
+      "naturalist:canary_idle",
+      "naturalist:canary_song"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_canary"
   },
   "entity.bird.ambient_robin": {
     "sounds": [
-      "naturalist:entity/bird/robin/idle1",
-      "naturalist:entity/bird/robin/idle2",
-      "naturalist:entity/bird/robin/idle4",
-      "naturalist:entity/bird/robin/idle5",
-      "naturalist:entity/bird/robin/idle6",
-      "naturalist:entity/bird/robin/idle7",
-      "naturalist:entity/bird/robin/song3"
+      "naturalist:robin_idle",
+      "naturalist:robin_song"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_robin"
   },
@@ -268,9 +251,9 @@
       "naturalist:entity/bird/finch/idle1",
       "naturalist:entity/bird/finch/idle2",
       "naturalist:entity/bird/finch/idle3",
-      "naturalist:entity/bird/finch/idle4",
-      "naturalist:entity/bird/finch/idle5",
-      "naturalist:entity/bird/finch/idle6"
+      "naturalist:entity/bird/finch/song1",
+      "naturalist:entity/bird/finch/song2",
+      "naturalist:entity/bird/finch/song3"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_finch"
   },
@@ -279,20 +262,14 @@
       "naturalist:entity/bird/sparrow/idle1",
       "naturalist:entity/bird/sparrow/idle2",
       "naturalist:entity/bird/sparrow/idle3",
-      "naturalist:entity/bird/sparrow/idle4",
-      "naturalist:entity/bird/sparrow/idle5",
-      "naturalist:entity/bird/sparrow/idle6",
-      "naturalist:entity/bird/sparrow/idle7",
-      "naturalist:entity/bird/sparrow/idle8"
+      "naturalist:entity/bird/sparrow/idle4"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_sparrow"
   },
   "entity.bird.ambient_cardinal": {
     "sounds": [
-      "naturalist:entity/bird/cardinal/idle1",
-      "naturalist:entity/bird/cardinal/idle2",
-      "naturalist:entity/bird/cardinal/idle4",
-      "naturalist:entity/bird/cardinal/song3"
+      "naturalist:cardinal_idle",
+      "naturalist:cardinal_song"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_cardinal"
   },
@@ -336,56 +313,23 @@
   },
   "entity.lion.hurt": {
     "sounds": [
-      "naturalist:entity/lion/hurt1",
-      "naturalist:entity/lion/hurt2",
-      "naturalist:entity/lion/hurt3",
-      "naturalist:entity/lion/hurt4",
-      "naturalist:entity/lion/hurt5",
-      "naturalist:entity/lion/hurt6"
+      "naturalist:lion_hurt1"
     ],
     "subtitle": "naturalist.subtitles.entity.lion.hurt"
   },
   "entity.lion.ambient": {
     "sounds": [
-      "naturalist:entity/lion/idle1",
-      "naturalist:entity/lion/idle2",
-      "naturalist:entity/lion/idle3",
-      "naturalist:entity/lion/idle4",
-      "naturalist:entity/lion/idle5",
-      "naturalist:entity/lion/idle6",
-      "naturalist:entity/lion/idle7"
+      "naturalist:lion_idle1",
+      "naturalist:lion_roar1"
     ],
     "subtitle": "naturalist.subtitles.entity.lion.ambient"
   },
   "entity.lion.roar": {
     "sounds": [
-      "naturalist:entity/lion/roar1",
-      "naturalist:entity/lion/roar2",
-      "naturalist:entity/lion/roar3"
+      "naturalist:lion_roar1",
+      "naturalist:lion_roar2"
     ],
     "subtitle": "naturalist.subtitles.entity.lion.roar"
-  },
-  "entity.lion.sleep": {
-    "sounds": [
-      "naturalist:entity/lion/sleep1",
-      "naturalist:entity/lion/sleep2",
-      "naturalist:entity/lion/sleep3",
-      "naturalist:entity/lion/sleep4",
-      "naturalist:entity/lion/sleep5"
-    ],
-    "subtitle": "naturalist.subtitles.entity.lion.sleep"
-  },
-  "entity.lion.step": {
-    "sounds": [
-      "naturalist:entity/lion/step1",
-      "naturalist:entity/lion/step2",
-      "naturalist:entity/lion/step3",
-      "naturalist:entity/lion/step4",
-      "naturalist:entity/lion/step5",
-        "naturalist:entity/lion/step6",
-        "naturalist:entity/lion/step7"
-    ],
-    "subtitle": "naturalist.subtitles.entity.lion.step"
   },
   "entity.elephant.ambient": {
     "sounds": [
