@@ -448,16 +448,6 @@ public class Bear extends Animal implements NeutralMob, GeoEntity, SleepingAnima
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
-        boolean bl = target.hurt(this.damageSources().mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
-        if (bl) {
-            this.playSound(NaturalistSoundEvents.BEAR_ATTACK.get(), 1.0F, 1.0F);
-        }
-
-        return bl;
-    }
-
-    @Override
     public float getVoicePitch() {
         return this.isSleeping() ? super.getVoicePitch() * 0.3F : this.isBaby() ? super.getVoicePitch() * 0.4F : super.getVoicePitch();
     }
@@ -466,7 +456,6 @@ public class Bear extends Animal implements NeutralMob, GeoEntity, SleepingAnima
     protected void playStepSound(BlockPos pPos, BlockState pBlock) {
         this.playSound(SoundEvents.POLAR_BEAR_STEP, 0.15F, 1.0F);
     }
-
 
     // ANIMATION
     @Override

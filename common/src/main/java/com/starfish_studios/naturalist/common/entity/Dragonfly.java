@@ -1,6 +1,5 @@
 package com.starfish_studios.naturalist.common.entity;
 
-import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
 import com.starfish_studios.naturalist.core.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -9,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -59,16 +57,6 @@ public class Dragonfly extends PathfinderMob implements GeoEntity {
         super(entityType, level);
         this.setHoverTicks(30);
         this.setNoGravity(true);
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return NaturalistSoundEvents.DRAGONFLY_HURT.get();
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return NaturalistSoundEvents.DRAGONFLY_DEATH.get();
     }
 
     public static AttributeSupplier.Builder createAttributes() {

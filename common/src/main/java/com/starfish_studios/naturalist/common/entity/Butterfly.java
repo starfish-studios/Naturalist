@@ -90,16 +90,6 @@ public class Butterfly extends Animal implements GeoEntity, FlyingAnimal, Catcha
     }
 
     @Override
-    protected SoundEvent getAmbientSound() {
-        return NaturalistSoundEvents.BUTTERFLY_AMBIENT.get();
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-        return NaturalistSoundEvents.BUTTERFLY_HURT.get();
-    }
-
-    @Override
     protected PathNavigation createNavigation(Level pLevel) {
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, pLevel) {
             public boolean isStableDestination(BlockPos pPos) {

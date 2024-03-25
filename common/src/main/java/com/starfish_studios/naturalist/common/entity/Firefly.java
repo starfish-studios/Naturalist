@@ -213,11 +213,6 @@ public class Firefly extends Animal implements FlyingAnimal, GeoEntity {
         return NaturalistSoundEvents.FIREFLY_HURT.get();
     }
 
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return NaturalistSoundEvents.FIREFLY_AMBIENT.get();
-    }
-
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {

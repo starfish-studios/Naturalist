@@ -221,16 +221,6 @@ public class Lion extends Animal implements GeoEntity, SleepingAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
-        boolean bl = target.hurt(this.damageSources().mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
-        if (bl) {
-            this.playSound(NaturalistSoundEvents.LION_ATTACK.get(), 1.0F, 1.0F);
-        }
-
-        return bl;
-    }
-
-    @Override
     public int getAmbientSoundInterval() {
         return 900;
     }
@@ -436,6 +426,7 @@ public class Lion extends Animal implements GeoEntity, SleepingAnimal {
             this.speedModifier = this.mob.distanceTo(target) > 12 ? 0.5D : 1.5D;
             this.mob.getNavigation().moveTo(this.path, this.speedModifier);
             this.mob.setAggressive(true);
+            this.mob.playSound(NaturalistSoundEvents.LION_ROAR.get());
             this.ticksUntilNextPathRecalculation = 0;
             this.ticksUntilNextAttack = 0;
         }
