@@ -11,7 +11,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class ButterflyModel extends GeoModel<Butterfly> {
     @Override
     public ResourceLocation getModelResource(Butterfly butterfly) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/butterfly.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/butterfly.geo.json");
     }
 
     @Override

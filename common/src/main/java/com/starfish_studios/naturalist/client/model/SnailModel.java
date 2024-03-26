@@ -18,7 +18,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class SnailModel extends GeoModel<Snail> {
     @Override
     public ResourceLocation getModelResource(Snail snail) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/snail.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/snail.geo.json");
     }
 
     @Override

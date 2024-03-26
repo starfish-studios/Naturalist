@@ -5,6 +5,8 @@ import com.starfish_studios.naturalist.NaturalistClient;
 import com.starfish_studios.naturalist.client.model.ZebraModel;
 import com.starfish_studios.naturalist.client.renderer.ZebraRenderer;
 import com.starfish_studios.naturalist.core.registry.*;
+import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
+import com.starfish_studios.naturalist.core.registry.NaturalistItems;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;

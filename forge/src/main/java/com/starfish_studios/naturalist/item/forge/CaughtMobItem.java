@@ -1,7 +1,6 @@
 package com.starfish_studios.naturalist.item.forge;
 
 import com.starfish_studios.naturalist.common.entity.Butterfly;
-import com.starfish_studios.naturalist.common.entity.Moth;
 import com.starfish_studios.naturalist.common.entity.core.Catchable;
 import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
 import net.minecraft.ChatFormatting;

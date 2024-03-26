@@ -1,8 +1,5 @@
 package com.starfish_studios.naturalist.common.item;
 
-import com.starfish_studios.naturalist.common.entity.Butterfly;
-import com.starfish_studios.naturalist.common.entity.Moth;
-import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;

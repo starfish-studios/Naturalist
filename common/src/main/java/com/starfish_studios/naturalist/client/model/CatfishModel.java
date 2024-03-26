@@ -11,7 +11,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class CatfishModel extends GeoModel<Catfish> {
     @Override
     public ResourceLocation getModelResource(Catfish catfish) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/catfish.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/catfish.geo.json");
     }
 
     @Override

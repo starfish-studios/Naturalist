@@ -15,6 +15,6 @@ public class SnakeRenderer extends GeoEntityRenderer<Snake> {
     public SnakeRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new SnakeModel());
         this.shadowRadius = 0.4F;
-        this.addRenderLayer(new SleepLayer<>(this, new ResourceLocation(Naturalist.MOD_ID, "geo/snake.geo.json"), new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snake/snake_sleep.png")));
+        this.addRenderLayer(new SleepLayer<>(this, new ResourceLocation(Naturalist.MOD_ID, "geo/entity/snake.geo.json"), new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snake/snake_sleep.png")));
     }
 }

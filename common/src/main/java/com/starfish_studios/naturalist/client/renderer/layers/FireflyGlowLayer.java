@@ -21,7 +21,7 @@ public class FireflyGlowLayer extends GeoRenderLayer<Firefly> {
     private static final ResourceLocation BOTTOM_LAYER = new ResourceLocation(Naturalist.MOD_ID, "textures/entity/firefly/firefly_glow_bottom.png");
     private static final ResourceLocation LEFT_LAYER = new ResourceLocation(Naturalist.MOD_ID, "textures/entity/firefly/firefly_glow_left.png");
     private static final ResourceLocation RIGHT_LAYER = new ResourceLocation(Naturalist.MOD_ID, "textures/entity/firefly/firefly_glow_right.png");
-    private static final ResourceLocation MODEL = new ResourceLocation(Naturalist.MOD_ID, "geo/firefly.geo.json");
+    private static final ResourceLocation MODEL = new ResourceLocation(Naturalist.MOD_ID, "geo/entity/firefly.geo.json");
 
     public FireflyGlowLayer(GeoRenderer<Firefly> entityRendererIn) {
         super(entityRendererIn);

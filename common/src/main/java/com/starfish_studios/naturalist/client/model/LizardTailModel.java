@@ -18,7 +18,7 @@ public class LizardTailModel extends GeoModel<LizardTail> {
 
     @Override
     public ResourceLocation getModelResource(LizardTail lizard) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/lizard_tail.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/lizard_tail.geo.json");
     }
 
     @Override

@@ -16,7 +16,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class VultureModel extends GeoModel<Vulture> {
     @Override
     public ResourceLocation getModelResource(Vulture vulture) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/vulture.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/vulture.geo.json");
     }
 
     @Override

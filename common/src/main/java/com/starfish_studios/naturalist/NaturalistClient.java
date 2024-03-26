@@ -31,7 +31,6 @@ public class NaturalistClient {
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.SNAIL, SnailRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.BEAR, BearRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.BUTTERFLY, ButterflyRenderer::new);
-        // ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.MOTH, MothRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.FIREFLY, FireflyRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.SNAKE, SnakeRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.CORAL_SNAKE, SnakeRenderer::new);
@@ -64,7 +63,6 @@ public class NaturalistClient {
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.LIZARD_TAIL, LizardTailRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.TORTOISE, TortoiseRenderer::new);
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.DUCK, DuckRenderer::new);
-        // ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.OSTRICH, OstrichRenderer::new);
 
         // Set<Item> particleMarkerBlocks = new HashSet<>(ClientLevelMixin.getMARKER_PARTICLE_ITEMS());
         // particleMarkerBlocks.add(NaturalistItems.GLOW_GOOP.get());

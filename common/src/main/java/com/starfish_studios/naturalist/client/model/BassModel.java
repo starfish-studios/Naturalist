@@ -11,7 +11,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class BassModel extends GeoModel<Bass> {
     @Override
     public ResourceLocation getModelResource(Bass bass) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/bass.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/bass.geo.json");
     }
 
     @Override

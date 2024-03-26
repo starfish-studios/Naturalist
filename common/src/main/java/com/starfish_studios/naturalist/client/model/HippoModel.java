@@ -16,7 +16,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class HippoModel extends GeoModel<Hippo> {
     @Override
     public ResourceLocation getModelResource(Hippo hippo) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/hippo.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/hippo.geo.json");
     }
 
     @Override

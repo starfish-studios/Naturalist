@@ -11,7 +11,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class FireflyModel extends GeoModel<Firefly> {
     @Override
     public ResourceLocation getModelResource(Firefly firefly) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/firefly.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/firefly.geo.json");
     }
 
     @Override

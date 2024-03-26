@@ -16,7 +16,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class LionModel extends GeoModel<Lion> {
     @Override
     public ResourceLocation getModelResource(Lion lion) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/lion.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/lion.geo.json");
     }
 
     @Override

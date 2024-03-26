@@ -1,6 +1,6 @@
 //package com.starfish_studios.naturalist.item;
 //
-//import com.starfish_studios.naturalist.registry.NaturalistItems;
+//import com.starfish_studios.naturalist.core.registry.NaturalistItems;
 //import net.minecraft.sounds.SoundEvent;
 //import net.minecraft.sounds.SoundEvents;
 //import net.minecraft.util.LazyLoadedValue;

@@ -53,19 +53,19 @@
 
   "entity.snake.hiss": {
     "sounds": [
-      "naturalist:snake_hiss"
+      "naturalist:mob/snake/hiss"
     ],
     "subtitle": "naturalist.subtitles.entity.snake.hiss"
   },
   "entity.snake.hurt": {
     "sounds": [
-      "naturalist:snake_hurt"
+      "naturalist:mob/snake/hurt"
     ],
     "subtitle": "naturalist.subtitles.entity.snake.hurt"
   },
   "entity.snake.rattle": {
     "sounds": [
-      "naturalist:snake_rattle"
+      "naturalist:mob/snake/rattle"
     ],
     "subtitle": "naturalist.subtitles.entity.snake.rattle"
   },
@@ -81,25 +81,25 @@
   },
   "entity.snail.forward": {
     "sounds": [
-      "naturalist:snail_forward"
+      "naturalist:mob/snail/forward"
     ],
     "subtitle": "naturalist.subtitles.entity.snail.move"
   },
   "entity.snail.back": {
     "sounds": [
-      "naturalist:snail_back"
+      "naturalist:mob/snail/back"
     ],
     "subtitle": "naturalist.subtitles.entity.snail.move"
   },
   "item.bucket.fill_snail": {
     "sounds": [
-      "naturalist:bucket_fill_snail"
+      "naturalist:mob/snail/bucket_fill"
     ],
     "subtitle": "naturalist.subtitles.item.bucket.fill_snail"
   },
   "item.bucket.empty_snail": {
     "sounds": [
-      "naturalist:bucket_empty_snail"
+      "naturalist:mob/snail/bucket_empty"
     ],
     "subtitle": "naturalist.subtitles.item.bucket.empty_snail"
   },
@@ -227,160 +227,160 @@
   },
   "entity.bird.ambient_bluejay": {
     "sounds": [
-      "naturalist:bluejay_idle_1",
-      "naturalist:bluejay_idle_2"
+      "naturalist:mob/bird/bluejay/idle1",
+      "naturalist:mob/bird/bluejay/idle2"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_bluejay"
   },
   "entity.bird.ambient_canary": {
     "sounds": [
-      "naturalist:canary_idle",
-      "naturalist:canary_song"
+      "naturalist:mob/bird/canary/idle",
+      "naturalist:mob/bird/canary/song"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_canary"
   },
   "entity.bird.ambient_robin": {
     "sounds": [
-      "naturalist:robin_idle",
-      "naturalist:robin_song"
+      "naturalist:mob/bird/robin/idle",
+      "naturalist:mob/bird/robin/song"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_robin"
   },
   "entity.bird.ambient_finch": {
     "sounds": [
-      "naturalist:entity/bird/finch/idle1",
-      "naturalist:entity/bird/finch/idle2",
-      "naturalist:entity/bird/finch/idle3",
-      "naturalist:entity/bird/finch/song1",
-      "naturalist:entity/bird/finch/song2",
-      "naturalist:entity/bird/finch/song3"
+      "naturalist:mob/bird/finch/idle1",
+      "naturalist:mob/bird/finch/idle2",
+      "naturalist:mob/bird/finch/idle3",
+      "naturalist:mob/bird/finch/song1",
+      "naturalist:mob/bird/finch/song2",
+      "naturalist:mob/bird/finch/song3"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_finch"
   },
   "entity.bird.ambient_sparrow": {
     "sounds": [
-      "naturalist:entity/bird/sparrow/idle1",
-      "naturalist:entity/bird/sparrow/idle2",
-      "naturalist:entity/bird/sparrow/idle3",
-      "naturalist:entity/bird/sparrow/idle4"
+      "naturalist:mob/bird/sparrow/idle1",
+      "naturalist:mob/bird/sparrow/idle2",
+      "naturalist:mob/bird/sparrow/idle3",
+      "naturalist:mob/bird/sparrow/idle4"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_sparrow"
   },
   "entity.bird.ambient_cardinal": {
     "sounds": [
-      "naturalist:cardinal_idle",
-      "naturalist:cardinal_song"
+      "naturalist:mob/bird/cardinal/idle",
+      "naturalist:mob/bird/cardinal/song"
     ],
     "subtitle": "naturalist.subtitles.entity.bird.ambient_cardinal"
   },
   "entity.firefly.hurt": {
     "sounds": [
-      "naturalist:firefly_hurt"
+      "naturalist:mob/firefly/hurt"
     ],
     "subtitle": "naturalist.subtitles.entity.firefly.hurt"
   },
   "entity.firefly.death": {
     "sounds": [
-      "naturalist:firefly_death"
+      "naturalist:mob/firefly/death"
     ],
     "subtitle": "naturalist.subtitles.entity.firefly.death"
   },
   "entity.firefly.hide": {
     "sounds": [
-      "naturalist:firefly_hide"
+      "naturalist:mob/firefly/hide"
     ],
     "subtitle": "naturalist.subtitles.entity.firefly.hide"
   },
   "entity.rhino.scrape": {
     "sounds": [
-      "naturalist:rhino_scrape"
+      "naturalist:mob/rhino/scrape"
     ],
     "subtitle": "naturalist.subtitles.entity.rhino.scrape"
   },
   "entity.rhino.ambient": {
     "sounds": [
-      "naturalist:rhino_idle1",
-      "naturalist:rhino_idle2",
-      "naturalist:rhino_idle3"
+      "naturalist:mob/rhino/idle1",
+      "naturalist:mob/rhino/idle2",
+      "naturalist:mob/rhino/idle3"
     ],
     "subtitle": "naturalist.subtitles.entity.rhino.ambient"
   },
   "entity.rhino.ambient_baby": {
     "sounds": [
-      "naturalist:rhino_idle_baby"
+      "naturalist:mob/rhino/idle_baby"
     ],
     "subtitle": "naturalist.subtitles.entity.rhino.ambient_baby"
   },
   "entity.lion.hurt": {
     "sounds": [
-      "naturalist:lion_hurt1"
+      "naturalist:mob/lion/hurt1"
     ],
     "subtitle": "naturalist.subtitles.entity.lion.hurt"
   },
   "entity.lion.ambient": {
     "sounds": [
-      "naturalist:lion_idle1",
-      "naturalist:lion_roar1"
+      "naturalist:mob/lion/idle1",
+      "naturalist:mob/lion/roar1"
     ],
     "subtitle": "naturalist.subtitles.entity.lion.ambient"
   },
   "entity.lion.roar": {
     "sounds": [
-      "naturalist:lion_roar1",
-      "naturalist:lion_roar2"
+      "naturalist:mob/lion/roar1",
+      "naturalist:mob/lion/roar2"
     ],
     "subtitle": "naturalist.subtitles.entity.lion.roar"
   },
   "entity.elephant.ambient": {
     "sounds": [
-      "naturalist:elephant_idle1",
-      "naturalist:elephant_idle2",
-      "naturalist:elephant_hurt"
+      "naturalist:mob/elephant/idle1",
+      "naturalist:mob/elephant/idle2",
+      "naturalist:mob/elephant/hurt"
     ],
     "subtitle": "naturalist.subtitles.entity.elephant.ambient"
   },
   "entity.elephant.hurt": {
     "sounds": [
-      "naturalist:elephant_hurt"
+      "naturalist:mob/elephant/hurt"
     ],
     "subtitle": "naturalist.subtitles.entity.elephant.hurt"
   },
   "entity.deer.ambient": {
     "sounds": [
-      "naturalist:deer_idle1",
-      "naturalist:deer_idle2",
-      "naturalist:deer_idle3"
+      "naturalist:mob/deer/idle1",
+      "naturalist:mob/deer/idle2",
+      "naturalist:mob/deer/idle3"
     ],
     "subtitle": "naturalist.subtitles.entity.deer.ambient"
   },
   "entity.deer.hurt": {
     "sounds": [
-      "naturalist:deer_hurt"
+      "naturalist:mob/deer/hurt"
     ],
     "subtitle": "naturalist.subtitles.entity.deer.hurt"
   },
   "entity.deer.ambient_baby": {
     "sounds": [
-      "naturalist:fawn_idle"
+      "naturalist:mob/deer/fawn_idle"
     ],
     "subtitle": "naturalist.subtitles.entity.deer.ambient_baby"
   },
   "entity.deer.hurt_baby": {
     "sounds": [
-      "naturalist:fawn_hurt"
+      "naturalist:mob/deer/fawn_hurt"
     ],
     "subtitle": "naturalist.subtitles.entity.deer.hurt_baby"
   },
   "entity.zebra.ambient": {
     "sounds": [
-      "naturalist:zebra_idle1",
-      "naturalist:zebra_idle2"
+      "naturalist:mob/zebra/idle1",
+      "naturalist:mob/zebra/idle2"
     ],
     "subtitle": "naturalist.subtitles.entity.zebra.ambient"
   },
   "entity.zebra.hurt": {
     "sounds": [
-      "naturalist:zebra_hurt"
+      "naturalist:mob/zebra/hurt"
     ],
     "subtitle": "naturalist.subtitles.entity.zebra.hurt"
   },
@@ -422,67 +422,67 @@
   },
   "entity.vulture.ambient": {
     "sounds": [
-      "naturalist:vulture_idle"
+      "naturalist:mob/vulture/idle"
     ],
     "subtitle": "naturalist.subtitles.entity.vulture.ambient"
   },
   "entity.vulture.hurt": {
     "sounds": [
-      "naturalist:vulture_hurt"
+      "naturalist:mob/vulture/hurt"
     ],
     "subtitle": "naturalist.subtitles.entity.vulture.hurt"
   },
   "entity.vulture.death": {
     "sounds": [
-      "naturalist:vulture_death"
+      "naturalist:mob/vulture/death"
     ],
     "subtitle": "naturalist.subtitles.entity.vulture.death"
   },
   "entity.giraffe.ambient": {
     "sounds": [
-      "naturalist:giraffe_idle"
+      "naturalist:mob/giraffe/idle"
     ],
     "subtitle": "naturalist.subtitles.entity.giraffe.ambient"
   },
   "entity.hippo.ambient": {
     "sounds": [
-      "naturalist:hippo_idle1",
-      "naturalist:hippo_idle2"
+      "naturalist:mob/hippo/idle1",
+      "naturalist:mob/hippo/idle2"
     ],
     "subtitle": "naturalist.subtitles.entity.hippo.ambient"
   },
   "entity.hippo.hurt": {
     "sounds": [
-      "naturalist:hippo_hurt1",
-      "naturalist:hippo_hurt2",
-      "naturalist:hippo_hurt3"
+      "naturalist:mob/hippo/hurt1",
+      "naturalist:mob/hippo/hurt2",
+      "naturalist:mob/hippo/hurt3"
     ],
     "subtitle": "naturalist.subtitles.entity.hippo.hurt"
   },
   "entity.alligator.hurt": {
     "sounds": [
-      "naturalist:gator_hurt1",
-      "naturalist:gator_hurt2",
-      "naturalist:gator_hurt3"
+      "naturalist:mob/alligator/hurt1",
+      "naturalist:mob/alligator/hurt2",
+      "naturalist:mob/alligator/hurt3"
     ],
     "subtitle": "naturalist.subtitles.entity.alligator.hurt"
   },
   "entity.alligator.death": {
     "sounds": [
-      "naturalist:gator_death"
+      "naturalist:mob/alligator/death"
     ],
     "subtitle": "naturalist.subtitles.entity.alligator.death"
   },
   "entity.alligator.ambient": {
     "sounds": [
-      "naturalist:gator_idle1",
-      "naturalist:gator_idle2"
+      "naturalist:mob/alligator/idle1",
+      "naturalist:mob/alligator/idle2"
     ],
     "subtitle": "naturalist.subtitles.entity.alligator.ambient"
   },
   "entity.alligator.ambient_baby": {
     "sounds": [
-      "naturalist:gator_baby_idle"
+      "naturalist:mob/alligator/baby_idle"
     ],
     "subtitle": "naturalist.subtitles.entity.alligator.ambient_baby"
   },
@@ -575,46 +575,46 @@
   },
   "entity.duck.ambient": {
     "sounds": [
-      "naturalist:entity/duck/idle1",
-      "naturalist:entity/duck/idle2"
+      "naturalist:mob/duck/idle1",
+      "naturalist:mob/duck/idle2"
     ],
     "subtitle": "naturalist.subtitles.entity.duck.ambient"
   },
   "entity.duck.hurt": {
       "sounds": [
-      "naturalist:entity/duck/hurt1",
-      "naturalist:entity/duck/hurt2"
+      "naturalist:mob/duck/hurt1",
+      "naturalist:mob/duck/hurt2"
       ],
       "subtitle": "naturalist.subtitles.entity.duck.hurt"
   },
   "entity.duck.death": {
       "sounds": [
-        "naturalist:entity/duck/hurt1",
-        "naturalist:entity/duck/hurt2"
+        "naturalist:mob/duck/hurt1",
+        "naturalist:mob/duck/hurt2"
       ],
       "subtitle": "naturalist.subtitles.entity.duck.death"
   },
   "entity.duck.step": {
       "sounds": [
-      "naturalist:entity/duck/step1",
-      "naturalist:entity/duck/step2",
-      "naturalist:entity/duck/step3",
-      "naturalist:entity/duck/step4",
-      "naturalist:entity/duck/step5"
+      "naturalist:mob/duck/step1",
+      "naturalist:mob/duck/step2",
+      "naturalist:mob/duck/step3",
+      "naturalist:mob/duck/step4",
+      "naturalist:mob/duck/step5"
       ],
       "subtitle": "subtitles.block.generic.footsteps"
   },
     "entity.rubber_ducky.ambient": {
         "sounds": [
-        "naturalist:entity/duck/rubber_ducky/idle1",
-        "naturalist:entity/duck/rubber_ducky/idle2"
+        "naturalist:mob/duck/rubber_ducky/idle1",
+        "naturalist:mob/duck/rubber_ducky/idle2"
         ],
         "subtitle": "naturalist.subtitles.entity.duck.ambient"
     },
     "entity.rubber_ducky.hurt": {
         "sounds": [
-        "naturalist:entity/duck/rubber_ducky/hurt1",
-        "naturalist:entity/duck/rubber_ducky/hurt2"
+        "naturalist:mob/duck/rubber_ducky/hurt1",
+        "naturalist:mob/duck/rubber_ducky/hurt2"
         ],
         "subtitle": "naturalist.subtitles.entity.duck.hurt"
     }

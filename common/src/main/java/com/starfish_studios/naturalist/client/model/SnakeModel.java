@@ -17,7 +17,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 public class SnakeModel extends GeoModel<Snake> {
     @Override
     public ResourceLocation getModelResource(Snake snake) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/snake.geo.json");
+        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/snake.geo.json");
     }
 
     @Override
