@@ -6,27 +6,29 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 @Environment(EnvType.CLIENT)
 public class GiraffeModel extends GeoModel<Giraffe> {
     @Override
-    public ResourceLocation getModelResource(Giraffe giraffe) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/giraffe.geo.json");
+    public ResourceLocation getModelResource(Giraffe giraffe, @Nullable GeoRenderer<Giraffe> geoRenderer) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/giraffe.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(Giraffe giraffe) {
-        return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/giraffe.png");
+    public ResourceLocation getTextureResource(Giraffe giraffe, @Nullable GeoRenderer<Giraffe> geoRenderer) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/giraffe.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Giraffe giraffe) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/giraffe.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/giraffe.rp_anim.json");
     }
 
     @Override
@@ -37,7 +39,7 @@ public class GiraffeModel extends GeoModel<Giraffe> {
 
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        GeoBone head = this.getAnimationProcessor().getBone("head");
 
         if (entity.isBaby()) {
             head.setScaleX(1.3F);

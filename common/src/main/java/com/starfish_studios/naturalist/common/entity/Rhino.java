@@ -7,6 +7,7 @@ import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.registry.NaturalistSoundEvents;
 import com.starfish_studios.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -26,6 +27,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Ravager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -38,13 +40,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
@@ -66,7 +65,7 @@ public class Rhino extends Animal implements NaturalistGeoEntity {
 
     public Rhino(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(1.0f);
+        //this.setMaxUpStep(1.0f); //TODO: 1.21.4
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -74,12 +73,12 @@ public class Rhino extends Animal implements NaturalistGeoEntity {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, EntitySpawnReason pReason, @Nullable SpawnGroupData pSpawnData) {
         if (pSpawnData == null) {
             pSpawnData = new AgeableMobGroupData(1.0F);
         }
 
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     @Override
@@ -107,20 +106,20 @@ public class Rhino extends Animal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new RhinoNearestAttackablePlayerTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false, (p_213619_0_) -> p_213619_0_.getItemBySlot(EquipmentSlot.HEAD).getItem() == Items.CARVED_PUMPKIN));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false, (p_213619_0_, level) -> p_213619_0_.getItemBySlot(EquipmentSlot.HEAD).getItem() == Items.CARVED_PUMPKIN));
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return NaturalistEntityTypes.RHINO.get().create(serverLevel);
+        return NaturalistEntityTypes.RHINO.create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CHARGE_COOLDOWN_TICKS, 0);
-        this.entityData.define(HAS_TARGET, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CHARGE_COOLDOWN_TICKS, 0);
+        builder.define(HAS_TARGET, false);
     }
 
     @Override
@@ -182,7 +181,7 @@ public class Rhino extends Animal implements NaturalistGeoEntity {
             double d = this.getX() - (double)this.getBbWidth() * Math.sin(this.yBodyRot * ((float)Math.PI / 180)) + (this.random.nextDouble() * 0.6 - 0.3);
             double e = this.getY() + (double)this.getBbHeight() - 0.3;
             double f = this.getZ() + (double)this.getBbWidth() * Math.cos(this.yBodyRot * ((float)Math.PI / 180)) + (this.random.nextDouble() * 0.6 - 0.3);
-            this.level().addParticle(ParticleTypes.ENTITY_EFFECT, d, e, f, 0.4980392156862745, 0.5137254901960784, 0.5725490196078431);
+            this.level().addParticle(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, 0.4980392156862745F, 0.5137254901960784F, 0.5725490196078431F), d, e, f, 0.0, 0.0, 0.0);
         }
     }
 
@@ -211,13 +210,13 @@ public class Rhino extends Animal implements NaturalistGeoEntity {
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.5D);
         } else {
             this.setSprinting(false);
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     private boolean isWithinYRange(LivingEntity target) {
@@ -404,7 +403,7 @@ public class Rhino extends Animal implements NaturalistGeoEntity {
             if (this.mob.horizontalCollision && this.mob.onGround()) {
                 this.mob.jumpFromGround();
             }
-            if (this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            if (this.mob.level() instanceof ServerLevel serverLevel && serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
                 AABB boundingBox = this.mob.getBoundingBox().inflate(0.2);
                 for (BlockPos pos : BlockPos.betweenClosed(Mth.floor(boundingBox.minX), Mth.floor(boundingBox.minY), Mth.floor(boundingBox.minZ), Mth.floor(boundingBox.maxX), Mth.floor(boundingBox.maxY), Mth.floor(boundingBox.maxZ))) {
                     BlockState state = this.mob.level().getBlockState(pos);
@@ -422,19 +421,21 @@ public class Rhino extends Animal implements NaturalistGeoEntity {
         }
 
         protected void tryToHurt() {
-            List<LivingEntity> nearbyEntities = this.mob.level().getNearbyEntities(LivingEntity.class, TargetingConditions.forCombat(), this.mob, this.mob.getBoundingBox());
-            if (!nearbyEntities.isEmpty()) {
-                LivingEntity livingEntity = nearbyEntities.get(0);
-                if (!(livingEntity instanceof Rhino)) {
-                    livingEntity.hurt(livingEntity.damageSources().mobAttack(this.mob), (float) this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
-                    float speed = Mth.clamp(this.mob.getSpeed() * 1.65f, 0.2f, 3.0f);
-                    float shieldBlockModifier = livingEntity.isDamageSourceBlocked(livingEntity.damageSources().mobAttack(this.mob)) ? 0.5f : 1.0f;
-                    livingEntity.knockback(shieldBlockModifier * speed * 2.0D, this.chargeDirection.x(), this.chargeDirection.z());
-                    double knockbackResistance = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-                    livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(0.0, 0.4f * knockbackResistance, 0.0));
-                    this.mob.swing(InteractionHand.MAIN_HAND);
-                    if (livingEntity.equals(this.mob.getTarget())) {
-                        this.stop();
+            if (this.mob.level() instanceof ServerLevel serverLevel) {
+                List<LivingEntity> nearbyEntities = serverLevel.getNearbyEntities(LivingEntity.class, TargetingConditions.forCombat(), this.mob, this.mob.getBoundingBox());
+                if (!nearbyEntities.isEmpty()) {
+                    LivingEntity livingEntity = nearbyEntities.get(0);
+                    if (!(livingEntity instanceof Rhino)) {
+                        livingEntity.hurt(livingEntity.damageSources().mobAttack(this.mob), (float) this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                        float speed = Mth.clamp(this.mob.getSpeed() * 1.65f, 0.2f, 3.0f);
+                        float shieldBlockModifier = livingEntity.isDamageSourceBlocked(livingEntity.damageSources().mobAttack(this.mob)) ? 0.5f : 1.0f;
+                        livingEntity.knockback(shieldBlockModifier * speed * 2.0D, this.chargeDirection.x(), this.chargeDirection.z());
+                        double knockbackResistance = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+                        livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(0.0, 0.4f * knockbackResistance, 0.0));
+                        this.mob.swing(InteractionHand.MAIN_HAND);
+                        if (livingEntity.equals(this.mob.getTarget())) {
+                            this.stop();
+                        }
                     }
                 }
             }
@@ -445,7 +446,7 @@ public class Rhino extends Animal implements NaturalistGeoEntity {
         private final Rhino rhino;
 
         public RhinoNearestAttackablePlayerTargetGoal(Rhino mob) {
-            super(mob, Player.class, 10, true, true, EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+            super(mob, Player.class, 10, true, true, (livingEntity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity));
             this.rhino = mob;
         }
 

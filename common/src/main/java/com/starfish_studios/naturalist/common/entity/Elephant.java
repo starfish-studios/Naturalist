@@ -30,17 +30,15 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +58,7 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
 
     public Elephant(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(1.0F);
+        //this.setMaxUpStep(1.0F); //TODO: 1.21.4
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -74,7 +72,7 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         AgeableMobGroupData ageableMobGroupData;
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(true);
@@ -84,14 +82,14 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
         }
         ageableMobGroupData.increaseGroupSizeByOne();
         RandomSource random = level.getRandom();
-        this.getAttribute(Attributes.FOLLOW_RANGE).addPermanentModifier(new AttributeModifier("Random spawn bonus", random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.MULTIPLY_BASE));
+        this.getAttribute(Attributes.FOLLOW_RANGE).addPermanentModifier(new AttributeModifier(RANDOM_SPAWN_BONUS_ID, random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         return spawnData;
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return NaturalistEntityTypes.ELEPHANT.get().create(serverLevel);
+        return NaturalistEntityTypes.ELEPHANT.create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
 
@@ -101,13 +99,13 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.2D);
         } else {
             this.setSprinting(false);
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     @Override
@@ -146,8 +144,8 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
-        boolean shouldHurt = target.hurt(target.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity target) {
+        boolean shouldHurt = target.hurtServer(serverLevel, target.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         if (shouldHurt && target instanceof LivingEntity livingEntity) {
             Vec3 knockbackDirection = new Vec3(this.blockPosition().getX() - target.getX(), 0.0, this.blockPosition().getZ() - target.getZ()).normalize();
             float shieldBlockModifier = livingEntity.isDamageSourceBlocked(target.damageSources().mobAttack(this)) ? 0.5f : 1.0f;
@@ -160,11 +158,11 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
         // this.entityData.define(DIRTY_TICKS, 0);
-        this.entityData.define(REMAINING_ANGER_TIME, 0);
-        this.entityData.define(DRINKING, false);
+        builder.define(REMAINING_ANGER_TIME, 0);
+        builder.define(DRINKING, false);
     }
 
     @Override
@@ -180,6 +178,11 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
         this.readPersistentAngerSaveData(this.level(), pCompound);
         // this.setDirtyTicks(pCompound.getInt("DirtyTicks"));
         // this.updateContainerEquipment();
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return false;
     }
 
     // public void setDirtyTicks(int ticks) {
@@ -255,7 +258,7 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
-    private <E extends Elephant> PlayState predicate(final AnimationState<E> event) {
+    private <E extends Elephant> PlayState predicate(final software.bernie.geckolib.animation.AnimationState<E> event) {
         if (this.isBaby()) {
             event.setControllerSpeed(1.3f + event.getLimbSwingAmount());
         } else {
@@ -293,10 +296,11 @@ public class Elephant extends Animal implements NeutralMob, NaturalistGeoEntity 
             super(pathfinderMob, speedMultiplier, followingTargetEvenIfNotSeen);
         }
 
-        @Override
+        //TODO: 1.21.4
+        /*@Override
         protected double getAttackReachSqr(LivingEntity attackTarget) {
             return Mth.square(this.mob.getBbWidth());
-        }
+        }*/
     }
 
     /*static class ElephantMoveToWaterGoal extends MoveToBlockGoal {

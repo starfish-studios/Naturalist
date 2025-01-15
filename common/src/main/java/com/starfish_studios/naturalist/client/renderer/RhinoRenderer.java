@@ -26,7 +26,8 @@ public class RhinoRenderer extends GeoEntityRenderer<Rhino> {
         return 0.000001f;
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public void render(Rhino entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (entity.isBaby()) {
             poseStack.scale(0.5F, 0.5F, 0.5F);
@@ -34,9 +35,10 @@ public class RhinoRenderer extends GeoEntityRenderer<Rhino> {
             poseStack.scale(0.9F, 0.9F, 0.9F);
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
+    }*/
 
-   public RenderType getRenderType(Rhino entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
+    @Override
+    public @Nullable RenderType getRenderType(Rhino animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return RenderType.entityCutoutNoCull(texture);
     }
 }

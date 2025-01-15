@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
@@ -37,7 +38,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
                 level.removeBlock(pos, false);
                 for (int j = 0; j < state.getValue(EGGS); ++j) {
                     level.levelEvent(2001, pos, Block.getId(state));
-                    Tortoise tortoise = NaturalistEntityTypes.TORTOISE.get().create(level);
+                    Tortoise tortoise = NaturalistEntityTypes.TORTOISE.create(level, EntitySpawnReason.BREEDING);
                     tortoise.setAge(-24000);
                     tortoise.moveTo((double)pos.getX() + 0.3 + (double)j * 0.2, pos.getY(), (double)pos.getZ() + 0.3, 0.0f, 0.0f);
                     level.addFreshEntity(tortoise);
@@ -74,7 +75,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     private void destroyEgg(Level level, BlockState state, BlockPos pos, Entity entity, int chance) {
-        if (!this.canDestroyEgg(level, entity)) {
+        if (level instanceof ServerLevel serverLevel && !this.canDestroyEgg(serverLevel, entity)) {
             return;
         }
         if (!level.isClientSide && level.random.nextInt(chance) == 0 && state.is(Blocks.TURTLE_EGG)) {
@@ -82,7 +83,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
         }
     }
 
-    private boolean canDestroyEgg(Level level, Entity entity) {
+    private boolean canDestroyEgg(ServerLevel level, Entity entity) {
         if (!(entity instanceof Tortoise) && !(entity.getType().is(NaturalistTags.EntityTypes.SAFE_EGG_WALKERS))) {
             if (!(entity instanceof LivingEntity)) {
                 return false;

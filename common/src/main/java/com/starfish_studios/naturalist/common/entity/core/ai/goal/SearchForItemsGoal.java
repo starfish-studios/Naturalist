@@ -9,15 +9,16 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class SearchForItemsGoal extends Goal {
     private final PathfinderMob mob;
     private final double speedModifier;
     private final double horizontalSearchRange;
     private final double verticalSearchRange;
-    private final Ingredient ingredient;
+    private final Predicate<ItemStack> ingredient;
 
-    public SearchForItemsGoal(PathfinderMob mob, double speedModifier, Ingredient ingredient, double horizontalSearchRange, double verticalSearchRange) {
+    public SearchForItemsGoal(PathfinderMob mob, double speedModifier, Predicate<ItemStack> ingredient, double horizontalSearchRange, double verticalSearchRange) {
         this.setFlags(EnumSet.of(Flag.MOVE));
         this.mob = mob;
         this.speedModifier = speedModifier;

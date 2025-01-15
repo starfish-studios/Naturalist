@@ -10,6 +10,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -26,13 +27,14 @@ public class LizardTailRenderer extends GeoEntityRenderer<LizardTail> {
         return 0.000001f;
     }
 
-   public RenderType getRenderType(LizardTail entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
+    @Override
+    public @Nullable RenderType getRenderType(LizardTail animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return RenderType.entityCutoutNoCull(texture);
     }
 
     @Override
-    public void render(LizardTail entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(EntityRenderState entityRenderState, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.translate(0, -0.3, 0);
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        super.render(entityRenderState, poseStack, bufferSource, packedLight);
     }
 }

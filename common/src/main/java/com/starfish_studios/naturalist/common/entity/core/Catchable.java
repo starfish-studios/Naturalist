@@ -10,16 +10,19 @@ import java.util.Optional;
 import com.starfish_studios.naturalist.common.helper.*;
 import com.starfish_studios.naturalist.registry.NaturalistRegistry;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 public interface Catchable {
     boolean fromHand();
@@ -36,33 +39,31 @@ public interface Catchable {
 
     /** @deprecated */
     @Deprecated
-    static void saveDefaultDataToHandTag(Mob mob, ItemStack hand) {
-        CompoundTag compoundTag = hand.getOrCreateTag();
-        if (mob.hasCustomName()) {
-            hand.setHoverName(mob.getCustomName());
-        }
+    static void saveDefaultDataToHandTag(Mob mob, ItemStack itemStack) {
+        itemStack.set(DataComponents.CUSTOM_NAME, mob.getCustomName());
+        CustomData.update(DataComponents.CUSTOM_DATA, itemStack, compoundTag -> {
+            if (mob.isNoAi()) {
+                compoundTag.putBoolean("NoAI", mob.isNoAi());
+            }
 
-        if (mob.isNoAi()) {
-            compoundTag.putBoolean("NoAI", mob.isNoAi());
-        }
+            if (mob.isSilent()) {
+                compoundTag.putBoolean("Silent", mob.isSilent());
+            }
 
-        if (mob.isSilent()) {
-            compoundTag.putBoolean("Silent", mob.isSilent());
-        }
+            if (mob.isNoGravity()) {
+                compoundTag.putBoolean("NoGravity", mob.isNoGravity());
+            }
 
-        if (mob.isNoGravity()) {
-            compoundTag.putBoolean("NoGravity", mob.isNoGravity());
-        }
+            if (mob.hasGlowingTag()) {
+                compoundTag.putBoolean("Glowing", mob.hasGlowingTag());
+            }
 
-        if (mob.hasGlowingTag()) {
-            compoundTag.putBoolean("Glowing", true);
-        }
+            if (mob.isInvulnerable()) {
+                compoundTag.putBoolean("Invulnerable", mob.isInvulnerable());
+            }
 
-        if (mob.isInvulnerable()) {
-            compoundTag.putBoolean("Invulnerable", mob.isInvulnerable());
-        }
-
-        compoundTag.putFloat("Health", mob.getHealth());
+            compoundTag.putFloat("Health", mob.getHealth());
+        });
     }
 
     /** @deprecated */
@@ -97,13 +98,11 @@ public interface Catchable {
 
     static <T extends LivingEntity & Catchable> Optional<InteractionResult> catchAnimal(Player player, InteractionHand hand, T entity, boolean needsNet) {
         ItemStack itemStack = player.getItemInHand(hand);
-        if ((needsNet ? itemStack.getItem().equals(NaturalistRegistry.BUG_NET.get()) : itemStack.isEmpty()) && entity.isAlive()) {
+        if ((needsNet ? itemStack.getItem().equals(NaturalistRegistry.BUG_NET) : itemStack.isEmpty()) && entity.isAlive()) {
             ItemStack caughtItemStack = entity.getCaughtItemStack();
             entity.saveToHandTag(caughtItemStack);
             if (needsNet) {
-                itemStack.hurtAndBreak(1, player, (playerEntity) -> {
-                    playerEntity.broadcastBreakEvent(hand);
-                });
+                itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             }
             if (player.getInventory().add(caughtItemStack)) {
                 entity.discard();

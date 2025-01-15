@@ -6,32 +6,34 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 @Environment(EnvType.CLIENT)
 public class DuckModel extends GeoModel<Duck> {
     @Override
-    public ResourceLocation getModelResource(Duck animal) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/duck.geo.json");
+    public ResourceLocation getModelResource(Duck animal, @Nullable GeoRenderer<Duck> geoRenderer) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/duck.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(Duck animal) {
+    public ResourceLocation getTextureResource(Duck animal, @Nullable GeoRenderer<Duck> geoRenderer) {
         if (animal.getName().getString().equalsIgnoreCase("Queso")) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/duck/queso.png");
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/queso.png");
         } else if (animal.getName().getString().equalsIgnoreCase("Donald")) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/duck/donald.png");
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/donald.png");
         }
-        return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/duck/duck.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/duck.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Duck animal) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/duck.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/duck.rp_anim.json");
     }
 
     @Override
@@ -41,7 +43,7 @@ public class DuckModel extends GeoModel<Duck> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        GeoBone head = this.getAnimationProcessor().getBone("head");
 
         if (entity.isBaby()) {
             head.setScaleX(1.7F);

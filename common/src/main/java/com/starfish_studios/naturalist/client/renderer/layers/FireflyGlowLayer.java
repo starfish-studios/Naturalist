@@ -16,17 +16,17 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 @Environment(EnvType.CLIENT)
 public class FireflyGlowLayer extends GeoRenderLayer<Firefly> {
-    private static final ResourceLocation GLOW = new ResourceLocation(Naturalist.MOD_ID, "textures/entity/firefly/glow.png");
-    private static final ResourceLocation MODEL = new ResourceLocation(Naturalist.MOD_ID, "geo/entity/firefly.geo.json");
+    private static final ResourceLocation GLOW = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/firefly/glow.png");
+    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/firefly.geo.json");
 
     public FireflyGlowLayer(GeoRenderer<Firefly> entityRendererIn) {
         super(entityRendererIn);
     }
 
     @Override
-    public void render(PoseStack poseStack, Firefly entity, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTicks, int packedLightIn, int packedOverlay) {
+    public void render(PoseStack poseStack, Firefly entity, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTicks, int packedLightIn, int packedOverlay, int renderColor) {
         RenderType glow = entity.isGlowing() ? RenderType.eyes(GLOW) : RenderType.entityCutoutNoCull(GLOW);
 
-        getRenderer().reRender(getDefaultBakedModel(entity), poseStack, bufferSource, entity, glow, bufferSource.getBuffer(glow), partialTicks, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        getRenderer().reRender(getDefaultBakedModel(entity, this.getRenderer()), poseStack, bufferSource, entity, glow, bufferSource.getBuffer(glow), partialTicks, packedLightIn, OverlayTexture.NO_OVERLAY, renderColor);
     }
 }

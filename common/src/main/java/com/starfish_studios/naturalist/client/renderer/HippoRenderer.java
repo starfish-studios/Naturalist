@@ -30,7 +30,8 @@ public class HippoRenderer extends GeoEntityRenderer<Hippo> {
         return 0.000001f;
     }
 
-    @Override
+    //TODO: 1.21.4
+     /*@Override
     public void render(Hippo entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (entity.isBaby()) {
             poseStack.scale(0.5F, 0.5F, 0.5F);
@@ -38,15 +39,16 @@ public class HippoRenderer extends GeoEntityRenderer<Hippo> {
             poseStack.scale(1.0F, 1.0F, 1.0F);
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
+    }*/
 
-   public RenderType getRenderType(Hippo entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
+    @Override
+    public @Nullable RenderType getRenderType(Hippo animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return RenderType.entityCutoutNoCull(texture);
     }
 
     @Override
     public void renderRecursively(PoseStack stack, Hippo entity, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-        int packedOverlay, float red, float green, float blue, float alpha) {
+        int packedOverlay, int renderColor) {
         if (bone.getName().equals("botjaw") && animatable.getMainHandItem().getItem() instanceof BlockItem blockItem) {
             stack.pushPose();
             stack.mulPose(new Quaternionf());
@@ -56,6 +58,6 @@ public class HippoRenderer extends GeoEntityRenderer<Hippo> {
             stack.popPose();
             buffer = bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
         }
-        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
     }
 }

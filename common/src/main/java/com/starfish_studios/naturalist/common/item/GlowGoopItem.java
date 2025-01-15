@@ -2,25 +2,22 @@ package com.starfish_studios.naturalist.common.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
-public class GlowGoopItem extends ItemNameBlockItem {
+public class GlowGoopItem extends BlockItem {
 
     public GlowGoopItem(Block block, Properties properties) {
-        super(block, properties);
+        super(block, properties.useItemDescriptionPrefix());
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
         // This makes it so that there's a different tooltip when the Player is holding Shift.
         if (Screen.hasShiftDown()) {
             tooltip.add(Component.literal("Place up to 3").withStyle(ChatFormatting.GRAY));

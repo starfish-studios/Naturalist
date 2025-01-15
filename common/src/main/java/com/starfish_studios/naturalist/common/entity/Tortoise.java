@@ -44,20 +44,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 
 public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, HidingAnimal, EggLayingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final Ingredient TEMPT_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS);
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
@@ -77,7 +73,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.17f).add(Attributes.MAX_HEALTH, 20.0).add(Attributes.ATTACK_DAMAGE, 2.0).add(Attributes.KNOCKBACK_RESISTANCE, 0.6);
+        return Animal.createAnimalAttributes().add(Attributes.MOVEMENT_SPEED, 0.17f).add(Attributes.MAX_HEALTH, 20.0).add(Attributes.ATTACK_DAMAGE, 2.0).add(Attributes.KNOCKBACK_RESISTANCE, 0.6);
     }
 
     @Nullable
@@ -89,7 +85,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        Tortoise tortoise = NaturalistEntityTypes.TORTOISE.get().create(level);
+        Tortoise tortoise = NaturalistEntityTypes.TORTOISE.create(level, EntitySpawnReason.BREEDING);
         if (otherParent instanceof Tortoise tortoiseParent) {
             assert tortoise != null;
             if (this.getVariant() == tortoiseParent.getVariant()) {
@@ -103,7 +99,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         Holder<Biome> holder = level.getBiome(this.blockPosition());
         if (holder.is(Biomes.SWAMP) || holder.is(Biomes.MANGROVE_SWAMP)) {
             this.setVariant(1);
@@ -112,12 +108,12 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         } else {
             this.setVariant(0);
         }
-        return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
     @Override
-    public void setTame(boolean tamed) {
-        super.setTame(tamed);
+    public void setTame(boolean tamed, boolean applyTamingSideEffects) {
+        super.setTame(tamed, applyTamingSideEffects);
         if (tamed) {
             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30.0);
             this.setHealth(30.0f);
@@ -135,8 +131,8 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new HideGoal<>(this));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.0, TEMPT_ITEMS, false));
-        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.0, 10.0f, 5.0f, false));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.0, (itemStack) -> itemStack.is(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS), false));
+        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.0, 10.0f, 5.0f));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10.0f));
@@ -155,7 +151,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return TEMPT_ITEMS.test(stack);
+        return stack.is(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS);
     }
 
     @Override
@@ -164,8 +160,8 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
+        return super.hurtServer(serverLevel, source, this.canHide() ? amount * 0.8F : amount);
     }
 
     @Override
@@ -220,8 +216,12 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         if (this.isTame()) {
             return false;
         }
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector(livingEntity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity) && !livingEntity.isDiscrete() && !livingEntity.isHolding(TEMPT_ITEMS)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
-        return !players.isEmpty();
+        if (this.level() instanceof ServerLevel serverLevel) {
+            List<Player> players = serverLevel.getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector((livingEntity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity) && !livingEntity.isDiscrete() && !livingEntity.isHolding((itemStack) -> itemStack.is(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS))), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
+            return !players.isEmpty();
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -229,20 +229,22 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         return 0.96f;
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
         return dimensions.height * 0.3F;
-    }
+    }*/
 
     @Override
     public double getFluidJumpThreshold() {
         return 0.4;
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public boolean canBreatheUnderwater() {
         return true;
-    }
+    }*/
 
     // ENTITY DATA
 
@@ -255,11 +257,11 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(VARIANT_ID, 0);
-        this.entityData.define(HAS_EGG, false);
-        this.entityData.define(LAYING_EGG, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(VARIANT_ID, 0);
+        builder.define(HAS_EGG, false);
+        builder.define(LAYING_EGG, false);
     }
 
     @Override
@@ -377,7 +379,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
 
     @Override
     public Block getEggBlock() {
-        return NaturalistRegistry.TORTOISE_EGG.get();
+        return NaturalistRegistry.TORTOISE_EGG;
     }
 
     @Override

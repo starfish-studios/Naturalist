@@ -32,16 +32,13 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Firefly extends Animal implements FlyingAnimal, NaturalistGeoEntity {
@@ -53,20 +50,20 @@ public class Firefly extends Animal implements FlyingAnimal, NaturalistGeoEntity
     protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.firefly.fly");
     // endregion
 
-    @Override
+    /*@Override
     @NotNull
     public MobType getMobType() {
         return MobType.ARTHROPOD;
-    }
+    }*/
 
     public Firefly(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0F);
-        this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0F);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.WATER, -1.0F);
+        this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
+        this.setPathfindingMalus(PathType.COCOA, -1.0F);
+        this.setPathfindingMalus(PathType.FENCE, -1.0F);
     }
 
     @Override
@@ -78,14 +75,15 @@ public class Firefly extends Animal implements FlyingAnimal, NaturalistGeoEntity
         };
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(false);
-        navigation.setCanPassDoors(true);
+        //navigation.setCanPassDoors(true); TODO: 1.21.4
         return navigation;
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     protected float getStandingEyeHeight(Pose pPose, EntityDimensions pSize) {
         return pSize.height * 0.5F;
-    }
+    }*/
 
     @Override
     public boolean causeFallDamage(float pFallDistance, float pMultiplier, DamageSource pSource) {
@@ -108,7 +106,7 @@ public class Firefly extends Animal implements FlyingAnimal, NaturalistGeoEntity
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0D).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.MOVEMENT_SPEED, 0.3F);
     }
 
-    public static boolean checkFireflySpawnRules(EntityType<? extends Firefly> pType, ServerLevelAccessor pLevel, MobSpawnType pReason, BlockPos pPos, RandomSource pRandom) {
+    public static boolean checkFireflySpawnRules(EntityType<? extends Firefly> pType, ServerLevelAccessor pLevel, EntitySpawnReason pReason, BlockPos pPos, RandomSource pRandom) {
         return Monster.isDarkEnoughToSpawn(pLevel, pPos, pRandom) && pLevel.getBlockState(pPos.below()).is(NaturalistTags.BlockTags.FIREFLIES_SPAWNABLE_ON);
     }
 
@@ -124,10 +122,10 @@ public class Firefly extends Animal implements FlyingAnimal, NaturalistGeoEntity
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(GLOW_TICKS_REMAINING, 0);
-        this.entityData.define(SUN_TICKS, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(GLOW_TICKS_REMAINING, 0);
+        builder.define(SUN_TICKS, 0);
     }
 
     public boolean isGlowing() {
@@ -260,7 +258,7 @@ public class Firefly extends Animal implements FlyingAnimal, NaturalistGeoEntity
 
         @Override
         protected boolean isValidTarget(LevelReader pLevel, BlockPos pPos) {
-            return pLevel.getBlockState(pPos).is(Blocks.GRASS) || pLevel.getBlockState(pPos).is(Blocks.FERN) || pLevel.getBlockState(pPos).is(Blocks.TALL_GRASS);
+            return pLevel.getBlockState(pPos).is(Blocks.SHORT_GRASS) || pLevel.getBlockState(pPos).is(Blocks.FERN) || pLevel.getBlockState(pPos).is(Blocks.TALL_GRASS);
         }
 
         @Override
@@ -269,7 +267,7 @@ public class Firefly extends Animal implements FlyingAnimal, NaturalistGeoEntity
             Level level = firefly.level();
             if (this.isReachedTarget()) {
                 if (!level.isClientSide) {
-                    ((ServerLevel)level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.GRASS.defaultBlockState()), firefly.getX(), firefly.getY(), firefly.getZ(), 50, firefly.getBbWidth() / 4.0F, firefly.getBbHeight() / 4.0F, firefly.getBbWidth() / 4.0F, 0.05D);
+                    ((ServerLevel)level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SHORT_GRASS.defaultBlockState()), firefly.getX(), firefly.getY(), firefly.getZ(), 50, firefly.getBbWidth() / 4.0F, firefly.getBbHeight() / 4.0F, firefly.getBbWidth() / 4.0F, 0.05D);
                 }
                 level.playSound(null, firefly.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
                 firefly.discard();

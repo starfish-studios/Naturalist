@@ -10,13 +10,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 @Environment(EnvType.CLIENT)
 public class BearShearedLayer extends GeoRenderLayer<Bear> {
-    private static final ResourceLocation LAYER = new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear_sheared.png");
+    private static final ResourceLocation LAYER = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_sheared.png");
 
     public BearShearedLayer(GeoRenderer<Bear> entityRendererIn) {
         super(entityRendererIn);
@@ -25,10 +26,10 @@ public class BearShearedLayer extends GeoRenderLayer<Bear> {
     @Override
     public void render(PoseStack poseStack, Bear entity, BakedGeoModel bakedModel, RenderType renderType,
                        MultiBufferSource bufferSource, VertexConsumer buffer, float partialTicks,
-                       int packedLightIn, int packedOverlay) {
+                       int packedLightIn, int packedOverlay, int renderColor) {
         if (entity.isSheared()) {
             RenderType renderLayer = RenderType.entityCutoutNoCull(LAYER);
-            getRenderer().reRender(getDefaultBakedModel(entity), poseStack, bufferSource, entity, renderLayer, bufferSource.getBuffer(renderLayer), partialTicks, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            getRenderer().reRender(getDefaultBakedModel(entity, this.getRenderer()), poseStack, bufferSource, entity, renderLayer, bufferSource.getBuffer(renderLayer), partialTicks, packedLightIn, OverlayTexture.NO_OVERLAY, renderColor);
         }
     }
 }

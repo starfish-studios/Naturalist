@@ -36,13 +36,14 @@ public class VultureRenderer extends GeoEntityRenderer<Vulture> {
         return 0.000001f;
     }
 
-   public RenderType getRenderType(Vulture entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
+    @Override
+    public @Nullable RenderType getRenderType(Vulture animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return RenderType.entityCutoutNoCull(texture);
     }
 
     @Override
     public void renderRecursively(PoseStack stack, Vulture entity, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-        int packedOverlay, float red, float green, float blue, float alpha) {
+        int packedOverlay, int renderColor) {
 
 
 
@@ -55,6 +56,6 @@ public class VultureRenderer extends GeoEntityRenderer<Vulture> {
             stack.popPose();
             buffer = bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
         }
-        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
     }
 }

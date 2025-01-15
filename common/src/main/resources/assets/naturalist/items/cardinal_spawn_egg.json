@@ -1,0 +1,6 @@
+{
+    "model": {
+        "type": "minecraft:model",
+        "model": "naturalist:item/cardinal_spawn_egg"
+    }
+}

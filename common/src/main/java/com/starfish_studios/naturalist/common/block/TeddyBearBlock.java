@@ -1,5 +1,6 @@
 package com.starfish_studios.naturalist.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -17,6 +18,11 @@ public class TeddyBearBlock extends HorizontalDirectionalBlock {
 
     public TeddyBearBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return null;
     }
 
     @Override

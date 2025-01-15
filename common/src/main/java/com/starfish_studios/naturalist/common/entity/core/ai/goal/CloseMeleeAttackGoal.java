@@ -10,8 +10,9 @@ public class CloseMeleeAttackGoal extends MeleeAttackGoal {
         super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     protected double getAttackReachSqr(LivingEntity pAttackTarget) {
         return Mth.square(this.mob.getBbWidth() * 1.2f);
-    }
+    }*/
 }

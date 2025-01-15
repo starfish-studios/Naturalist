@@ -11,12 +11,8 @@ import net.minecraft.world.entity.animal.AbstractSchoolingFish;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
@@ -38,7 +34,7 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
 
     @Override
     public ItemStack getBucketItemStack() {
-        return new ItemStack(NaturalistRegistry.BASS_BUCKET.get());
+        return new ItemStack(NaturalistRegistry.BASS_BUCKET);
     }
 
     @Override

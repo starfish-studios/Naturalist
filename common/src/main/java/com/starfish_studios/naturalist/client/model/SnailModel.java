@@ -1,40 +1,41 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Alligator;
 import com.starfish_studios.naturalist.common.entity.Snail;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 @Environment(EnvType.CLIENT)
 public class SnailModel extends GeoModel<Snail> {
     @Override
-    public ResourceLocation getModelResource(Snail snail) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/snail.geo.json");
+    public ResourceLocation getModelResource(Snail snail, @Nullable GeoRenderer<Snail> geoRenderer) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/snail.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(Snail snail) {
+    public ResourceLocation getTextureResource(Snail snail, @Nullable GeoRenderer<Snail> geoRenderer) {
         if (snail.getName().getString().contains("Gary")) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snail/gary.png");
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail/gary.png");
         } else if (snail.getSnailColor() != null) {
             int color = snail.getSnailColor().getId();
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snail/" + DyeColor.byId(color).getName() + ".png");
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail/" + DyeColor.byId(color).getName() + ".png");
         }
-        return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/snail.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Snail snail) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/snail.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/snail.rp_anim.json");
     }
 
     @Override
@@ -45,9 +46,9 @@ public class SnailModel extends GeoModel<Snail> {
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
 
-        CoreGeoBone leftEye = this.getAnimationProcessor().getBone("left_eye");
-        CoreGeoBone rightEye = this.getAnimationProcessor().getBone("right_eye");
-        CoreGeoBone eyes = this.getAnimationProcessor().getBone("eyes");
+        GeoBone leftEye = this.getAnimationProcessor().getBone("left_eye");
+        GeoBone rightEye = this.getAnimationProcessor().getBone("right_eye");
+        GeoBone eyes = this.getAnimationProcessor().getBone("eyes");
 
         if (animatable.isBaby()) {
             eyes.setScaleX(1.5F);

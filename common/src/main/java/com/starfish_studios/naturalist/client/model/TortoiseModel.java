@@ -6,32 +6,34 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 @Environment(EnvType.CLIENT)
 public class TortoiseModel extends GeoModel<Tortoise> {
 
     @Override
-    public ResourceLocation getModelResource(Tortoise tortoise) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/tortoise.geo.json");
+    public ResourceLocation getModelResource(Tortoise tortoise, @Nullable GeoRenderer<Tortoise> geoRenderer) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/tortoise.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(Tortoise tortoise) {
+    public ResourceLocation getTextureResource(Tortoise tortoise, @Nullable GeoRenderer<Tortoise> geoRenderer) {
         return switch (tortoise.getVariant()) {
-            case 1 -> new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/green.png");
-            case 2 -> new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/black.png");
-            default -> new ResourceLocation(Naturalist.MOD_ID, "textures/entity/tortoise/brown.png");
+            case 1 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/green.png");
+            case 2 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/black.png");
+            default -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/brown.png");
         };
     }
 
     @Override
     public ResourceLocation getAnimationResource(Tortoise tortoise) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/tortoise.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/tortoise.rp_anim.json");
     }
 
     @Override
@@ -41,7 +43,7 @@ public class TortoiseModel extends GeoModel<Tortoise> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
+        GeoBone head = this.getAnimationProcessor().getBone("head");
 
         if (entity.isBaby()) {
             head.setScaleX(1.4F);

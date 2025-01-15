@@ -36,12 +36,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Giraffe extends Animal implements NaturalistGeoEntity {
@@ -49,17 +46,16 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.run");
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> TAME_TICKS = SynchedEntityData.defineId(Giraffe.class, EntityDataSerializers.INT);
 
     public Giraffe(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(1.0f);
+        //this.setMaxUpStep(1.0f); //TODO: 1.21.4
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.25F);
+        return Animal.createAnimalAttributes().add(Attributes.MAX_HEALTH, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.25F);
     }
 
     @Override
@@ -72,7 +68,7 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.4));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, (itemStack) -> itemStack.is(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.0));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
@@ -81,29 +77,29 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return stack.is(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.3D);
         } else {
             this.setSprinting(false);
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return NaturalistEntityTypes.GIRAFFE.get().create(serverLevel);
+        return NaturalistEntityTypes.GIRAFFE.create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(TAME_TICKS, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TAME_TICKS, 0);
     }
 
     @Override
@@ -173,7 +169,7 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.LLAMA_ANGRY, this.getSoundSource(), 1.0f, 1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
                 }
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         if (this.isBaby()) {
             return super.mobInteract(player, hand);
@@ -181,7 +177,7 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
         if (this.isTame()) {
             this.doPlayerRide(player);
         }
-        return InteractionResult.sidedSuccess(this.level().isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     protected boolean handleEating(Player player, ItemStack stack) {
@@ -195,7 +191,7 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
                 shouldEat = true;
                 this.setInLove(player);
             }
-        } else if (FOOD_ITEMS.test(stack)) {
+        } else if (stack.is(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS)) {
             foodHealAmount = 2.0f;
             ageUpAmount = 20;
             if (!this.level().isClientSide()) {
@@ -253,7 +249,7 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
             this.setDeltaMovement(Vec3.ZERO);
         }
         this.calculateEntityAnimation(false);
-        this.tryCheckInsideBlocks();
+        //this.tryCheckInsideBlocks(); //TODO: 1.21.4
     }
 
     @Override
@@ -287,8 +283,8 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
         }
     }
 
-
-    @Override
+        //TODO: 1.21.4
+     /*@Override
     protected void positionRider(Entity passenger, MoveFunction callback) {
         super.positionRider(passenger, callback);
 
@@ -303,10 +299,11 @@ public class Giraffe extends Animal implements NaturalistGeoEntity {
         }
     }
 
-    @Override
+
+   @Override
     public double getPassengersRidingOffset() {
         return this.getBbHeight() * 0.6;
-    }
+    }*/
 
     @Override
     public boolean onClimbable() {

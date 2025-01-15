@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.starfish_studios.naturalist.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "client": [
     "ClientLevelMixin",
     "ClientPacketListenerMixin"
@@ -14,7 +14,9 @@
     "MapItemMixin",
     "MobMixin",
     "MonsterMixin",
-    "ZombieMixin"
+    "ZombieMixin",
+    "legacy_block_registry.BlockBehaviourMixin",
+    "legacy_block_registry.BlockBehaviourPropertiesMixin"
   ],
   "injectors": {
     "defaultRequire": 1

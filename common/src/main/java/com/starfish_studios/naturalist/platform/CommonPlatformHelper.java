@@ -2,6 +2,7 @@ package com.starfish_studios.naturalist.platform;
 
 import com.starfish_studios.naturalist.registry.NaturalistMenus;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -45,27 +46,27 @@ public class CommonPlatformHelper {
     }
 
     @ExpectPlatform
-    public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
+    public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<? extends Mob>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, int color) {
+    public static Supplier<Item> registerNoFluidMobBucketItem(String name, Supplier<? extends EntityType<? extends Mob>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, int color) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static Supplier<Item> registerMobBucketItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
+    public static Supplier<Item> registerMobBucketItem(String name, Supplier<? extends EntityType<? extends Mob>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static Supplier<Item> registerCaughtMobItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
+    public static Supplier<Item> registerCaughtMobItem(String name, Supplier<? extends EntityType<? extends Mob>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static Supplier<Item> registerCaughtMobItem(String name, Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, int variantAmount) {
+    public static Supplier<Item> registerCaughtMobItem(String name, Supplier<? extends EntityType<? extends Mob>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, int variantAmount) {
         throw new AssertionError();
     }
 
@@ -75,17 +76,7 @@ public class CommonPlatformHelper {
     }
 
     @ExpectPlatform
-    public static <T extends Entity> Supplier<EntityType<T>> registerEntityType(String name, EntityType.EntityFactory<T> factory, MobCategory category, float width, float height, int clientTrackingRange) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
     public static <T extends AbstractContainerMenu> MenuType<T> registerMenuType(String name, Supplier<MenuType<T>> supplier) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static <T extends AbstractContainerMenu> MenuType<T> createMenuType(NaturalistMenus.MenuFactory<T> factory) {
         throw new AssertionError();
     }
 
@@ -95,32 +86,17 @@ public class CommonPlatformHelper {
     }
 
     @ExpectPlatform
-    public static CreativeModeTab registerCreativeModeTab(ResourceLocation name, Supplier<ItemStack> icon) {
+    public static Holder<Potion> registerPotion(String name, Potion potion) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static <T extends Potion> Supplier<T> registerPotion(String name, Supplier<T> potion) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static void registerBrewingRecipe(Potion input, Item ingredient, Potion output) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static <T extends Mob> void registerSpawnPlacement(EntityType<T> entityType, SpawnPlacements.Type decoratorType, Heightmap.Types heightMapType, SpawnPlacements.SpawnPredicate<T> decoratorPredicate) {
+    public static <T extends Mob> void registerSpawnPlacement(EntityType<T> entityType, SpawnPlacementType decoratorType, Heightmap.Types heightMapType, SpawnPlacements.SpawnPredicate<T> decoratorPredicate) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void registerCompostable(float chance, ItemLike item) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static void acceptItemToCreativeTab(ItemStack itemStack) {
         throw new AssertionError();
     }
 }

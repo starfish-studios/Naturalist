@@ -21,7 +21,7 @@ public class ZombieMixin extends Monster {
 
     @Inject(at = @At("HEAD"), method = "registerGoals")
     private void registerGoals(CallbackInfo info) {
-        this.goalSelector.addGoal(2, new AttackAlligatorEggGoal(NaturalistRegistry.ALLIGATOR_EGG.get(), this, 1.0D, 3));
-        this.goalSelector.addGoal(2, new AttackTortoiseEggGoal(NaturalistRegistry.TORTOISE_EGG.get(), this, 1.0D, 3));
+        this.goalSelector.addGoal(2, new AttackAlligatorEggGoal(NaturalistRegistry.ALLIGATOR_EGG, this, 1.0D, 3));
+        this.goalSelector.addGoal(2, new AttackTortoiseEggGoal(NaturalistRegistry.TORTOISE_EGG, this, 1.0D, 3));
     }
 }

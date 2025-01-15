@@ -36,24 +36,22 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 import java.util.List;
 
 public class Hippo extends Animal implements NaturalistGeoEntity {
-
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.run");
@@ -67,8 +65,8 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
 
     public Hippo(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
-        this.setMaxUpStep(1.0f);
+        this.setPathfindingMalus(PathType.WATER, 0.0f);
+        //this.setMaxUpStep(1.0f); TODO: 1.21.4
     }
 
     @Override
@@ -77,7 +75,7 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
+        return Animal.createAnimalAttributes()
                 .add(Attributes.MAX_HEALTH, 40.0D)
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.2D)
@@ -85,7 +83,7 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.6D);
     }
 
-    public static boolean checkHippoSpawnRules(EntityType<? extends Animal> entityType, LevelAccessor levelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
+    public static boolean checkHippoSpawnRules(EntityType<? extends Animal> entityType, LevelAccessor levelAccessor, EntitySpawnReason mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         if (levelAccessor.getBlockState(blockPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && Animal.isBrightEnoughToSpawn(levelAccessor, blockPos)) {
             for (int x = -16; x <= 16; x++) {
@@ -110,10 +108,11 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
         return FOOD_ITEMS.test(stack);
     }
 
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
+    //TODO: 1.21.4
+    //@Override
+    //public boolean canBreatheUnderwater() {
+    //    return true;
+    //}
 
     @Override
     protected void registerGoals() {
@@ -128,17 +127,17 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && entity.isInWater()));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity, level) -> !this.isBaby() && entity.isInWater()));
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.0D);
         } else {
             this.setSprinting(false);
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     @Override
@@ -162,7 +161,7 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
             if (this.isBaby()) {
                 this.usePlayerItem(player, hand, itemStack);
                 this.ageUp(Animal.getSpeedUpSecondsWhenFeeding(-age), true);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (this.level().isClientSide) {
                 return InteractionResult.CONSUME;
@@ -192,7 +191,8 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
         }
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public @NotNull EntityDimensions getDimensions(Pose pose) {
         if (this.isBaby()) {
             return super.getDimensions(pose).scale(1.5F);
@@ -200,7 +200,7 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
         } else {
             return super.getDimensions(pose);
         }
-    }
+    }*/
 
     @Override
     protected float getWaterSlowDown() {
@@ -215,7 +215,7 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return NaturalistEntityTypes.HIPPO.get().create(serverLevel);
+        return NaturalistEntityTypes.HIPPO.create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @Nullable
@@ -234,7 +234,7 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
         return this.geoCache;
     }
 
-    private <E extends Hippo> PlayState predicate(final AnimationState<E> event) {
+    private <E extends Hippo> PlayState predicate(final software.bernie.geckolib.animation.AnimationState<E> event) {
         event.getController().setAnimationSpeed(0.8D + event.getLimbSwingAmount());
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (!this.isInWater()) {
@@ -257,7 +257,7 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
         return PlayState.CONTINUE;
     }
 
-    private <E extends Hippo> PlayState attackPredicate(final AnimationState<E> event) {
+    private <E extends Hippo> PlayState attackPredicate(final software.bernie.geckolib.animation.AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
             event.getController().forceAnimationReset();
         
@@ -382,10 +382,10 @@ public class Hippo extends Animal implements NaturalistGeoEntity {
 
         protected void checkAndPerformAttack(Entity enemy, double distToEnemySqr) {
             double reach = this.getAttackReachSqr(enemy);
-            if (distToEnemySqr <= reach && this.ticksUntilNextAttack <= 0) {
+            if (this.mob.level() instanceof ServerLevel serverLevel && distToEnemySqr <= reach && this.ticksUntilNextAttack <= 0) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(enemy);
+                this.mob.doHurtTarget(serverLevel, enemy);
             }
         }
 

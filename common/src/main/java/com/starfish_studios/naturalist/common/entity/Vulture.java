@@ -4,13 +4,18 @@ import com.starfish_studios.naturalist.common.entity.core.ai.goal.FlyingWanderGo
 import com.starfish_studios.naturalist.registry.NaturalistSoundEvents;
 import com.starfish_studios.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -27,28 +32,28 @@ import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 
 public class Vulture extends PathfinderMob implements NaturalistGeoEntity, FlyingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -62,13 +67,13 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
         this.setCanPickUpLoot(true);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0F);
-        this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_OTHER, 0.0F);
-        this.setPathfindingMalus(BlockPathTypes.DAMAGE_OTHER, 0.0F);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.WATER, -1.0F);
+        this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
+        this.setPathfindingMalus(PathType.COCOA, -1.0F);
+        this.setPathfindingMalus(PathType.FENCE, -1.0F);
+        this.setPathfindingMalus(PathType.DANGER_OTHER, 0.0F);
+        this.setPathfindingMalus(PathType.DAMAGE_OTHER, 0.0F);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -84,11 +89,11 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         this.goalSelector.addGoal(3, new FlyingWanderGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Monster.class, 10, false, false, entity -> entity.getType().is(NaturalistTags.EntityTypes.VULTURE_HOSTILES) && !FOOD_ITEMS.test(this.getMainHandItem())));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, entity -> entity.getHealth() <= 6 && !entity.getMainHandItem().isEmpty() && !FOOD_ITEMS.test(this.getMainHandItem())));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Monster.class, 10, false, false, (entity, level) -> entity.getType().is(NaturalistTags.EntityTypes.VULTURE_HOSTILES) && !FOOD_ITEMS.test(this.getMainHandItem())));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, (entity, level) -> entity.getHealth() <= 6 && !entity.getMainHandItem().isEmpty() && !FOOD_ITEMS.test(this.getMainHandItem())));
     }
 
-    public static boolean checkVultureSpawnRules(EntityType<Vulture> entityType, LevelAccessor state, MobSpawnType type, BlockPos pos, RandomSource random) {
+    public static boolean checkVultureSpawnRules(EntityType<Vulture> entityType, LevelAccessor state, EntitySpawnReason type, BlockPos pos, RandomSource random) {
         return state.getBlockState(pos.below()).is(NaturalistTags.BlockTags.VULTURES_SPAWNABLE_ON) && state.getRawBrightness(pos, 0) > 8;
     }
 
@@ -142,46 +147,59 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource pSource) {
-        return pSource.equals(this.damageSources().cactus()) || super.isInvulnerableTo(pSource);
+    public boolean isInvulnerableTo(ServerLevel serverLevel, DamageSource pSource) {
+        return pSource.equals(this.damageSources().cactus()) || super.isInvulnerableTo(serverLevel, pSource);
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
-        boolean shouldHurt;
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity source) {
         float damage = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        float knockback = (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-        if (target instanceof LivingEntity livingEntity) {
-            damage += livingEntity.getMobType().equals(MobType.UNDEAD) ? damage : 0;
-            knockback += (float)EnchantmentHelper.getKnockbackBonus(this);
-        }
-        if (shouldHurt = target.hurt(target.damageSources().mobAttack(this), damage)) {
-            if (knockback > 0.0f && target instanceof LivingEntity) {
-                ((LivingEntity)target).knockback(knockback * 0.5f, Mth.sin(this.getYRot() * ((float)Math.PI / 180)), -Mth.cos(this.getYRot() * ((float)Math.PI / 180)));
+        ItemStack weaponItem = this.getWeaponItem();
+        DamageSource damageSource = Optional.ofNullable(weaponItem.getItem().getDamageSource(this)).orElse(this.damageSources().mobAttack(this));
+        damage += weaponItem.getItem().getAttackDamageBonus(source, source.getType().is(EntityTypeTags.UNDEAD) ? damage : 0, damageSource);
+        boolean shouldHurt = source.hurtServer(serverLevel, damageSource, damage);
+        if (shouldHurt) {
+            float knockback = this.getKnockback(source, damageSource);
+            if (knockback > 0.0F && source instanceof LivingEntity livingEntity) {
+                livingEntity.knockback(
+                        knockback * 0.5F,
+                        Mth.sin(this.getYRot() * (float) (Math.PI / 180.0)),
+                        -Mth.cos(this.getYRot() * (float) (Math.PI / 180.0))
+                );
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
             }
-            this.doEnchantDamageEffects(this, target);
-            this.setLastHurtMob(target);
+
+            if (source instanceof LivingEntity livingEntity) {
+                weaponItem.hurtEnemy(livingEntity, this);
+            }
+
+            EnchantmentHelper.doPostAttackEffects(serverLevel, source, damageSource);
+            this.setLastHurtMob(source);
+            this.playAttackSound();
         }
+
         return shouldHurt;
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
-        this.level().getProfiler().push("looting");
-        if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+        ProfilerFiller profilerFiller = Profiler.get();
+        profilerFiller.push("looting");
+        if (this.level() instanceof ServerLevel serverLevel && this.canPickUpLoot() && this.isAlive() && !this.dead && serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(1.0D, 1.0D, 1.0D))) {
-                if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
-                    this.pickUpItem(itementity);
+                if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(serverLevel, itementity.getItem())) {
+                    this.pickUpItem(serverLevel, itementity);
                 }
             }
         }
-        this.level().getProfiler().pop();
+        profilerFiller.pop();
         if (!this.level().isClientSide && this.isAlive() && this.isEffectiveAi()) {
             ++this.ticksSinceEaten;
             ItemStack stack = this.getItemBySlot(EquipmentSlot.MAINHAND);
-            if (stack.getItem().isEdible()) {
+            FoodProperties foodProperties = stack.get(DataComponents.FOOD);
+            Consumable consumable = stack.get(DataComponents.CONSUMABLE);
+            if (foodProperties != null && consumable != null) {
                 if (this.ticksSinceEaten > 600) {
                     ItemStack finishedStack = stack.finishUsingItem(this.level(), this);
                     if (!finishedStack.isEmpty()) {
@@ -189,7 +207,7 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
                     }
                     this.ticksSinceEaten = 0;
                 } else if (this.ticksSinceEaten > 560 && this.random.nextFloat() < 0.1f) {
-                    this.playSound(this.getEatingSound(stack), 1.0f, 1.0f);
+                    this.playSound(consumable.sound().value(), 1.0f, 1.0f);
                     this.level().broadcastEntityEvent(this, (byte)45);
                 }
             }
@@ -211,10 +229,11 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         }
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public boolean canTakeItem(ItemStack pItemstack) {
         return !FOOD_ITEMS.test(this.getMainHandItem());
-    }
+    }*/
 
     @Override
     public boolean canHoldItem(ItemStack pStack) {
@@ -222,7 +241,7 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     }
 
     @Override
-    protected void pickUpItem(ItemEntity pItemEntity) {
+    protected void pickUpItem(ServerLevel serverLevel, ItemEntity pItemEntity) {
         ItemStack itemstack = pItemEntity.getItem();
         if (this.canHoldItem(itemstack)) {
             if (!this.getMainHandItem().isEmpty() && !FOOD_ITEMS.test(this.getMainHandItem())) {
@@ -246,7 +265,6 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         VulturePathNavigation navigation = new VulturePathNavigation(this, pLevel);
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(true);
-        navigation.setCanPassDoors(true);
         return navigation;
     }
 
@@ -310,13 +328,12 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         }
 
         @Override
-        protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
-            double reach = this.getAttackReachSqr(enemy);
-            if (distToEnemySqr <= reach && this.getTicksUntilNextAttack() <= 0) {
+        protected void checkAndPerformAttack(LivingEntity enemy) {
+            if (this.mob.distanceToSqr(enemy) <= (double)((enemy.getBbWidth() + 3.0F) * (enemy.getBbWidth() + 3.0F)) && this.getTicksUntilNextAttack() <= 0) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
-                if (!(enemy instanceof Player)) {
-                    this.mob.doHurtTarget(enemy);
+                if (this.mob.level() instanceof ServerLevel serverLevel && !(enemy instanceof Player)) {
+                    this.mob.doHurtTarget(serverLevel, enemy);
                 }
                 if (enemy instanceof Player && this.mob.getMainHandItem().isEmpty() && !enemy.getMainHandItem().isEmpty()) {
                     this.mob.setItemSlot(EquipmentSlot.MAINHAND, enemy.getMainHandItem().split(1));

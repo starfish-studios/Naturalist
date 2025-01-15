@@ -10,10 +10,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,10 +27,12 @@ public class SnailEggBlock extends Block {
         super(properties);
     }
 
+    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
+    @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         level.scheduleTick(pos, this, getSnailEggHatchDelay(level.getRandom()));
     }
@@ -42,14 +43,17 @@ public class SnailEggBlock extends Block {
         return random.nextInt(minHatchTickDelay, maxHatchTickDelay);
     }
 
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    @Override
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
+    @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         this.hatchSnailEgg(level, pos, random);
     }
 
+    @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity.getType().equals(EntityType.FALLING_BLOCK)) {
             this.destroyBlock(level, pos);
@@ -71,7 +75,7 @@ public class SnailEggBlock extends Block {
         int i = random.nextInt(2, 6);
 
         for(int j = 1; j <= i; ++j) {
-            Snail snail = NaturalistEntityTypes.SNAIL.get().create(level);
+            Snail snail = NaturalistEntityTypes.SNAIL.create(level, EntitySpawnReason.BREEDING);
             if (snail != null) {
                 double d = (double)pos.getX() + this.getRandomSnailPositionOffset(random);
                 double e = (double)pos.getZ() + this.getRandomSnailPositionOffset(random);

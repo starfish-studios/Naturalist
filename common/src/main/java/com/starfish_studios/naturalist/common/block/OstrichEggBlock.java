@@ -19,7 +19,7 @@ package com.starfish_studios.naturalist.common.block;
                 level.removeBlock(pos, false);
                 for (int j = 0; j < state.getValue(EGGS); ++j) {
                     level.levelEvent(2001, pos, Block.getId(state));
-                    Ostrich ostrich = NaturalistEntityTypes.OSTRICH.get().create(level);
+                    Ostrich ostrich = NaturalistEntityTypes.OSTRICH.create(level);
                     ostrich.setAge(-24000);
                     ostrich.moveTo((double)pos.getX() + 0.3 + (double)j * 0.2, pos.getY(), (double)pos.getZ() + 0.3, 0.0f, 0.0f);
                     level.addFreshEntity(ostrich);

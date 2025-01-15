@@ -1,47 +1,66 @@
 package com.starfish_studios.naturalist.registry;
 
+import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.common.entity.*;
 import com.starfish_studios.naturalist.common.entity.core.projectile.ThrownDuckEgg;
 import com.starfish_studios.naturalist.platform.CommonPlatformHelper;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 
 import java.util.function.Supplier;
 
 public class NaturalistEntityTypes {
-    public static final Supplier<EntityType<Alligator>> ALLIGATOR = CommonPlatformHelper.registerEntityType("alligator", Alligator::new, MobCategory.CREATURE, 1.8F, 0.8F, 10);
-    public static final Supplier<EntityType<Bass>> BASS = CommonPlatformHelper.registerEntityType("bass", Bass::new, MobCategory.WATER_AMBIENT, 0.7f, 0.4f, 4);
-    public static final Supplier<EntityType<Bear>> BEAR = CommonPlatformHelper.registerEntityType("bear", Bear::new, MobCategory.CREATURE, 1.4F, 1.7F, 10);
-    public static final Supplier<EntityType<Bird>> BLUEJAY = CommonPlatformHelper.registerEntityType("bluejay", Bird::new, MobCategory.CREATURE, 0.5F, 0.6F, 8);
-    public static final Supplier<EntityType<Boar>> BOAR = CommonPlatformHelper.registerEntityType("boar", Boar::new, MobCategory.CREATURE, 0.9f, 0.9f, 10);
-    public static final Supplier<EntityType<Butterfly>> BUTTERFLY = CommonPlatformHelper.registerEntityType("butterfly", Butterfly::new, MobCategory.AMBIENT, 0.7F, 0.6F, 8);
-    public static final Supplier<EntityType<Bird>> CANARY = CommonPlatformHelper.registerEntityType("canary", Bird::new, MobCategory.CREATURE, 0.5F, 0.6F, 8);
-    public static final Supplier<EntityType<Bird>> CARDINAL = CommonPlatformHelper.registerEntityType("cardinal", Bird::new, MobCategory.CREATURE, 0.5F, 0.6F, 8);
-    public static final Supplier<EntityType<Caterpillar>> CATERPILLAR = CommonPlatformHelper.registerEntityType("caterpillar", Caterpillar::new, MobCategory.CREATURE, 0.4F, 0.4F, 10);
-    public static final Supplier<EntityType<Catfish>> CATFISH = CommonPlatformHelper.registerEntityType("catfish", Catfish::new, MobCategory.WATER_AMBIENT, 0.7f, 0.4f, 4);
-    public static final Supplier<EntityType<Snake>> CORAL_SNAKE = CommonPlatformHelper.registerEntityType("coral_snake", Snake::new, MobCategory.CREATURE, 0.6F, 0.7F, 8);
-    public static final Supplier<EntityType<Deer>> DEER = CommonPlatformHelper.registerEntityType("deer", Deer::new, MobCategory.CREATURE, 1.3F, 1.6F, 10);
-    public static final Supplier<EntityType<Dragonfly>> DRAGONFLY = CommonPlatformHelper.registerEntityType("dragonfly", Dragonfly::new, MobCategory.AMBIENT, 0.9F, 0.7F, 8);
-    public static final Supplier<EntityType<Duck>> DUCK = CommonPlatformHelper.registerEntityType("duck", Duck::new, MobCategory.CREATURE, 0.6F, 1.0F, 10);
-    public static final Supplier<EntityType<ThrownDuckEgg>> DUCK_EGG = CommonPlatformHelper.registerEntityType("duck_egg", ThrownDuckEgg::new, MobCategory.MISC, 0.25F, 0.25F, 16);
-    public static final Supplier<EntityType<Elephant>> ELEPHANT = CommonPlatformHelper.registerEntityType("elephant", Elephant::new, MobCategory.CREATURE, 2.5F, 3.5F, 10);
-    public static final Supplier<EntityType<Firefly>> FIREFLY = CommonPlatformHelper.registerEntityType("firefly", Firefly::new, MobCategory.AMBIENT, 0.7F, 0.6F, 8);
-    public static final Supplier<EntityType<Bird>> FINCH = CommonPlatformHelper.registerEntityType("finch", Bird::new, MobCategory.CREATURE, 0.5F, 0.6F, 8);
-    public static final Supplier<EntityType<Giraffe>> GIRAFFE = CommonPlatformHelper.registerEntityType("giraffe", Giraffe::new, MobCategory.CREATURE, 1.9f, 5.4f, 10);
-    public static final Supplier<EntityType<Hippo>> HIPPO = CommonPlatformHelper.registerEntityType("hippo", Hippo::new, MobCategory.CREATURE, 1.8F, 1.8F, 10);
-    public static final Supplier<EntityType<Lion>> LION = CommonPlatformHelper.registerEntityType("lion", Lion::new, MobCategory.CREATURE, 1.5F, 1.8F, 10);
-    public static final Supplier<EntityType<Lizard>> LIZARD = CommonPlatformHelper.registerEntityType("lizard", Lizard::new, MobCategory.CREATURE, 0.8F, 0.5F, 10);
-    public static final Supplier<EntityType<LizardTail>> LIZARD_TAIL = CommonPlatformHelper.registerEntityType("lizard_tail", LizardTail::new, MobCategory.CREATURE, 0.7f, 0.5f, 10);
-//    public static final Supplier<EntityType<Ostrich>> OSTRICH = CommonPlatformHelper.registerEntityType("ostrich", Ostrich::new, MobCategory.CREATURE, 1.4F, 2.1F, 10);
-    public static final Supplier<EntityType<Snake>> RATTLESNAKE = CommonPlatformHelper.registerEntityType("rattlesnake", Snake::new, MobCategory.CREATURE, 0.6F, 0.7F, 8);
-    public static final Supplier<EntityType<Rhino>> RHINO = CommonPlatformHelper.registerEntityType("rhino", Rhino::new, MobCategory.CREATURE, 2.5F, 3.0F, 10);
-    public static final Supplier<EntityType<Bird>> ROBIN = CommonPlatformHelper.registerEntityType("robin", Bird::new, MobCategory.CREATURE, 0.5F, 0.6F, 8);
-    public static final Supplier<EntityType<Snail>> SNAIL = CommonPlatformHelper.registerEntityType("snail", Snail::new, MobCategory.CREATURE, 0.7F, 0.7F, 10);
-    public static final Supplier<EntityType<Snake>> SNAKE = CommonPlatformHelper.registerEntityType("snake", Snake::new, MobCategory.CREATURE, 0.6F, 0.7F, 8);
-    public static final Supplier<EntityType<Bird>> SPARROW = CommonPlatformHelper.registerEntityType("sparrow", Bird::new, MobCategory.CREATURE, 0.5F, 0.6F, 8);
-    public static final Supplier<EntityType<Tortoise>> TORTOISE = CommonPlatformHelper.registerEntityType("tortoise", Tortoise::new, MobCategory.CREATURE, 1.2F, 0.875F, 10);
-    public static final Supplier<EntityType<Vulture>> VULTURE = CommonPlatformHelper.registerEntityType("vulture", Vulture::new, MobCategory.CREATURE, 0.9f, 0.5f, 10);
-    public static final Supplier<EntityType<Zebra>> ZEBRA = CommonPlatformHelper.registerEntityType("zebra", Zebra::new, MobCategory.CREATURE, 1.3964844F, 1.5F, 10);
+    public static final EntityType<Alligator> ALLIGATOR = register("alligator", EntityType.Builder.of(Alligator::new, MobCategory.CREATURE).sized(1.8F, 0.8F).clientTrackingRange(10));
+    public static final EntityType<Bass> BASS = register("bass", EntityType.Builder.of(Bass::new, MobCategory.WATER_AMBIENT).sized(0.7f, 0.4f).clientTrackingRange(4));
+    public static final EntityType<Bear> BEAR = register("bear", EntityType.Builder.of(Bear::new, MobCategory.CREATURE).sized(1.4F, 1.7F).clientTrackingRange(10));
+    public static final EntityType<Bird> BLUEJAY = register("bluejay", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));
+    public static final EntityType<Boar> BOAR = register("boar", EntityType.Builder.of(Boar::new, MobCategory.CREATURE).sized(0.9f, 0.9f).clientTrackingRange(10));
+    public static final EntityType<Butterfly> BUTTERFLY = register("butterfly", EntityType.Builder.of(Butterfly::new, MobCategory.AMBIENT).sized(0.7F, 0.6F).clientTrackingRange(8));
+    public static final EntityType<Bird> CANARY = register("canary", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));
+    public static final EntityType<Bird> CARDINAL = register("cardinal", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));
+    public static final EntityType<Caterpillar> CATERPILLAR = register("caterpillar", EntityType.Builder.of(Caterpillar::new, MobCategory.CREATURE).sized(0.4F, 0.4F).clientTrackingRange(10));
+    public static final EntityType<Catfish> CATFISH = register("catfish", EntityType.Builder.of(Catfish::new, MobCategory.WATER_AMBIENT).sized(0.7f, 0.4f).clientTrackingRange(4));
+    public static final EntityType<Snake> CORAL_SNAKE = register("coral_snake", EntityType.Builder.of(Snake::new, MobCategory.CREATURE).sized(0.6F, 0.7F).clientTrackingRange(8));
+    public static final EntityType<Deer> DEER = register("deer", EntityType.Builder.of(Deer::new, MobCategory.CREATURE).sized(1.3F, 1.6F).clientTrackingRange(10));
+    public static final EntityType<Dragonfly> DRAGONFLY = register("dragonfly", EntityType.Builder.of(Dragonfly::new, MobCategory.AMBIENT).sized(0.9F, 0.7F).clientTrackingRange(8));
+    public static final EntityType<Duck> DUCK = register("duck", EntityType.Builder.of(Duck::new, MobCategory.CREATURE).sized(0.6F, 1.0F).clientTrackingRange(10));
+    public static final EntityType<ThrownDuckEgg> DUCK_EGG = register("duck_egg", EntityType.Builder.<ThrownDuckEgg>of(ThrownDuckEgg::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(16));
+    public static final EntityType<Elephant> ELEPHANT = register("elephant", EntityType.Builder.of(Elephant::new, MobCategory.CREATURE).sized(2.5F, 3.5F).clientTrackingRange(10));
+    public static final EntityType<Firefly> FIREFLY = register("firefly", EntityType.Builder.of(Firefly::new, MobCategory.AMBIENT).sized( 0.7F, 0.6F).clientTrackingRange(8));
+    public static final EntityType<Bird> FINCH = register("finch", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));
+    public static final EntityType<Giraffe> GIRAFFE = register("giraffe", EntityType.Builder.of(Giraffe::new, MobCategory.CREATURE).sized(1.9f, 5.4f).clientTrackingRange(10));
+    public static final EntityType<Hippo> HIPPO = register("hippo", EntityType.Builder.of(Hippo::new, MobCategory.CREATURE).sized(1.8F, 1.8F).clientTrackingRange(10));
+    public static final EntityType<Lion> LION = register("lion", EntityType.Builder.of(Lion::new, MobCategory.CREATURE).sized(1.5F, 1.8F).clientTrackingRange(10));
+    public static final EntityType<Lizard> LIZARD = register("lizard", EntityType.Builder.of(Lizard::new, MobCategory.CREATURE).sized(0.8F, 0.5F).clientTrackingRange(0));
+    public static final EntityType<LizardTail> LIZARD_TAIL = register("lizard_tail", EntityType.Builder.of(LizardTail::new, MobCategory.CREATURE).sized(0.7f, 0.5f).clientTrackingRange(10));
+//    public static final EntityType<Ostrich> OSTRICH = register("ostrich", EntityType.Builder.of(Ostrich::new, MobCategory.CREATURE).sized(1.4F, 2.1F).clientTrackingRange(10));
+    public static final EntityType<Snake> RATTLESNAKE = register("rattlesnake", EntityType.Builder.of(Snake::new, MobCategory.CREATURE).sized(0.6F, 0.7F).clientTrackingRange(8));
+    public static final EntityType<Rhino> RHINO = register("rhino", EntityType.Builder.of(Rhino::new, MobCategory.CREATURE).sized(2.5F, 3.0F).clientTrackingRange(10));
+    public static final EntityType<Bird> ROBIN = register("robin", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));
+    public static final EntityType<Snail> SNAIL = register("snail", EntityType.Builder.of(Snail::new, MobCategory.CREATURE).sized(0.7F, 0.7F).clientTrackingRange(10));
+    public static final EntityType<Snake> SNAKE = register("snake", EntityType.Builder.of(Snake::new, MobCategory.CREATURE).sized(0.6F, 0.7F).clientTrackingRange(8));
+    public static final EntityType<Bird> SPARROW = register("sparrow", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));
+    public static final EntityType<Tortoise> TORTOISE = register("tortoise", EntityType.Builder.of(Tortoise::new, MobCategory.CREATURE).sized(1.2F, 0.875F).clientTrackingRange(10));
+    public static final EntityType<Vulture> VULTURE = register("vulture", EntityType.Builder.of(Vulture::new, MobCategory.CREATURE).sized(0.9f, 0.5f).clientTrackingRange(10));
+    public static final EntityType<Zebra> ZEBRA = register("zebra", EntityType.Builder.of(Zebra::new, MobCategory.CREATURE).sized(1.3964844F, 1.5F).clientTrackingRange(10));
 
     public static void init() {}
+
+    private static <T extends Entity> EntityType<T> register(ResourceKey<EntityType<?>> $$0, EntityType.Builder<T> $$1) {
+        return Registry.register(BuiltInRegistries.ENTITY_TYPE, $$0, $$1.build($$0));
+    }
+
+    private static ResourceKey<EntityType<?>> naturalistEntityId(String $$0) {
+        return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, $$0));
+    }
+
+    private static <T extends Entity> EntityType<T> register(String $$0, EntityType.Builder<T> $$1) {
+        return register(naturalistEntityId($$0), $$1);
+    }
 }

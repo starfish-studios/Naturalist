@@ -5,7 +5,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -25,7 +25,7 @@ public class BottleItemMixin extends Item {
     }
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    private void onUse(Level level, Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
+    private void onUse(Level level, Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult> cir) {
         List<AreaEffectCloud> list = level.getEntitiesOfClass(AreaEffectCloud.class, player.getBoundingBox().inflate(2.0), areaEffectCloud -> areaEffectCloud != null && areaEffectCloud.isAlive() && areaEffectCloud.getOwner() instanceof Dragonfly);
         ItemStack itemStack = player.getItemInHand(usedHand);
         if (!list.isEmpty()) {
@@ -33,7 +33,7 @@ public class BottleItemMixin extends Item {
             areaEffectCloud2.discard();
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.NEUTRAL, 1.0f, 1.0f);
             level.gameEvent(player, GameEvent.FLUID_PICKUP, player.position());
-            cir.setReturnValue(InteractionResultHolder.sidedSuccess(this.onTurnBottleIntoItem(itemStack, player, new ItemStack(Items.DRAGON_BREATH)), level.isClientSide()));
+            cir.setReturnValue(InteractionResult.SUCCESS.heldItemTransformedTo(this.onTurnBottleIntoItem(itemStack, player, new ItemStack(Items.DRAGON_BREATH))));
         }
     }
 

@@ -5,7 +5,8 @@
 
 package com.starfish_studios.naturalist.common.advancements.criterion;
 
-import com.google.gson.JsonObject;
+//TODO: 1.21.4??? Wasn't used
+/*import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,14 +48,15 @@ public class CaughtEntityTrigger extends SimpleCriterionTrigger<CaughtEntityTrig
         }
         */
 
-        public boolean matches(ItemStack stack) {
-            return this.item.matches(stack);
-        }
+        ///public boolean matches(ItemStack stack) {
+            //return this.item.matches(stack);
+        //}
 
-        public @NotNull JsonObject serializeToJson(@NotNull SerializationContext context) {
-            JsonObject jsonObject = super.serializeToJson(context);
-            jsonObject.add("item", this.item.serializeToJson());
-            return jsonObject;
-        }
-    }
-}
+        //public @NotNull JsonObject serializeToJson(@NotNull SerializationContext context) {
+        //    JsonObject jsonObject = super.serializeToJson(context);
+        //    jsonObject.add("item", this.item.serializeToJson());
+        //    return jsonObject;
+        //}
+    //}
+//}
+

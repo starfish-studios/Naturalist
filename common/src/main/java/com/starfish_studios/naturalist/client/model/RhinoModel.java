@@ -6,27 +6,29 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 @Environment(EnvType.CLIENT)
 public class RhinoModel extends GeoModel<Rhino> {
     @Override
-    public ResourceLocation getModelResource(Rhino rhino) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/rhino.geo.json");
+    public ResourceLocation getModelResource(Rhino rhino, @Nullable GeoRenderer<Rhino> geoRenderer) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/rhino.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(Rhino rhino) {
-        return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/rhino.png");
+    public ResourceLocation getTextureResource(Rhino rhino, @Nullable GeoRenderer<Rhino> geoRenderer) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/rhino.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Rhino rhino) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/rhino.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/rhino.rp_anim.json");
     }
 
     @Override
@@ -36,12 +38,12 @@ public class RhinoModel extends GeoModel<Rhino> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
-        CoreGeoBone bigHorn = this.getAnimationProcessor().getBone("big_horn");
-        CoreGeoBone smallHorn = this.getAnimationProcessor().getBone("small_horn");
-        CoreGeoBone babyHorn = this.getAnimationProcessor().getBone("baby_horn");
-        CoreGeoBone leftEar = this.getAnimationProcessor().getBone("left_ear");
-        CoreGeoBone rightEar = this.getAnimationProcessor().getBone("right_ear");
+        GeoBone head = this.getAnimationProcessor().getBone("head");
+        GeoBone bigHorn = this.getAnimationProcessor().getBone("big_horn");
+        GeoBone smallHorn = this.getAnimationProcessor().getBone("small_horn");
+        GeoBone babyHorn = this.getAnimationProcessor().getBone("baby_horn");
+        GeoBone leftEar = this.getAnimationProcessor().getBone("left_ear");
+        GeoBone rightEar = this.getAnimationProcessor().getBone("right_ear");
 
         if (entity.isBaby()) {
             head.setScaleX(1.4F);

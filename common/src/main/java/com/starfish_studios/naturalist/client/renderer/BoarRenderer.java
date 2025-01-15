@@ -26,7 +26,8 @@ public class BoarRenderer extends GeoEntityRenderer<Boar> {
         return 0.000001f;
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public void render(Boar entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (entity.isBaby()) {
             poseStack.scale(0.5F, 0.5F, 0.5F);
@@ -35,9 +36,10 @@ public class BoarRenderer extends GeoEntityRenderer<Boar> {
             poseStack.scale(1.0F, 1.0F, 1.0F);
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
+    }*/
 
-   public RenderType getRenderType(Boar entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
+    @Override
+    public @Nullable RenderType getRenderType(Boar animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return RenderType.entityCutoutNoCull(texture);
     }
 }

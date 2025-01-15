@@ -31,7 +31,8 @@ public class BearRenderer extends GeoEntityRenderer<Bear> {
         return 0.000001f;
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public void render(Bear entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (entity.isBaby()) {
             poseStack.scale(0.5F, 0.5F, 0.5F);
@@ -40,11 +41,11 @@ public class BearRenderer extends GeoEntityRenderer<Bear> {
             poseStack.scale(1.0F, 1.0F, 1.0F);
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
+    }*/
 
     @Override
     public void renderRecursively(PoseStack stack, Bear entity, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-        int packedOverlay, float red, float green, float blue, float alpha) {
+        int packedOverlay, int renderColor) {
         if (bone.getName().equals("snout")) {
             stack.pushPose();
             stack.mulPose(new Quaternionf(-0.7071f, 0.0f, 0.0f, 0.7071f));
@@ -54,6 +55,6 @@ public class BearRenderer extends GeoEntityRenderer<Bear> {
             stack.popPose();
             buffer = bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
         }
-        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
     }
 }

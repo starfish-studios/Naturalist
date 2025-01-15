@@ -1,5 +1,6 @@
 package com.starfish_studios.naturalist.common.block;
 
+import com.mojang.serialization.MapCodec;
 import com.starfish_studios.naturalist.common.entity.Butterfly;
 import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
 import net.minecraft.core.BlockPos;
@@ -9,10 +10,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -38,6 +41,11 @@ public class ChrysalisBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return null;
+    }
+
+    @Override
     public boolean isRandomlyTicking(BlockState pState) {
         return true;
     }
@@ -53,7 +61,7 @@ public class ChrysalisBlock extends HorizontalDirectionalBlock {
             pLevel.removeBlock(pPos, false);
             pLevel.playSound(null, pPos, SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 0.7F, 0.9F + pRandom.nextFloat() * 0.2F);
             pLevel.levelEvent(2001, pPos, Block.getId(pState));
-            Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.get().create(pLevel);
+            Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.create(pLevel, EntitySpawnReason.BREEDING);
             assert butterfly != null;
             butterfly.setVariant(Butterfly.Variant.getTypeById(pRandom.nextInt(Butterfly.Variant.values().length)));
             butterfly.moveTo(pPos.getX() + 0.5D, pPos.getY() + 0.5D, pPos.getZ() + 0.5D, 0.0F, 0.0F);
@@ -103,8 +111,8 @@ public class ChrysalisBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {
-        return pFacing == pState.getValue(FACING) && !pState.canSurvive(pLevel, pCurrentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(pState, pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        return direction == state.getValue(FACING) && !state.canSurvive(level, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override

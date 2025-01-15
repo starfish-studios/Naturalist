@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 
 public class AttackAlligatorEggGoal extends RemoveBlockGoal {
     public AttackAlligatorEggGoal(Block block, PathfinderMob pathfinderMob, double d, int i) {
-        super(NaturalistRegistry.ALLIGATOR_EGG.get(), pathfinderMob, d, i);
+        super(NaturalistRegistry.ALLIGATOR_EGG, pathfinderMob, d, i);
     }
     public void playDestroyProgressSound(LevelAccessor level, BlockPos pos) {
         level.playSound(null, pos, SoundEvents.ZOMBIE_DESTROY_EGG, SoundSource.HOSTILE, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);

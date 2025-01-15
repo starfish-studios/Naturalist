@@ -26,7 +26,8 @@ public class DeerRenderer extends GeoEntityRenderer<Deer> {
         return 0.000001f;
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public void render(Deer entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (entity.isBaby()) {
             poseStack.scale(0.6F, 0.6F, 0.6F);
@@ -35,9 +36,10 @@ public class DeerRenderer extends GeoEntityRenderer<Deer> {
             poseStack.scale(0.9F, 0.9F, 0.9F);
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
+    }*/
 
-   public RenderType getRenderType(Deer entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
+    @Override
+    public @Nullable RenderType getRenderType(Deer animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return RenderType.entityCutoutNoCull(texture);
     }
 }

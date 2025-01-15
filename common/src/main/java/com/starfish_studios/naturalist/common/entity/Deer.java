@@ -9,10 +9,7 @@ import com.starfish_studios.naturalist.registry.NaturalistTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -27,12 +24,9 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
@@ -50,7 +44,7 @@ public class Deer extends Animal implements NaturalistGeoEntity {
 
     public Deer(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(2.0F);
+        //this.setMaxUpStep(2.0F); TODO: 1.21.4
     }
 
     @Override
@@ -63,11 +57,11 @@ public class Deer extends Animal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return NaturalistEntityTypes.DEER.get().create(level);
+        return NaturalistEntityTypes.DEER.create(level, EntitySpawnReason.BREEDING);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.2F);
+        return Animal.createAnimalAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.2F);
     }
 
     @Override
@@ -141,21 +135,21 @@ public class Deer extends Animal implements NaturalistGeoEntity {
     // MOVEMENT
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         this.eatAnimationTick = this.eatBlockGoal.getEatAnimationTick();
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.5D);
         } else {
             this.setSprinting(false);
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     // PANICKING
 
     @Override
-    public boolean hurt(DamageSource pSource, float pAmount) {
-        boolean lastHurt = super.hurt(pSource, pAmount);
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource pSource, float pAmount) {
+        boolean lastHurt = super.hurtServer(serverLevel, pSource, pAmount);
         if (lastHurt) {
             int ticks = 100 + this.random.nextInt(100);
             this.panicTicks = ticks;

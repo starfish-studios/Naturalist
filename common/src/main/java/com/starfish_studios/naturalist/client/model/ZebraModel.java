@@ -1,15 +1,15 @@
 package com.starfish_studios.naturalist.client.model;
 
-import com.starfish_studios.naturalist.common.entity.Zebra;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.HorseModel;
+import net.minecraft.client.model.AbstractEquineModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.entity.state.DonkeyRenderState;
 
 @Environment(value= EnvType.CLIENT)
-public class ZebraModel extends HorseModel<Zebra> {
+public class ZebraModel extends AbstractEquineModel<DonkeyRenderState> {
     private final ModelPart leftChest;
     private final ModelPart rightChest;
 
@@ -20,7 +20,7 @@ public class ZebraModel extends HorseModel<Zebra> {
     }
 
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition meshDefinition = HorseModel.createBodyMesh(CubeDeformation.NONE);
+        MeshDefinition meshDefinition = AbstractEquineModel.createBodyMesh(CubeDeformation.NONE);
         PartDefinition partDefinition = meshDefinition.getRoot();
         PartDefinition partDefinition2 = partDefinition.getChild("body");
         CubeListBuilder cubeListBuilder = CubeListBuilder.create().texOffs(26, 21).addBox(-4.0f, 0.0f, -2.0f, 8.0f, 8.0f, 3.0f);
@@ -30,14 +30,9 @@ public class ZebraModel extends HorseModel<Zebra> {
     }
 
     @Override
-    public void setupAnim(Zebra entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        if (entity.hasChest()) {
-            this.leftChest.visible = true;
-            this.rightChest.visible = true;
-        } else {
-            this.leftChest.visible = false;
-            this.rightChest.visible = false;
-        }
+    public void setupAnim(DonkeyRenderState donkeyRenderState) {
+        super.setupAnim(donkeyRenderState);
+        this.leftChest.visible = donkeyRenderState.hasChest;
+        this.rightChest.visible = donkeyRenderState.hasChest;
     }
 }

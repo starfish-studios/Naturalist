@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -62,8 +63,8 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-        return NaturalistRegistry.GLOW_GOOP.get().asItem().getDefaultInstance();
+    public @NotNull ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+        return NaturalistRegistry.GLOW_GOOP.asItem().getDefaultInstance();
     }
 
     @Override
@@ -92,7 +93,7 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
                 this.decreaseGoop(level, pos, state);
                 int goop = state.getValue(GOOP);
                 for (int i = 0; i < goop; i++) {
-                    popResource(level, pos, new ItemStack(NaturalistRegistry.GLOW_GOOP.get()));
+                    popResource(level, pos, new ItemStack(NaturalistRegistry.GLOW_GOOP));
                 }
             }
         }
@@ -109,12 +110,12 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, PathComputationType type) {
         return true;
     }
 
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return context.isHoldingItem(NaturalistRegistry.GLOW_GOOP.get()) ? Shapes.block() : Shapes.empty();
+        return context.isHoldingItem(NaturalistRegistry.GLOW_GOOP) ? Shapes.block() : Shapes.empty();
     }
 
     public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {

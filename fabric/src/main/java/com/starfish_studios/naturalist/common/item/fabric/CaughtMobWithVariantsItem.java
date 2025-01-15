@@ -11,12 +11,13 @@ import net.minecraft.world.level.material.*;
 public class CaughtMobWithVariantsItem extends CaughtMobItem {
     private final int variantCount;
 
-    public CaughtMobWithVariantsItem(EntityType<?> entitySupplier, Fluid fluid, SoundEvent emptyingSound, int variantCount, Properties settings) {
+    public CaughtMobWithVariantsItem(EntityType<? extends Mob> entitySupplier, Fluid fluid, SoundEvent emptyingSound, int variantCount, Properties settings) {
         super(entitySupplier, fluid, emptyingSound, settings);
         this.variantCount = variantCount;
     }
 
-    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
+    // TODO: Unused right now, 1.21.4
+    /*public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
         for (int i = 0; i < variantCount; i++) {
             ItemStack variantStack = new ItemStack(this);
             CompoundTag compoundTag = new CompoundTag();
@@ -24,5 +25,5 @@ public class CaughtMobWithVariantsItem extends CaughtMobItem {
             variantStack.setTag(compoundTag);
             items.add(variantStack);
         }
-    }
+    }*/
 }

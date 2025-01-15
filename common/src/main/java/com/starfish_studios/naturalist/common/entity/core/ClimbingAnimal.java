@@ -17,9 +17,9 @@ public abstract class ClimbingAnimal extends Animal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CLIMB_FLAG, (byte)0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CLIMB_FLAG, (byte)0);
     }
 
     @Override

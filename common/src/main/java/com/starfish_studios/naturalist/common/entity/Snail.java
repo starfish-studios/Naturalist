@@ -10,6 +10,7 @@ import com.starfish_studios.naturalist.registry.NaturalistRegistry;
 import com.starfish_studios.naturalist.registry.NaturalistSoundEvents;
 import com.starfish_studios.naturalist.registry.NaturalistTags;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -32,6 +33,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -39,22 +41,19 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.core.animation.AnimationState;
 
 import java.util.*;
 
 public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucketable, HidingAnimal, EggLayingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEETROOT);
-    private static EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> DATA_COLOR;
+    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_COLOR = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     int layEggCounter;
@@ -91,15 +90,15 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return super.hurtServer(level, source, this.canHide() ? amount * 0.8F : amount);
     }
 
 
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
+    //@Override
+    //public boolean canBreatheUnderwater() {
+    //    return true;
+    //} //TODO: 1.21.4
 
     @Override
     public boolean hasEgg() {
@@ -113,7 +112,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
 
     @Override
     public Block getEggBlock() {
-        return NaturalistRegistry.SNAIL_EGGS.get();
+        return NaturalistRegistry.SNAIL_EGGS;
     }
 
     @Override
@@ -148,10 +147,11 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
         return super.canFallInLove() && !this.hasEgg();
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
         return 0.3F;
-    }
+    }*/
 
     @Override
     protected float getClimbSpeedMultiplier() {
@@ -161,7 +161,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return NaturalistEntityTypes.SNAIL.get().create(level);
+        return NaturalistEntityTypes.SNAIL.create(level, EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -199,12 +199,12 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     // BUCKETING
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(FROM_BUCKET, false);
-        this.entityData.define(DATA_COLOR, Color.BROWN.getId());
-        this.entityData.define(HAS_EGG, false);
-        this.entityData.define(LAYING_EGG, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(FROM_BUCKET, false);
+        builder.define(DATA_COLOR, Color.BROWN.getId());
+        builder.define(HAS_EGG, false);
+        builder.define(LAYING_EGG, false);
     }
 
     @Override
@@ -332,7 +332,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
             }
 
             entity.discard();
-            return Optional.of(InteractionResult.sidedSuccess(level.isClientSide));
+            return Optional.of(InteractionResult.SUCCESS);
         } else {
             return Optional.empty();
         }
@@ -340,9 +340,8 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
 
     @Override
     public void saveToBucketTag(ItemStack stack) {
-        CompoundTag compoundTag = stack.getOrCreateTag();
         Bucketable.saveDefaultDataToBucketTag(this, stack);
-        compoundTag.putInt("Color", this.getSnailColor().getId());
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, compoundTag -> compoundTag.putInt("Color", this.getSnailColor().getId()));
     }
 
     @Override
@@ -356,7 +355,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
 
     @Override
     public ItemStack getBucketItemStack() {
-        return new ItemStack(NaturalistRegistry.SNAIL_BUCKET.get());
+        return new ItemStack(NaturalistRegistry.SNAIL_BUCKET);
     }
 
     @Override
@@ -376,8 +375,12 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
 
     @Override
     public boolean canHide() {
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
-        return !players.isEmpty();
+        if (this.level() instanceof ServerLevel serverLevel) {
+            List<Player> players = serverLevel.getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector((livingEntity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
+            return !players.isEmpty();
+        } else {
+            return false;
+        }
     }
 
     public AnimatableInstanceCache getAnimatableInstanceCache() {
@@ -427,10 +430,5 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
             this.forceTrigger = true;
             this.interval = 1;
         }
-    }
-
-    static {
-        DATA_COLOR = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.INT);
-        FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     }
 }

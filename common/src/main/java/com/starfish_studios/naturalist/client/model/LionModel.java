@@ -6,32 +6,34 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 @Environment(EnvType.CLIENT)
 public class LionModel extends GeoModel<Lion> {
     @Override
-    public ResourceLocation getModelResource(Lion entity) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/lion.geo.json");
+    public ResourceLocation getModelResource(Lion entity, @Nullable GeoRenderer<Lion> geoRenderer) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/lion.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(Lion entity) {
-        return (entity.isSleeping() && entity.hasMane()) && !entity.isBaby() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion/lion_sleep.png") :
-                (!entity.hasMane() && entity.isSleeping() || entity.isBaby() && entity.isSleeping()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion/lioness_sleep.png") :
-                        (!entity.hasMane() && !entity.isAggressive() || entity.isBaby()) ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion/lioness.png") :
-                                (entity.isAggressive()) && !entity.isBaby() && entity.hasMane() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion/lion_angry.png") :
-                                        (!entity.hasMane() && entity.isAggressive()) || entity.isBaby() && entity.isAggressive() ? new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion/lioness_angry.png") :
-                                                new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lion/lion.png");
+    public ResourceLocation getTextureResource(Lion entity, @Nullable GeoRenderer<Lion> geoRenderer) {
+        return (entity.isSleeping() && entity.hasMane()) && !entity.isBaby() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion_sleep.png") :
+                (!entity.hasMane() && entity.isSleeping() || entity.isBaby() && entity.isSleeping()) ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness_sleep.png") :
+                        (!entity.hasMane() && !entity.isAggressive() || entity.isBaby()) ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness.png") :
+                                (entity.isAggressive()) && !entity.isBaby() && entity.hasMane() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion_angry.png") :
+                                        (!entity.hasMane() && entity.isAggressive()) || entity.isBaby() && entity.isAggressive() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness_angry.png") :
+                                                ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Lion entity) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/lion.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/lion.rp_anim.json");
     }
 
     @Override
@@ -41,8 +43,8 @@ public class LionModel extends GeoModel<Lion> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
-        CoreGeoBone mane = this.getAnimationProcessor().getBone("mane");
+        GeoBone head = this.getAnimationProcessor().getBone("head");
+        GeoBone mane = this.getAnimationProcessor().getBone("mane");
 
         if (entity.isBaby()) {
             head.setScaleX(1.4F);

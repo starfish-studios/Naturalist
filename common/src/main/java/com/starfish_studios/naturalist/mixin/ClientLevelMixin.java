@@ -23,7 +23,7 @@ public abstract class ClientLevelMixin {
         Player player = instance.player;
         if (player != null) {
             Item item = player.getMainHandItem().getItem();
-            if (item instanceof BlockItem blockItem && item == NaturalistRegistry.GLOW_GOOP.get()) {
+            if (item instanceof BlockItem blockItem && item == NaturalistRegistry.GLOW_GOOP) {
                 cir.setReturnValue(blockItem.getBlock());
             }
         }

@@ -19,16 +19,12 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Catfish extends AbstractFish implements NaturalistGeoEntity {
@@ -61,13 +57,13 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity {
                 setKillCooldown(2400);
             }
         });
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity, level) -> entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(KILL_COOLDOWN, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(KILL_COOLDOWN, 0);
     }
 
     @Override
@@ -111,7 +107,7 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity {
 
     @Override
     public ItemStack getBucketItemStack() {
-        return new ItemStack(NaturalistRegistry.CATFISH_BUCKET.get());
+        return new ItemStack(NaturalistRegistry.CATFISH_BUCKET);
     }
 
     @Override

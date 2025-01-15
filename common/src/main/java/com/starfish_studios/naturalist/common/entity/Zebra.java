@@ -9,6 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -68,7 +69,7 @@ public class Zebra extends AbstractChestedHorse {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        AbstractHorse zebra = NaturalistEntityTypes.ZEBRA.get().create(serverLevel);
+        AbstractHorse zebra = NaturalistEntityTypes.ZEBRA.create(serverLevel, EntitySpawnReason.BREEDING);
         this.setOffspringAttributes(ageableMob, zebra);
         return zebra;
     }
@@ -95,10 +96,11 @@ public class Zebra extends AbstractChestedHorse {
         }
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public double getPassengersRidingOffset() {
         return super.getPassengersRidingOffset() + 0;
-    }
+    }*/
 
     @Override
     protected void playJumpSound() {

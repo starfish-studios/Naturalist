@@ -9,6 +9,7 @@ import com.starfish_studios.naturalist.registry.NaturalistRegistry;
 import com.starfish_studios.naturalist.registry.NaturalistTags;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -37,22 +38,22 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import org.jetbrains.annotations.Nullable;
@@ -71,26 +72,27 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
     protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.butterfly.fly");
     // endregion
 
-    @Override
-    @NotNull
-    public MobType getMobType() {
-        return MobType.ARTHROPOD;
-    }
+    // TODO: 1.21.4
+    //@Override
+    //@NotNull
+    //public MobType getMobType() {
+    //    return MobType.ARTHROPOD;
+    //}
 
     public Butterfly(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0F);
-        this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0F);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.WATER, -1.0F);
+        this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
+        this.setPathfindingMalus(PathType.COCOA, -1.0F);
+        this.setPathfindingMalus(PathType.FENCE, -1.0F);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25D, Ingredient.of(ItemTags.FLOWERS), false));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25D, (itemStack) -> itemStack.is(ItemTags.BEE_FOOD), false));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new ButterflyGrowCropGoal(this, 1.0D, 16, 4));
         this.goalSelector.addGoal(5, new ButterflyPollinateGoal(this, 1.0D, 16, 4));
@@ -99,7 +101,7 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.MOVEMENT_SPEED, 0.3F);
+        return Animal.createAnimalAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.MOVEMENT_SPEED, 0.3F);
     }
 
     @Override
@@ -111,7 +113,7 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
         };
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(false);
-        navigation.setCanPassDoors(true);
+        //navigation.setCanPassDoors(true);
         return navigation;
     }
 
@@ -123,11 +125,11 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
     // region DATA
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_VARIANT, 1);
-        this.entityData.define(FROM_HAND, false);
-        this.entityData.define(HAS_NECTAR, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, 1);
+        builder.define(FROM_HAND, false);
+        builder.define(HAS_NECTAR, false);
     }
 
     public void addAdditionalSaveData(CompoundTag compound) {
@@ -179,14 +181,14 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
         ++this.numCropsGrownSincePollination;
     }
 
+    @Override
     public void saveToHandTag(ItemStack stack) {
         Catchable.saveDefaultDataToHandTag(this, stack);
-        CompoundTag compoundTag = stack.getOrCreateTag();
-        compoundTag.putInt("Variant", this.getVariant().getId());
-        compoundTag.putInt("Age", this.getAge());
-
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, compoundTag -> compoundTag.putInt("Variant", this.getVariant().getId()));
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, compoundTag -> compoundTag.putInt("Age", this.getAge()));
     }
 
+    @Override
     public void loadFromHandTag(CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
         int i = tag.getInt("Variant");
@@ -218,10 +220,11 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
         return !this.onGround();
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     protected float getStandingEyeHeight(Pose pPose, EntityDimensions pSize) {
         return pSize.height * 0.5F;
-    }
+    }*/
 
     // endregion
 
@@ -229,8 +232,8 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @org.jetbrains.annotations.Nullable SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable CompoundTag dataTag) {
-        if (reason == MobSpawnType.BUCKET) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @org.jetbrains.annotations.Nullable SpawnGroupData spawnData) {
+        if (reason == EntitySpawnReason.BUCKET) {
             return spawnData;
         } else {
             RandomSource randomSource = level.getRandom();
@@ -240,11 +243,11 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
 
             this.setVariant(((Butterfly.ButterflyGroupData)spawnData).getVariant(randomSource));
 
-            return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+            return super.finalizeSpawn(level, difficulty, reason, spawnData);
         }
     }
 
-    public static boolean checkButterflySpawnRules(EntityType<? extends Butterfly> pType, ServerLevelAccessor pLevel, MobSpawnType pReason, BlockPos pPos, RandomSource pRandom) {
+    public static boolean checkButterflySpawnRules(EntityType<? extends Butterfly> pType, ServerLevelAccessor pLevel, EntitySpawnReason pReason, BlockPos pPos, RandomSource pRandom) {
         return pLevel.getBlockState(pPos.below()).is(NaturalistTags.BlockTags.BUTTERFLIES_SPAWNABLE_ON);
     }
 
@@ -254,7 +257,7 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
 
     @Override
     public boolean isFood(ItemStack pStack) {
-        return pStack.is(ItemTags.FLOWERS);
+        return pStack.is(ItemTags.BEE_FOOD);
     }
 
     public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -270,7 +273,7 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
     }
 
     public ItemStack getCaughtItemStack() {
-        return new ItemStack(NaturalistRegistry.BUTTERFLY.get());
+        return new ItemStack(NaturalistRegistry.BUTTERFLY);
     }
 
     @Override
@@ -305,7 +308,7 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return NaturalistEntityTypes.CATERPILLAR.get().create(level);
+        return NaturalistEntityTypes.CATERPILLAR.create(level, EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -420,7 +423,7 @@ public class Butterfly extends Animal implements NaturalistGeoEntity, FlyingAnim
 
         @Override
         protected boolean isValidTarget(LevelReader pLevel, BlockPos pPos) {
-            return pLevel.getBlockState(pPos).is(BlockTags.FLOWERS) || pLevel.getBlockState(pPos).is(NaturalistRegistry.CATTAIL.get());
+            return pLevel.getBlockState(pPos).is(BlockTags.FLOWERS) || pLevel.getBlockState(pPos).is(NaturalistRegistry.CATTAIL);
         }
 
         @Override

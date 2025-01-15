@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -29,14 +30,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import org.jetbrains.annotations.Nullable;
@@ -50,11 +46,12 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
 
     protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.dragonfly.fly");
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     @NotNull
     public MobType getMobType() {
         return MobType.ARTHROPOD;
-    }
+    }*/
 
     public Dragonfly(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
@@ -66,7 +63,7 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0);
     }
 
-    public static boolean checkDragonflySpawnRules(EntityType<? extends Dragonfly> pType, ServerLevelAccessor pLevel, MobSpawnType pReason, BlockPos pPos, RandomSource pRandom) {
+    public static boolean checkDragonflySpawnRules(EntityType<? extends Dragonfly> pType, ServerLevelAccessor pLevel, EntitySpawnReason pReason, BlockPos pPos, RandomSource pRandom) {
         return pLevel.getBlockState(pPos.below()).is(NaturalistTags.BlockTags.DRAGONFLIES_SPAWNABLE_ON);
     }
 
@@ -87,9 +84,9 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(VARIANT_ID, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(VARIANT_ID, 0);
     }
 
     @Override
@@ -106,9 +103,9 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         this.setVariant(level.getRandom().nextInt(3));
-        return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
     @Override
@@ -131,9 +128,9 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
-        if (!(this.targetPosition == null || this.level().isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > this.level().getMinBuildHeight())) {
+    protected void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
+        if (!(this.targetPosition == null || this.level().isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > serverLevel.getMinY())) {
             this.targetPosition = null;
         }
         if (this.getHoverTicks() > 0) {
@@ -195,7 +192,7 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.is(Items.CHORUS_FRUIT)) {
-            this.playSound(SoundEvents.GENERIC_EAT);
+            this.playSound(SoundEvents.GENERIC_EAT.value());
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
@@ -209,9 +206,9 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
                 areaEffectCloud.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(areaEffectCloud);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
-        return super.mobInteract(player , hand);
+        return super.mobInteract(player, hand);
     }
 
     @Override

@@ -27,7 +27,8 @@ public class SnailRenderer extends GeoEntityRenderer<Snail> {
         return 0.000001f;
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public void render(Snail animatable, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (animatable.isBaby()) {
             poseStack.scale(0.5F, 0.5F, 0.5F);
@@ -36,9 +37,10 @@ public class SnailRenderer extends GeoEntityRenderer<Snail> {
             poseStack.scale(1.0F, 1.0F, 1.0F);
         }
         super.render(animatable, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
+    }*/
 
-   public RenderType getRenderType(Snail animatable, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
+    @Override
+    public @Nullable RenderType getRenderType(Snail animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return RenderType.entityCutoutNoCull(texture);
     }
 }

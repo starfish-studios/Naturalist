@@ -44,13 +44,10 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.Path;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import org.jetbrains.annotations.Nullable;
@@ -59,8 +56,6 @@ import java.util.UUID;
 
 public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
-    private static final Ingredient TAME_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Snake.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Snake.class, EntityDataSerializers.BOOLEAN);
@@ -91,7 +86,7 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new SnakeMeleeAttackGoal(this, 1.75D, true));
-        this.goalSelector.addGoal(2, new SearchForItemsGoal(this, 1.2F, FOOD_ITEMS, 8.0D, 8.0D));
+        this.goalSelector.addGoal(2, new SearchForItemsGoal(this, 1.2F, (itemStack) -> itemStack.is(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS), 8.0D, 8.0D));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -100,7 +95,7 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
         // this.goalSelector.addGoal(8, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny())));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, (livingEntity, level) -> livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny())));
         this.targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -110,14 +105,14 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
         return null;
     }
 
-    public static boolean checkSnakeSpawnRules(EntityType<Snake> entityType, LevelAccessor level, MobSpawnType type, BlockPos pos, RandomSource random) {
+    public static boolean checkSnakeSpawnRules(EntityType<Snake> entityType, LevelAccessor level, EntitySpawnReason type, BlockPos pos, RandomSource random) {
         return level.getBlockState(pos.below()).is(BlockTags.RABBITS_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, EntitySpawnReason pReason, @Nullable SpawnGroupData pSpawnData) {
         this.populateDefaultEquipmentSlots(random, pDifficulty);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     @Override
@@ -143,19 +138,19 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
 
     @Override
     public boolean isFood(ItemStack pStack) {
-        return FOOD_ITEMS.test(pStack);
+        return pStack.is(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
     }
 
     public boolean isTameFood(ItemStack pStack) {
-        return TAME_ITEMS.test(pStack);
+        return pStack.is(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS);
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(SLEEPING, false);
-        this.entityData.define(EAT_COUNTER, 0);
-        this.entityData.define(REMAINING_ANGER_TIME, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SLEEPING, false);
+        builder.define(EAT_COUNTER, 0);
+        builder.define(REMAINING_ANGER_TIME, 0);
     }
 
     @Override
@@ -231,7 +226,8 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
 
     // EATING
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     public boolean canTakeItem(ItemStack pItemstack) {
         EquipmentSlot slot = getEquipmentSlotForItem(pItemstack);
         if (!this.getItemBySlot(slot).isEmpty()) {
@@ -239,12 +235,12 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
         } else {
             return slot == EquipmentSlot.MAINHAND && super.canTakeItem(pItemstack);
         }
-    }
+    }*/
 
     @Override
-    protected void pickUpItem(ItemEntity pItemEntity) {
+    protected void pickUpItem(ServerLevel serverLevel, ItemEntity pItemEntity) {
         ItemStack stack = pItemEntity.getItem();
-        if (this.getMainHandItem().isEmpty() && FOOD_ITEMS.test(stack)) {
+        if (this.getMainHandItem().isEmpty() && stack.is(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS)) {
             this.onItemPickup(pItemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, stack);
             this.handDropChances[EquipmentSlot.MAINHAND.getIndex()] = 2.0F;
@@ -254,16 +250,16 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
     }
 
     @Override
-    public boolean hurt(DamageSource pSource, float pAmount) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource pSource, float pAmount) {
         if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
             itemEntity.setPickUpDelay(80);
-            itemEntity.setThrower(this.getUUID());
+            itemEntity.setThrower(this);
             this.playSound(SoundEvents.FOX_SPIT, 1.0F, 1.0F);
             this.level().addFreshEntity(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
-        return super.hurt(pSource, pAmount);
+        return super.hurtServer(serverLevel, pSource, pAmount);
     }
 
     // MOVEMENT
@@ -331,21 +327,25 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
     // SNAKE VARIANTS
 
     @Override
-    public boolean doHurtTarget(Entity pEntity) {
-        if ((this.getType().equals(NaturalistEntityTypes.CORAL_SNAKE.get()) || this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())) && pEntity instanceof LivingEntity living) {
+    public boolean doHurtTarget(ServerLevel serverLevel, Entity pEntity) {
+        if ((this.getType().equals(NaturalistEntityTypes.CORAL_SNAKE) || this.getType().equals(NaturalistEntityTypes.RATTLESNAKE)) && pEntity instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.POISON, 40));
         }
-        return super.doHurtTarget(pEntity);
+        return super.doHurtTarget(serverLevel, pEntity);
     }
 
     private boolean canRattle() {
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
-        if(!players.isEmpty() && this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get()) && !players.get(0).isCreative()){
-            this.setTarget(players.get(0));
+        if (this.level() instanceof ServerLevel serverLevel) {
+            List<Player> players = serverLevel.getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
+            if (!players.isEmpty() && this.getType().equals(NaturalistEntityTypes.RATTLESNAKE) && !players.get(0).isCreative()) {
+                this.setTarget(players.get(0));
+            } else {
+                this.setTarget(null);
+            }
+            return !players.isEmpty() && this.getType().equals(NaturalistEntityTypes.RATTLESNAKE);
         } else {
-            this.setTarget(null);
+            return false;
         }
-        return !players.isEmpty() && this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get());
     }
 
     @Override
@@ -512,7 +512,8 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
                     if (this.path != null) {
                         return true;
                     } else {
-                        return this.getAttackReachSqr(livingEntity) >= this.mob.distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+                        //return this.getAttackReachSqr(livingEntity) >= this.mob.distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ()); //TODO: 1.21.4
+                        return this.canPerformAttack(livingEntity);
                     }
                 }
             }
@@ -523,9 +524,9 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
             return mob.getMainHandItem().isEmpty() && super.canContinueToUse();
         }
 
-        @Override
+        /*@Override
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
             return 4.0F + pAttackTarget.getBbWidth();
-        }
+        }*/
     }
 }

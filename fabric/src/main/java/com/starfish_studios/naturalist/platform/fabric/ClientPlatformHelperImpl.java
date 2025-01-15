@@ -1,4 +1,4 @@
-package com.starfish_studios.naturalist.core.platform.fabric;
+package com.starfish_studios.naturalist.platform.fabric;
 
 import com.starfish_studios.naturalist.registry.NaturalistRegistry;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class ClientPlatformHelperImpl {
     public static void setRenderLayer(Supplier<Block> block, RenderType type) {
         BlockRenderLayerMap.INSTANCE.putBlock(block.get(), type);
-        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.CATTAIL.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.CATTAIL, RenderType.cutout());
     }
 
     public static <T extends Entity> void registerEntityRenderers(Supplier<EntityType<T>> type, EntityRendererProvider<T> renderProvider) {

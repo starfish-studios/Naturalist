@@ -1,49 +1,33 @@
 package com.starfish_studios.naturalist;
 
 import com.starfish_studios.naturalist.common.entity.*;
-import com.starfish_studios.naturalist.common.entity.core.projectile.ThrownDuckEgg;
 import com.starfish_studios.naturalist.platform.CommonPlatformHelper;
 import com.starfish_studios.naturalist.registry.*;
-import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Position;
-import net.minecraft.core.dispenser.AbstractProjectileDispenseBehavior;
-import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.WaterAnimal;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DispensibleContainerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
-import software.bernie.geckolib.GeckoLib;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Naturalist {
     public static final String MOD_ID = "naturalist";
-    public static final CreativeModeTab TAB = CommonPlatformHelper.registerCreativeModeTab(new ResourceLocation(MOD_ID, "tab"), () -> new ItemStack(NaturalistRegistry.BUG_NET.get()));
-    public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(MOD_ID, "tab"));
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static void init() {
-        GeckoLib.initialize();
+        //GeckoLib.initialize();
         NaturalistRegistry.init();
+        NaturalistCreativeModeTabs.registerCreativeModeTabs();
         NaturalistBlockEntities.init();
         NaturalistSoundEvents.init();
         NaturalistEntityTypes.init();
@@ -51,7 +35,8 @@ public class Naturalist {
     }
 
     public static void registerDispenserBehaviors() {
-        DispenserBlock.registerBehavior(NaturalistRegistry.DUCK_EGG.get(), new AbstractProjectileDispenseBehavior() {
+        // TODO: 1.21.4
+        /*DispenserBlock.registerBehavior(NaturalistRegistry.DUCK_EGG, new AbstractProjectileDispenseBehavior() {
             protected Projectile getProjectile(Level level, Position position, ItemStack stack) {
                 return Util.make(new ThrownDuckEgg(level, position.x(), position.y(), position.z()), (thrownDuckEgg) -> {
                     thrownDuckEgg.setItem(stack);
@@ -61,6 +46,7 @@ public class Naturalist {
         DispenseItemBehavior dispenseItemBehavior = new DefaultDispenseItemBehavior() {
             private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
 
+            @Override
             public ItemStack execute(BlockSource source, ItemStack stack) {
                 DispensibleContainerItem dispensibleContainerItem = (DispensibleContainerItem)stack.getItem();
                 BlockPos blockPos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
@@ -73,17 +59,17 @@ public class Naturalist {
                 }
             }
         };
-        DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET.get(), dispenseItemBehavior);
-        DispenserBlock.registerBehavior(NaturalistRegistry.BASS_BUCKET.get(), dispenseItemBehavior);
-        DispenserBlock.registerBehavior(NaturalistRegistry.CATFISH_BUCKET.get(), dispenseItemBehavior);
+        DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET, dispenseItemBehavior);
+        DispenserBlock.registerBehavior(NaturalistRegistry.BASS_BUCKET, dispenseItemBehavior);
+        DispenserBlock.registerBehavior(NaturalistRegistry.CATFISH_BUCKET, dispenseItemBehavior);
 
 
-        DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET.get(), new DefaultDispenseItemBehavior() {
+        DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET, new DefaultDispenseItemBehavior() {
             public ItemStack execute(BlockSource source, ItemStack stack) {
                 Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
                 BlockPos blockPos = source.getPos().relative(direction);
                 ServerLevel serverLevel = source.getLevel();
-                Snail snail = NaturalistEntityTypes.SNAIL.get().spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
+                Snail snail = NaturalistEntityTypes.SNAIL.spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
                 if (snail != null) {
                     snail.setSnailColor(Snail.Color.getTypeById(stack.getOrCreateTag().getInt("Color")));
                     stack.shrink(1);
@@ -92,12 +78,12 @@ public class Naturalist {
                 return stack;
             }
         });
-        DispenserBlock.registerBehavior(NaturalistRegistry.BUTTERFLY.get(), new DefaultDispenseItemBehavior() {
+        DispenserBlock.registerBehavior(NaturalistRegistry.BUTTERFLY, new DefaultDispenseItemBehavior() {
             public ItemStack execute(BlockSource source, ItemStack stack) {
                 Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
                 BlockPos blockPos = source.getPos().relative(direction);
                 ServerLevel serverLevel = source.getLevel();
-                Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.get().spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
+                Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
                 if (butterfly != null) {
                     butterfly.setVariant(Butterfly.Variant.getTypeById(stack.getOrCreateTag().getInt("Variant")));
                     stack.shrink(1);
@@ -105,53 +91,53 @@ public class Naturalist {
 
                 return stack;
             }
-        });
+        });*/
     }
     
-    public static void registerBrewingRecipes() {
-        CommonPlatformHelper.registerBrewingRecipe(Potions.AWKWARD, NaturalistRegistry.ANTLER.get(), NaturalistPotions.FOREST_DASHER.get());
-        CommonPlatformHelper.registerBrewingRecipe(NaturalistPotions.FOREST_DASHER.get(), Items.REDSTONE, NaturalistPotions.LONG_FOREST_DASHER.get());
-        CommonPlatformHelper.registerBrewingRecipe(NaturalistPotions.FOREST_DASHER.get(), Items.GLOWSTONE_DUST, NaturalistPotions.STRONG_FOREST_DASHER.get());
+    public static void registerBrewingRecipes(PotionBrewing.Builder builder) {
+        builder.addMix(Potions.AWKWARD, NaturalistRegistry.ANTLER, NaturalistPotions.FOREST_DASHER);
+        builder.addMix(NaturalistPotions.FOREST_DASHER, Items.REDSTONE, NaturalistPotions.LONG_FOREST_DASHER);
+        builder.addMix(NaturalistPotions.FOREST_DASHER, Items.GLOWSTONE_DUST, NaturalistPotions.STRONG_FOREST_DASHER);
     }
 
     public static void registerSpawnPlacements() {
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.SNAIL.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BEAR.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BUTTERFLY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Butterfly::checkButterflySpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.FIREFLY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Firefly::checkFireflySpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.SNAKE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.CORAL_SNAKE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.RATTLESNAKE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.DEER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.SNAIL, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BEAR, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BUTTERFLY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Butterfly::checkButterflySpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.FIREFLY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Firefly::checkFireflySpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.SNAKE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.CORAL_SNAKE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.RATTLESNAKE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.DEER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
 
 
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BLUEJAY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.CANARY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.CARDINAL.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.ROBIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.FINCH.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.SPARROW.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BLUEJAY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.CANARY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.CARDINAL, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.ROBIN, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.FINCH, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.SPARROW, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
 
 
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.RHINO.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.LION.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.ELEPHANT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.ZEBRA.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.GIRAFFE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.HIPPO.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hippo::checkHippoSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.VULTURE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Vulture::checkVultureSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BOAR.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.DRAGONFLY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Dragonfly::checkDragonflySpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.CATFISH.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.ALLIGATOR.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Alligator::checkAlligatorSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BASS.get(), SpawnPlacements.Type.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.LIZARD.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.TORTOISE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
-        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.DUCK.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Duck::checkDuckSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.RHINO, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.LION, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.ELEPHANT, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.ZEBRA, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.GIRAFFE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.HIPPO, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hippo::checkHippoSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.VULTURE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Vulture::checkVultureSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BOAR, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.DRAGONFLY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Dragonfly::checkDragonflySpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.CATFISH, SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.ALLIGATOR, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Alligator::checkAlligatorSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.BASS, SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.LIZARD, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.TORTOISE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
+        CommonPlatformHelper.registerSpawnPlacement(NaturalistEntityTypes.DUCK, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Duck::checkDuckSpawnRules);
     }
 
 
     public static void registerCompostables() {
-        CommonPlatformHelper.registerCompostable(0.65F, NaturalistRegistry.SNAIL_SHELL.get());
+        CommonPlatformHelper.registerCompostable(0.65F, NaturalistRegistry.SNAIL_SHELL);
     }
 }

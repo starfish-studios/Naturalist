@@ -31,16 +31,12 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Duck extends Animal implements NaturalistGeoEntity {
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
     public float flap;
     public float flapSpeed;
     public float oFlapSpeed;
@@ -71,7 +67,7 @@ public class Duck extends Animal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.4));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, (itemStack) -> itemStack.is(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
         this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0, 10));
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1.0));
@@ -79,18 +75,19 @@ public class Duck extends Animal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
-    @Override
+    //TODO: 1.21.4
+    /*@Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
         return this.isBaby() ? dimensions.height * 0.85F : dimensions.height * 0.92F;
-    }
+    }*/
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 4.0).add(Attributes.MOVEMENT_SPEED, 0.25);
+        return Animal.createAnimalAttributes().add(Attributes.MAX_HEALTH, 4.0).add(Attributes.MOVEMENT_SPEED, 0.25);
     }
 
     @Override
     public boolean isFood(ItemStack pStack) {
-        return FOOD_ITEMS.test(pStack);
+        return pStack.is(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
     }
 
     @Override
@@ -101,10 +98,10 @@ public class Duck extends Animal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public Duck getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return NaturalistEntityTypes.DUCK.get().create(serverLevel);
+        return NaturalistEntityTypes.DUCK.create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
-    public static boolean checkDuckSpawnRules(EntityType<? extends Duck> pType, ServerLevelAccessor pLevel, MobSpawnType pReason, BlockPos pPos, RandomSource pRandom) {
+    public static boolean checkDuckSpawnRules(EntityType<? extends Duck> pType, ServerLevelAccessor pLevel, EntitySpawnReason pReason, BlockPos pPos, RandomSource pRandom) {
         return pLevel.getBlockState(pPos.below()).is(NaturalistTags.BlockTags.DUCKS_SPAWNABLE_ON) || pLevel.getBlockState(pPos.below()).getFluidState().is(FluidTags.WATER);
     }
 
@@ -149,14 +146,14 @@ public class Duck extends Animal implements NaturalistGeoEntity {
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.2D);;
         } else {
             this.setSprinting(false);
             this.flapping = 0.9F;
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     @Override
@@ -177,9 +174,9 @@ public class Duck extends Animal implements NaturalistGeoEntity {
         }
 
         this.flap += this.flapping * 2.0F;
-        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && --this.eggTime <= 0) {
+        if (this.level() instanceof ServerLevel serverLevel && this.isAlive() && !this.isBaby() && --this.eggTime <= 0) {
             this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-            this.spawnAtLocation(NaturalistRegistry.DUCK_EGG.get());
+            this.spawnAtLocation(serverLevel, NaturalistRegistry.DUCK_EGG);
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(6000) + 6000;
         }
@@ -187,7 +184,7 @@ public class Duck extends Animal implements NaturalistGeoEntity {
     }
 
     @Override
-    public int getExperienceReward() {
+    protected int getBaseExperienceReward(ServerLevel level) {
         return 10;
     }
 
@@ -215,7 +212,7 @@ public class Duck extends Animal implements NaturalistGeoEntity {
         return this.geoCache;
     }
 
-    protected <E extends Duck> PlayState predicate(final AnimationState<E> event) {
+    protected <E extends Duck> PlayState predicate(final software.bernie.geckolib.animation.AnimationState<E> event) {
         if (this.isInWater()) {
             event.getController().setAnimation(SWIM);
             event.getController().setAnimationSpeed(1.0D);

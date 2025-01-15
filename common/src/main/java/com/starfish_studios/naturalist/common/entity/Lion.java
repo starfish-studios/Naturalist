@@ -31,16 +31,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
@@ -63,7 +60,7 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
 
     public Lion(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(1.0f);
+        //this.setMaxUpStep(1.0f); //TODO: 1.21.4
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -71,7 +68,7 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         AgeableMobGroupData ageableMobGroupData;
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(true);
@@ -82,14 +79,14 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
         }
         ageableMobGroupData.increaseGroupSizeByOne();
         RandomSource random = level.getRandom();
-        this.getAttribute(Attributes.FOLLOW_RANGE).addPermanentModifier(new AttributeModifier("Random spawn bonus", random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.MULTIPLY_BASE));
+        this.getAttribute(Attributes.FOLLOW_RANGE).addPermanentModifier(new AttributeModifier(RANDOM_SPAWN_BONUS_ID, random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         return spawnData;
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return NaturalistEntityTypes.LION.get().create(serverLevel);
+        return NaturalistEntityTypes.LION.create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -110,7 +107,7 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, true, entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby() && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, true, (entity, level) -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby() && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
     }
 
     @Override
@@ -119,10 +116,10 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(SLEEPING, false);
-        this.entityData.define(HAS_MANE, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SLEEPING, false);
+        builder.define(HAS_MANE, false);
     }
 
     @Override
@@ -164,7 +161,7 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         if (this.getMoveControl().hasWanted()) {
             double speedModifier = this.getMoveControl().getSpeedModifier();
             if (speedModifier < 1.0D && this.onGround()) {
@@ -227,7 +224,7 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
         return this.geoCache;
     }
 
-    private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
+    private <E extends Lion> PlayState predicate(final software.bernie.geckolib.animation.AnimationState<E> event) {
         if (this.isSleeping() && this.hasMane()) {
             event.getController().setAnimation(SLEEP2);
         } else if (this.isSleeping() && !this.hasMane()) {
@@ -324,15 +321,15 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
         @Override
         public void start() {
             this.timeToRecalcPath = 0;
-            this.oldWaterCost = this.mob.getPathfindingMalus(BlockPathTypes.WATER);
-            this.mob.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
+            this.oldWaterCost = this.mob.getPathfindingMalus(PathType.WATER);
+            this.mob.setPathfindingMalus(PathType.WATER, 0.0f);
         }
 
         @Override
         public void stop() {
             this.followingMob = null;
             this.navigation.stop();
-            this.mob.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
+            this.mob.setPathfindingMalus(PathType.WATER, this.oldWaterCost);
         }
 
         @Override
@@ -475,10 +472,10 @@ public class Lion extends Animal implements NaturalistGeoEntity, SleepingAnimal 
 
         protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
             double d = this.getAttackReachSqr(enemy);
-            if (distToEnemySqr <= d && this.ticksUntilNextAttack <= 0) {
+            if (this.mob.level() instanceof ServerLevel serverLevel && distToEnemySqr <= d && this.ticksUntilNextAttack <= 0) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(enemy);
+                this.mob.doHurtTarget(serverLevel, enemy);
             }
         }
 

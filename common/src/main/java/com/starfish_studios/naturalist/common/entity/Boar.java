@@ -28,13 +28,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.UUID;
@@ -42,7 +41,6 @@ import java.util.function.Predicate;
 
 public class Boar extends Animal implements NeutralMob, NaturalistGeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private int remainingPersistentAngerTime;
     @Nullable
@@ -58,21 +56,21 @@ public class Boar extends Animal implements NeutralMob, NaturalistGeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 14.0).add(Attributes.MOVEMENT_SPEED, 0.2).add(Attributes.ATTACK_DAMAGE, 1.0D);
+        return Animal.createAnimalAttributes().add(Attributes.MAX_HEALTH, 14.0).add(Attributes.MOVEMENT_SPEED, 0.2).add(Attributes.ATTACK_DAMAGE, 1.0D);
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return NaturalistEntityTypes.BOAR.get().create(level);
+        return NaturalistEntityTypes.BOAR.create(level, EntitySpawnReason.BREEDING);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.2, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(3, new BoarAvoidPlayerGoal(this, Player.class, 16.0f, 1.5D, 1.5D, entity -> !entity.isHolding(FOOD_ITEMS)));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.2, (itemStack) -> itemStack.is(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS), false));
+        this.goalSelector.addGoal(3, new BoarAvoidPlayerGoal(this, Player.class, 16.0f, 1.5D, 1.5D, entity -> !entity.isHolding((itemStack -> itemStack.is(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS)))));
         this.goalSelector.addGoal(4, new BoarMeleeAttackGoal(this, 1.2, false));
         this.goalSelector.addGoal(5, new BabyPanicGoal(this, 1.4));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1));
@@ -90,7 +88,7 @@ public class Boar extends Animal implements NeutralMob, NaturalistGeoEntity {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return stack.is(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS);
     }
 
     @Override
@@ -105,13 +103,13 @@ public class Boar extends Animal implements NeutralMob, NaturalistGeoEntity {
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.2D);
         } else {
             this.setSprinting(false);
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     @Nullable
@@ -145,7 +143,7 @@ public class Boar extends Animal implements NeutralMob, NaturalistGeoEntity {
     @Override
     public void thunderHit(ServerLevel level, LightningBolt lightning) {
         if (level.getDifficulty() != Difficulty.PEACEFUL) {
-            Zoglin zoglin = EntityType.ZOGLIN.create(level);
+            Zoglin zoglin = EntityType.ZOGLIN.create(level, EntitySpawnReason.CONVERSION);
             zoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
             zoglin.setNoAi(this.isNoAi());
             zoglin.setBaby(this.isBaby());

@@ -1,0 +1,6 @@
+{
+    "model": {
+        "type": "minecraft:model",
+        "model": "naturalist:item/canary_spawn_egg"
+    }
+}

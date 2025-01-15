@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 @Environment(EnvType.CLIENT)
 public class ElephantInventoryScreen extends AbstractContainerScreen<ElephantInventoryMenu> {
-    private static final ResourceLocation ELEPHANT_INVENTORY_LOCATION = new ResourceLocation(Naturalist.MOD_ID, "textures/gui/container/elephant.png");
+    private static final ResourceLocation ELEPHANT_INVENTORY_LOCATION = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/gui/container/elephant.png");
     private final Elephant elephant;
     private float xMouse;
     private float yMouse;
