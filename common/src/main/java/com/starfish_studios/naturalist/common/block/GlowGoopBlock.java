@@ -57,6 +57,8 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
             level.levelEvent(2001, pos, Block.getId(state));
         }
     }
+
+    @Override
     public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
         super.playerDestroy(level, player, pos, state, blockEntity, tool);
         this.decreaseGoop(level, pos, state);
@@ -85,19 +87,27 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-        if (!useContext.getItemInHand().is(this.asItem())) {
-            BlockPos pos = useContext.getClickedPos();
-            Level level = useContext.getLevel();
-            if (!level.isClientSide()) {
-                this.decreaseGoop(level, pos, state);
-                int goop = state.getValue(GOOP);
-                for (int i = 0; i < goop; i++) {
-                    popResource(level, pos, new ItemStack(NaturalistRegistry.GLOW_GOOP));
-                }
-            }
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+        ItemStack stack = context.getItemInHand();
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        int currentGoop = state.getValue(GOOP);
+
+        if (stack.is(this.asItem()) && !context.isSecondaryUseActive() && currentGoop < MAX_GOOP) {
+            return true;
         }
-        return !useContext.isSecondaryUseActive() && useContext.getItemInHand().is(this.asItem()) && state.getValue(GOOP) < MAX_GOOP || super.canBeReplaced(state, useContext);
+
+        if (!stack.is(this.asItem())) {
+            if (!level.isClientSide()) {
+                ItemStack itemStack = new ItemStack(NaturalistRegistry.GLOW_GOOP, currentGoop);
+                popResource(level, pos, itemStack);
+
+                level.removeBlock(pos, false);
+            }
+            return true;
+        }
+
+        return super.canBeReplaced(state, context);
     }
 
     @Override
@@ -105,6 +115,7 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
         builder.add(GOOP, WATERLOGGED);
     }
 
+    @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
@@ -114,14 +125,17 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
         return true;
     }
 
+    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return context.isHoldingItem(NaturalistRegistry.GLOW_GOOP) ? Shapes.block() : Shapes.empty();
     }
 
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
 
+    @Override
     public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
         return 1.0F;
     }
