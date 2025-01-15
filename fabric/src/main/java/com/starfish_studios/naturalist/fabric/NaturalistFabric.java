@@ -130,7 +130,7 @@ public class NaturalistFabric implements ModInitializer {
         addMobSpawn(NaturalistTags.Biomes.HAS_FIREFLY, MobCategory.AMBIENT, NaturalistEntityTypes.FIREFLY, config.fireflySpawnWeight, 2, 3);
 
 
-        addMobSpawn(NaturalistTags.Biomes.HAS_BUTTERFLY, MobCategory.CREATURE, NaturalistEntityTypes.BUTTERFLY, config.butterflySpawnWeight, 3, 5);
+        addMobSpawn(NaturalistTags.Biomes.HAS_BUTTERFLY, MobCategory.AMBIENT, NaturalistEntityTypes.BUTTERFLY, config.butterflySpawnWeight, 3, 5);
         addMobSpawn(NaturalistTags.Biomes.HAS_SNAKE, MobCategory.CREATURE, NaturalistEntityTypes.SNAKE, config.snakeSpawnWeight, 1, 1);
         addMobSpawn(NaturalistTags.Biomes.HAS_RATTLESNAKE, MobCategory.CREATURE, NaturalistEntityTypes.RATTLESNAKE, config.rattlesnakeSpawnWeight, 1, 1);
         addMobSpawn(NaturalistTags.Biomes.HAS_CORAL_SNAKE, MobCategory.CREATURE, NaturalistEntityTypes.CORAL_SNAKE, config.coralSnakeSpawnWeight, 1, 1);
