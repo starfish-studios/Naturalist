@@ -7,24 +7,42 @@ import com.starfish_studios.naturalist.registry.NaturalistRegistry;
 import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.registry.forge.NaturalistBiomeModifiers;
 import com.starfish_studios.naturalist.registry.forge.NaturalistConfigForge;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.food.Foods;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.function.BiFunction;
 
 @Mod(Naturalist.MOD_ID)
 public class NaturalistForge {
 
     public NaturalistForge() {
         Naturalist.init();
+
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueue);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, NaturalistConfigForge.COMMON_CONFIG, "naturalist.toml");
         NaturalistConfigForge.loadConfig(NaturalistConfigForge.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("naturalist.toml").toString());
@@ -45,6 +63,30 @@ public class NaturalistForge {
         bus.addListener(CommonPlatformHelperImpl::buildContents);
 
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    public void enqueue(InterModEnqueueEvent event) {
+        if (ModList.get().isLoaded("diet")) {
+            dietIntegration(NaturalistRegistry.DUCK.get(), Foods.CHICKEN);
+            dietIntegration(NaturalistRegistry.COOKED_DUCK.get(), Foods.COOKED_CHICKEN);
+            dietIntegration(NaturalistRegistry.VENISON.get(), Foods.BEEF);
+            dietIntegration(NaturalistRegistry.COOKED_VENISON.get(), Foods.COOKED_BEEF);
+            dietIntegration(NaturalistRegistry.LIZARD_TAIL.get(), NaturalistRegistry.LIZARD_TAIL.get().getFoodProperties());
+            dietIntegration(NaturalistRegistry.COOKED_LIZARD_TAIL.get(), NaturalistRegistry.COOKED_LIZARD_TAIL.get().getFoodProperties());
+            dietIntegration(NaturalistRegistry.CATFISH.get(), Foods.SALMON);
+            dietIntegration(NaturalistRegistry.COOKED_CATFISH.get(), Foods.COOKED_SALMON);
+            dietIntegration(NaturalistRegistry.BASS.get(), Foods.COD);
+            dietIntegration(NaturalistRegistry.COOKED_BASS.get(), Foods.COOKED_COD);
+        }
+    }
+
+    public static void dietIntegration(Item item, FoodProperties food) {
+        InterModComms.sendTo("diet", "item",
+                () -> new Tuple<Item, BiFunction<Player, ItemStack, Triple<List<ItemStack>, Integer, Float>>>(
+                        item,
+                        (player, stack) -> new ImmutableTriple<>(Collections.singletonList(stack), food.getNutrition(), food.getSaturationModifier())
+                )
+        );
     }
 
     private void setup(final FMLCommonSetupEvent event) {

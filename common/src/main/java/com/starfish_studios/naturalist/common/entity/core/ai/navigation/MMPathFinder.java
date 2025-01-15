@@ -1,6 +1,5 @@
 package com.starfish_studios.naturalist.common.entity.core.ai.navigation;
 
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -11,6 +10,7 @@ import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class MMPathFinder extends PathFinder {
         }
 
         @Override
-        public Vec3 getEntityPosAtNode(Entity entity, int index) {
+        public @NotNull Vec3 getEntityPosAtNode(Entity entity, int index) {
             Node point = this.getNode(index);
             double d0 = point.x + Mth.floor(entity.getBbWidth() + 1.0F) * 0.5D;
             double d1 = point.y;
@@ -42,7 +42,7 @@ public class MMPathFinder extends PathFinder {
         }
 
         private static List<Node> copyPathPoints(Path original) {
-            List<Node> points = new ArrayList();
+            List<Node> points = new ArrayList<>();
             for (int i = 0; i < original.getNodeCount(); i++) {
                 points.add(original.getNode(i));
             }
