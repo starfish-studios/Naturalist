@@ -61,7 +61,6 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     private int ticksSinceEaten;
 
     protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.vulture.fly");
-    
 
     public Vulture(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
@@ -95,6 +94,21 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
 
     public static boolean checkVultureSpawnRules(EntityType<Vulture> entityType, LevelAccessor state, EntitySpawnReason type, BlockPos pos, RandomSource random) {
         return state.getBlockState(pos.below()).is(NaturalistTags.BlockTags.VULTURES_SPAWNABLE_ON) && state.getRawBrightness(pos, 0) > 8;
+    }
+
+    @Override
+    protected void dropAllDeathLoot(ServerLevel serverLevel, DamageSource damageSource) {
+        super.dropAllDeathLoot(serverLevel, damageSource);
+
+        if (!this.level().isClientSide()) {
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                ItemStack itemStack = this.getItemBySlot(slot);
+                if (!itemStack.isEmpty()) {
+                    this.spawnAtLocation(serverLevel, itemStack);
+                    this.setItemSlot(slot, ItemStack.EMPTY);
+                }
+            }
+        }
     }
 
     @Override
