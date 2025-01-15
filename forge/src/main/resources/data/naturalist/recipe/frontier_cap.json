@@ -1,6 +1,10 @@
 {
-  "type": "forge:mod_loaded",
-  "modid": "alexsmobs",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "alexsmobs"
+    }
+  ],
   "pattern": [
     "HHH",
     "HCH",
