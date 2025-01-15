@@ -154,7 +154,7 @@ public class NaturalistFabric implements ModInitializer {
         addMobSpawn(NaturalistTags.Biomes.HAS_VULTURE, MobCategory.CREATURE, NaturalistEntityTypes.VULTURE, config.vultureSpawnWeight, 2, 4);
         addMobSpawn(NaturalistTags.Biomes.HAS_BOAR, MobCategory.CREATURE, NaturalistEntityTypes.BOAR, config.boarSpawnWeight, 4, 4);
 
-        addMobSpawn(NaturalistTags.Biomes.HAS_DRAGONFLY, MobCategory.CREATURE, NaturalistEntityTypes.DRAGONFLY, config.dragonflySpawnWeight, 2, 3);
+        addMobSpawn(NaturalistTags.Biomes.HAS_DRAGONFLY, MobCategory.AMBIENT, NaturalistEntityTypes.DRAGONFLY, config.dragonflySpawnWeight, 2, 3);
         addMobSpawn(NaturalistTags.Biomes.HAS_CATFISH, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.CATFISH, config.catfishSpawnWeight, 1, 1);
         addMobSpawn(NaturalistTags.Biomes.HAS_ALLIGATOR, MobCategory.CREATURE, NaturalistEntityTypes.ALLIGATOR, config.alligatorSpawnWeight, 1, 2);
         addMobSpawn(NaturalistTags.Biomes.HAS_BASS, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.BASS, config.bassSpawnWeight, 4, 4);
