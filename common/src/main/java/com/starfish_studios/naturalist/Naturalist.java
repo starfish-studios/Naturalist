@@ -3,22 +3,31 @@ package com.starfish_studios.naturalist;
 import com.starfish_studios.naturalist.common.entity.*;
 import com.starfish_studios.naturalist.platform.CommonPlatformHelper;
 import com.starfish_studios.naturalist.registry.*;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.WaterAnimal;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DispensibleContainerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 public class Naturalist {
     public static final String MOD_ID = "naturalist";
@@ -35,22 +44,14 @@ public class Naturalist {
     }
 
     public static void registerDispenserBehaviors() {
-        // TODO: 1.21.4
-        /*DispenserBlock.registerBehavior(NaturalistRegistry.DUCK_EGG, new AbstractProjectileDispenseBehavior() {
-            protected Projectile getProjectile(Level level, Position position, ItemStack stack) {
-                return Util.make(new ThrownDuckEgg(level, position.x(), position.y(), position.z()), (thrownDuckEgg) -> {
-                    thrownDuckEgg.setItem(stack);
-                });
-            }
-        });
+        DispenserBlock.registerProjectileBehavior(NaturalistRegistry.DUCK_EGG);
         DispenseItemBehavior dispenseItemBehavior = new DefaultDispenseItemBehavior() {
             private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
 
-            @Override
-            public ItemStack execute(BlockSource source, ItemStack stack) {
+            public @NotNull ItemStack execute(BlockSource source, ItemStack stack) {
                 DispensibleContainerItem dispensibleContainerItem = (DispensibleContainerItem)stack.getItem();
-                BlockPos blockPos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
-                Level level = source.getLevel();
+                BlockPos blockPos = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
+                Level level = source.level();
                 if (dispensibleContainerItem.emptyContents(null, level, blockPos, null)) {
                     dispensibleContainerItem.checkExtraContent(null, level, stack, blockPos);
                     return new ItemStack(Items.BUCKET);
@@ -65,13 +66,13 @@ public class Naturalist {
 
 
         DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET, new DefaultDispenseItemBehavior() {
-            public ItemStack execute(BlockSource source, ItemStack stack) {
-                Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-                BlockPos blockPos = source.getPos().relative(direction);
-                ServerLevel serverLevel = source.getLevel();
-                Snail snail = NaturalistEntityTypes.SNAIL.spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
+            public @NotNull ItemStack execute(BlockSource source, ItemStack stack) {
+                Direction direction = source.state().getValue(DispenserBlock.FACING);
+                BlockPos blockPos = source.pos().relative(direction);
+                ServerLevel serverLevel = source.level();
+                Snail snail = NaturalistEntityTypes.SNAIL.spawn(serverLevel, stack, null, blockPos, EntitySpawnReason.DISPENSER, true, false);
                 if (snail != null) {
-                    snail.setSnailColor(Snail.Color.getTypeById(stack.getOrCreateTag().getInt("Color")));
+                    snail.setSnailColor(Snail.Color.getTypeById(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag().getInt("Color")));
                     stack.shrink(1);
                     return new ItemStack(Items.BUCKET);
                 }
@@ -79,19 +80,19 @@ public class Naturalist {
             }
         });
         DispenserBlock.registerBehavior(NaturalistRegistry.BUTTERFLY, new DefaultDispenseItemBehavior() {
-            public ItemStack execute(BlockSource source, ItemStack stack) {
-                Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-                BlockPos blockPos = source.getPos().relative(direction);
-                ServerLevel serverLevel = source.getLevel();
-                Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
+            public @NotNull ItemStack execute(BlockSource source, ItemStack stack) {
+                Direction direction = source.state().getValue(DispenserBlock.FACING);
+                BlockPos blockPos = source.pos().relative(direction);
+                ServerLevel serverLevel = source.level();
+                Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.spawn(serverLevel, stack, null, blockPos, EntitySpawnReason.DISPENSER, true, false);
                 if (butterfly != null) {
-                    butterfly.setVariant(Butterfly.Variant.getTypeById(stack.getOrCreateTag().getInt("Variant")));
+                    butterfly.setVariant(Butterfly.Variant.getTypeById(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getInt("Variant")));
                     stack.shrink(1);
                 }
 
                 return stack;
             }
-        });*/
+        });
     }
     
     public static void registerBrewingRecipes(PotionBrewing.Builder builder) {
