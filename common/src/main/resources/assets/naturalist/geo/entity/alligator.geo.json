@@ -48,8 +48,13 @@
 					]
 				},
 				{
-					"name": "head",
+					"name": "headRot",
 					"parent": "body",
+					"pivot": [0, 8, -6]
+				},
+				{
+					"name": "head",
+					"parent": "headRot",
 					"pivot": [0, 8, -6],
 					"cubes": [
 						{"origin": [-4.5, 7, -12], "size": [9, 4, 6], "uv": [76, 75]},

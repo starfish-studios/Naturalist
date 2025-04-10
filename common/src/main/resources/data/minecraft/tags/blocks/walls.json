@@ -1,4 +1,5 @@
 {
+  "replace": false,
   "values": [
     "naturalist:shellstone_brick_wall",
     "naturalist:shellstone_wall",

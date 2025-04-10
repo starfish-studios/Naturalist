@@ -38,14 +38,6 @@
 					]
 				},
 				{
-					"name": "saddle",
-					"parent": "neck",
-					"pivot": [0, 0, 0],
-					"cubes": [
-						{"origin": [-4.5, 37.85212, -14.07548], "size": [9, 17, 20], "inflate": 0.5, "uv": [69, 91]}
-					]
-				},
-				{
 					"name": "head",
 					"parent": "neck",
 					"pivot": [0, 51.85212, -10.82548],
@@ -118,7 +110,7 @@
 					"parent": "back_legs",
 					"pivot": [-5, 32, 12.5],
 					"cubes": [
-						{"origin": [-7, 0, 10], "size": [4, 32, 5], "uv": [0, 90]}
+						{"origin": [-7, 0, 10], "size": [4, 32, 5], "uv": [0, 90], "mirror": true}
 					]
 				},
 				{

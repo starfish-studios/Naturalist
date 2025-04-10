@@ -114,7 +114,7 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.6D, true));
         this.goalSelector.addGoal(2, new BabyPanicGoal(this, 2.0D));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
         this.goalSelector.addGoal(4, new LionFollowParentGoal(this, 1.1));
@@ -123,7 +123,9 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, true, entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby() && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
+                entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby()
+                        && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
     }
 
     @Override

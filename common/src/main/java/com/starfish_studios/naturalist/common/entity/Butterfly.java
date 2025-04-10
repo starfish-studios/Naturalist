@@ -229,7 +229,7 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
         return pSize.height * 0.5F;
     }
 
-    // endregion
+    // endregiona
 
     // region SPAWNING
 

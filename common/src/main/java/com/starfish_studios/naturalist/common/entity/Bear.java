@@ -91,7 +91,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.bear.sleep");
     protected static final RawAnimation SNIFF = RawAnimation.begin().thenLoop("animation.sf_nba.bear.sniff");
     protected static final RawAnimation EAT = RawAnimation.begin().thenLoop("animation.sf_nba.bear.eat");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenLoop("animation.sf_nba.bear.attack");
+    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.bear.attack");
     // endregion
 
     public Bear(@NotNull EntityType<? extends NaturalistAnimal> entityType, Level level) {
@@ -536,12 +536,13 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
 
     protected <E extends Bear> PlayState attackPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            event.setAnimation(ATTACK);
-            event.getController().setAnimationSpeed(1.3F);
             event.getController().forceAnimationReset();
-        }
-        this.swinging = false;
 
+            event.getController().setAnimationSpeed(1.3F);
+            event.setAnimation(ATTACK);
+
+            this.swinging = false;
+        }
         return PlayState.CONTINUE;
     }
 

@@ -58,6 +58,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.alligator.swim");
     protected static final RawAnimation BITE = RawAnimation.begin().thenPlay("animation.sf_nba.alligator.bite");
 
+    private int attackDelayCounter = 0;
     int layEggCounter;
     boolean isDigging;
     // endregion
@@ -81,7 +82,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     public static boolean checkAlligatorSpawnRules(EntityType<? extends Alligator> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         return level.getBlockState(pos.below()).is(BlockTags.FROGS_SPAWNABLE_ON) && level.getRawBrightness(pos, 0) > 8;
     }
-    
+
     @Nullable
     @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource pDamageSource) {
@@ -125,7 +126,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new EggLayingBreedGoal<>(this, 1.0));
         this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
-        this.goalSelector.addGoal(2, new CloseMeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(2, new CloseMeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.2D));
         this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0D, 10));
@@ -243,6 +244,14 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     public void aiStep() {
         super.aiStep();
+//        if (this.swinging) {
+//            attackDelayCounter++;
+//            if (attackDelayCounter >= 20) {
+//                this.swinging = false;
+//                attackDelayCounter = 0;
+//            }
+//        }
+
         BlockPos pos = this.blockPosition();
         if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
             this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
@@ -261,6 +270,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     }
 
     protected <E extends Alligator> PlayState predicate(final AnimationState<E> event) {
+        double speedModifier = this.getAttributeValue(Attributes.MOVEMENT_SPEED);
         /* if (this.isDigging) {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("dig"));
             event.getController().forceAnimationReset();
@@ -269,10 +279,10 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
                 event.getController().setAnimation(SWIM);
             } else {
                 event.getController().setAnimation(WALK);
-                if (this.isBaby()) {
-                    event.getController().setAnimationSpeed(1.7D);
+                if (this.isBaby() || this.getTarget() != null) {
+                    event.getController().setAnimationSpeed(3.0D);
                 }
-                event.getController().setAnimationSpeed(1.5D);
+                event.getController().setAnimationSpeed(2.0D);
             }
         } else {
             event.getController().setAnimation(IDLE);
@@ -281,15 +291,17 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
         return PlayState.CONTINUE;
     }
 
-     protected <E extends Alligator> PlayState attackPredicate(final AnimationState<E> event) {
+    private <E extends Alligator> PlayState attackPredicate(final AnimationState<E> event) {
         if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            event.getController().setAnimation(BITE);
             event.getController().forceAnimationReset();
-        
+
+            event.getController().setAnimation(BITE);
             this.swinging = false;
         }
         return PlayState.CONTINUE;
     }
+
+
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {

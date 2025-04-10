@@ -51,6 +51,7 @@ import java.util.UUID;
 public class Elephant extends NaturalistAnimal implements NeutralMob, NaturalistGeoEntity {
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.walk");
+     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.run");
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     // private static final EntityDataAccessor<Integer> DIRTY_TICKS = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DRINKING = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
@@ -83,7 +84,7 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
                 .add(Attributes.ATTACK_DAMAGE, 10.0D)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.2)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)
-                .add(Attributes.FOLLOW_RANGE, 10.0D);
+                .add(Attributes.FOLLOW_RANGE, 15.0D);
     }
 
     @Override
@@ -123,7 +124,7 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bee.class, 8.0f, 1.3, 1.3));
-        this.goalSelector.addGoal(2, new ElephantMeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(2, new ElephantMeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.3D));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.2D, 24.0D, 6.0D, 12.0D));
         // this.goalSelector.addGoal(5, new ElephantDrinkWaterGoal(this));
@@ -264,13 +265,15 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
         return this.geoCache;
     }
     private <E extends Elephant> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.isBaby()) {
+        if (this.isBaby() || this.getTarget() != null) {
             event.setControllerSpeed(1.3f + event.getLimbSwingAmount());
-        } else {
-            event.setControllerSpeed(1.0f + event.getLimbSwingAmount());
         }
         if (event.isMoving()) {
-            event.getController().setAnimation(WALK);
+            if (this.isSprinting()) {
+                event.getController().setAnimation(RUN);
+            } else {
+                event.getController().setAnimation(WALK);
+            }
         } /*else if (this.isDrinking()) {
             event.getController().setAnimation(RawAnimation.begin().thenLoop("elephant.water"));
         }*/ else {

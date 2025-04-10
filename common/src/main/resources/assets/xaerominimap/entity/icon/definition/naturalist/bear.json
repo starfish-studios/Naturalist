@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "naturalist:textures/entity/bear/bear.png": "outlined_sprite:naturalist/bear.png",
+        "naturalist:textures/entity/bear/bear_angry.png": "outlined_sprite:naturalist/bear_angry.png",
+        "naturalist:textures/entity/bear/bear_honey.png": "outlined_sprite:naturalist/bear_honey.png",
+        "naturalist:textures/entity/bear/bear_berries.png": "outlined_sprite:naturalist/bear_berries.png",
+        "naturalist:textures/entity/bear/bear_sleep.png": "outlined_sprite:naturalist/bear_sleep.png",
+        "default": "outlined_sprite:naturalist/bear.png"
+    }
+}

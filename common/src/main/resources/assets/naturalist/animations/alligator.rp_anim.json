@@ -15,20 +15,6 @@
 			}
 		},
 		"animation.sf_nba.alligator.walk": {
-			"sound_effects": {
-				"0.3": {
-					"effect": "step"
-				},
-				"0.33": {
-					"effect": "step_-12dB"
-				},
-				"0.8": {
-					"effect": "step"
-				},
-				"0.83": {
-					"effect": "step_-12dB"
-				}
-			},
 			"loop": true,
 			"animation_length": 1.2917,
 			"bones": {
@@ -127,11 +113,6 @@
 			}
 		},
 		"animation.sf_nba.alligator.swim": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "swim"
-				}
-			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -176,24 +157,45 @@
 			}
 		},
 		"animation.sf_nba.alligator.bite": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "bite"
-				}
-			},
-			"loop": "hold_on_last_frame",
-			"animation_length": 0.125,
+			"animation_length": 0.5,
 			"bones": {
-				"head": {
-					"rotation": {
-						"0.0": [-22.5, 0, 0],
-						"0.125": [0, 0, 0]
-					}
-				},
 				"lower_jaw": {
 					"rotation": {
-						"0.0": [67.5, 0, 0],
-						"0.125": [0, 0, 0]
+						"0.0": {
+							"post": [67.5, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.125": {
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				},
+				"headRot": {
+					"rotation": {
+						"0.0": {
+							"post": [-22.5, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.125": {
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
+					},
+					"position": {
+						"0.0625": {
+							"pre": [0, 0, 0],
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.125": {
+							"post": [0, -1, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.1875": {
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
 					}
 				}
 			}

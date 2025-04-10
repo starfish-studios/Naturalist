@@ -357,11 +357,16 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     }
 
     @Override
-    public void loadFromBucketTag(CompoundTag tag) {
+    public void loadFromBucketTag(@NotNull CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
-        int i = tag.getInt("Color");
-        if (i >= 0 && i < Snail.Color.BY_ID.length) {
-            this.setSnailColor(Snail.Color.BY_ID[i]);
+
+        if (tag.contains("Color", 3)) {
+            int i = tag.getInt("Color");
+            if (i >= 0 && i < Snail.Color.BY_ID.length) {
+                this.setSnailColor(Snail.Color.BY_ID[i]);
+            }
+        } else {
+            this.setSnailColor(Snail.Color.BROWN);
         }
     }
 

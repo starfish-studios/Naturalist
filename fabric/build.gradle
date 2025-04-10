@@ -81,7 +81,7 @@ shadowJar {
 }
 
 remapJar {
-    archiveFileName.set("${project.archives_name}-5.0pre1+fabric-1.20.1.jar")
+    archiveFileName.set("${project.archives_name}-${project.mod_version}+fabric-1.20.1.jar")
     inputFile.set(shadowJar.archiveFile)
     dependsOn shadowJar
     archiveClassifier = "null"

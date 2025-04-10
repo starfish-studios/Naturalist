@@ -6,7 +6,7 @@
 				"identifier": "geometry.sf_nba.elephant",
 				"texture_width": 256,
 				"texture_height": 256,
-				"visible_bounds_width": 7,
+				"visible_bounds_width": 8,
 				"visible_bounds_height": 5.5,
 				"visible_bounds_offset": [0, 2.25, 0]
 			},
@@ -25,37 +25,6 @@
 					"pivot": [0, 40, 0],
 					"cubes": [
 						{"origin": [-14, 25, -24], "size": [28, 30, 48], "uv": [0, 0]}
-					]
-				},
-				{
-					"name": "saddle",
-					"parent": "body",
-					"pivot": [0, 40, 0],
-					"cubes": [
-						{"origin": [-14, 25, -24], "size": [28, 30, 48], "inflate": 0.5, "uv": [0, 123]},
-						{"origin": [-8, 56, -17.75], "size": [16, 4, 4], "inflate": 0.5, "uv": [4, 158]},
-						{"origin": [-8, 56, 13.75], "size": [16, 4, 4], "inflate": 0.5, "uv": [4, 158]}
-					]
-				},
-				{
-					"name": "chests",
-					"parent": "saddle",
-					"pivot": [0, 9.25, 1]
-				},
-				{
-					"name": "leftChest",
-					"parent": "chests",
-					"pivot": [0, 9.25, 1],
-					"cubes": [
-						{"origin": [14, 32.25, 4], "size": [4, 12, 20], "uv": [177, 6]}
-					]
-				},
-				{
-					"name": "rightChest",
-					"parent": "chests",
-					"pivot": [0, 9.25, 1],
-					"cubes": [
-						{"origin": [-18, 32.25, 4], "size": [4, 12, 20], "uv": [177, 6], "mirror": true}
 					]
 				},
 				{
