@@ -1,25 +1,54 @@
 {
+  "type": "minecraft:entity",
   "pools": [
     {
-      "rolls": 1,
+      "bonus_rolls": 0.0,
       "entries": [
         {
-          "type": "item",
-          "name": "minecraft:porkchop",
-          "weight": 1,
+          "type": "minecraft:item",
           "functions": [
             {
-              "function": "set_count",
+              "add": false,
               "count": {
-                "min": 1,
-                "max": 3
-              }
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
             },
             {
-              "function": "furnace_smelt",
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:leather"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
               "conditions": [
                 {
-                  "condition": "entity_properties",
+                  "condition": "minecraft:entity_properties",
                   "entity": "this",
                   "predicate": {
                     "flags": {
@@ -27,44 +56,22 @@
                     }
                   }
                 }
-              ]
+              ],
+              "function": "minecraft:furnace_smelt"
             },
             {
-              "function": "looting_enchant",
               "count": {
-                "min": 0,
-                "max": 1
-              }
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
             }
-          ]
+          ],
+          "name": "minecraft:porkchop"
         }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "item",
-          "name": "minecraft:leather",
-          "weight": 1,
-          "functions": [
-            {
-              "function": "set_count",
-              "count": {
-                "min": 0,
-                "max": 2
-              }
-            },
-            {
-              "function": "looting_enchant",
-              "count": {
-                "min": 0,
-                "max": 1
-              }
-            }
-          ]
-        }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }
