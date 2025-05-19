@@ -139,6 +139,10 @@
   "item.minecraft.splash_potion.effect.glowing": "Взрывное зелье свечения",
   "item.minecraft.lingering_potion.effect.glowing": "Туманное зелье свечения",
 
+  "tag.item.naturalist.bear_tempt_items": "Нравится медведям",
+  "tag.item.naturalist.bird_food_items": "Птичий корм",
+  "tag.item.naturalist.tortoise_tempt_items": "Нравится сухопутным черепахам",
+
   "advancements.husbandry.ride_giraffe_with_map.title": "Целый новый мир",
   "advancements.husbandry.ride_giraffe_with_map.description": "Используйте карту во время катания на жирафе",
   "advancements.husbandry.feed_hippo_melon.title": "Голодные бегемоты",
@@ -271,7 +275,7 @@
   "naturalist.midnightconfig.biomeConfig": "§c§l§n[!]§7§o Если вы хотите изменить биомы, в которых появляются мобы, вы должны сделать это с помощью §c§l§nНАБОРА ДАННЫХ.§7§o Их файлы находятся по адресу §9§o'naturalist:tags/worldgen/biome/has_<animal>.json'",
   "naturalist.midnightconfig.blacklistConfig": "§7§oЧтобы §c§l§nИСКЛЮЧИТЬ§7§o появление мобов в определённых биомах, добавьте биомы в §9§o'naturalist:tags/worldgen/biome/blacklist/<animal>_blacklist.json'",
 
-  "naturalist.midnightconfig.alligatorRemoved": "§7Удалить аллигатора",
+  "naturalist.midnightconfig.alligatorRemoved": "§7Отключить аллигатора",
   "naturalist.midnightconfig.alligatorRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', аллигаторы не будут появляться, а существующие аллигаторы будут удалены.",
   "naturalist.midnightconfig.alligatorSpawnWeight": "§9Вес появления аллигатора",
   "naturalist.midnightconfig.alligatorSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления аллигаторов в мире.",
@@ -280,7 +284,7 @@
   "naturalist.midnightconfig.alligatorSpawnMaxGroupSize": "§7§oМаксимальный размер группы аллигаторов",
   "naturalist.midnightconfig.alligatorSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество аллигаторов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.bassRemoved": "§7Удалить окуня",
+  "naturalist.midnightconfig.bassRemoved": "§7Отключить окуня",
   "naturalist.midnightconfig.bassRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', окуни не будут появляться, а существующие окуни будут удалены.",
   "naturalist.midnightconfig.bassSpawnWeight": "§9Вес появления окуня",
   "naturalist.midnightconfig.bassSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления окуней в мире.",
@@ -289,7 +293,7 @@
   "naturalist.midnightconfig.bassSpawnMaxGroupSize": "§7§oМаксимальный размер группы окуней",
   "naturalist.midnightconfig.bassSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество окуней, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.bearRemoved": "§7Удалить медведя",
+  "naturalist.midnightconfig.bearRemoved": "§7Отключить медведя",
   "naturalist.midnightconfig.bearRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', медведи не будут появляться, а существующие медведи будут удалены.",
   "naturalist.midnightconfig.bearSpawnWeight": "§9Вес появления медведя",
   "naturalist.midnightconfig.bearSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления медведей в мире.",
@@ -298,7 +302,7 @@
   "naturalist.midnightconfig.bearSpawnMaxGroupSize": "§7§oМаксимальный размер группы медведей",
   "naturalist.midnightconfig.bearSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество медведей, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.bluejayRemoved": "§7Удалить голубую сойку",
+  "naturalist.midnightconfig.bluejayRemoved": "§7Отключить голубую сойку",
   "naturalist.midnightconfig.bluejayRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', голубые сойки не будут появляться, а существующие голубые сойки будут удалены.",
   "naturalist.midnightconfig.bluejaySpawnWeight": "§9Вес появления голубой сойки",
   "naturalist.midnightconfig.bluejaySpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления голубых соек в мире.",
@@ -307,7 +311,7 @@
   "naturalist.midnightconfig.bluejaySpawnMaxGroupSize": "§7§oМаксимальный размер группы голубых соек",
   "naturalist.midnightconfig.bluejaySpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество голубых соек, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.birdRemoved": "§7Удалить птицу",
+  "naturalist.midnightconfig.birdRemoved": "§7Отключить птицу",
   "naturalist.midnightconfig.birdRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', птицы не будут появляться, а существующие птицы будут удалены.",
   "naturalist.midnightconfig.birdSpawnWeight": "§9Вес появления птицы",
   "naturalist.midnightconfig.birdSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления птиц в мире.",
@@ -316,7 +320,7 @@
   "naturalist.midnightconfig.birdSpawnMaxGroupSize": "§7§oМаксимальный размер группы птиц",
   "naturalist.midnightconfig.birdSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество птиц, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.boarRemoved": "§7Удалить кабана",
+  "naturalist.midnightconfig.boarRemoved": "§7Отключить кабана",
   "naturalist.midnightconfig.boarRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', кабаны не будут появляться, а существующие кабаны будут удалены.",
   "naturalist.midnightconfig.boarSpawnWeight": "§9Вес появления кабана",
   "naturalist.midnightconfig.boarSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления кабанов в мире.",
@@ -325,7 +329,7 @@
   "naturalist.midnightconfig.boarSpawnMaxGroupSize": "§7§oМаксимальный размер группы кабанов",
   "naturalist.midnightconfig.boarSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество кабанов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.butterflyRemoved": "§7Удалить бабочку",
+  "naturalist.midnightconfig.butterflyRemoved": "§7Отключить бабочку",
   "naturalist.midnightconfig.butterflyRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', бабочки не будут появляться, а существующие бабочки будут удалены.",
   "naturalist.midnightconfig.butterflySpawnWeight": "§9Вес появления бабочки",
   "naturalist.midnightconfig.butterflySpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления бабочек в мире.",
@@ -334,7 +338,7 @@
   "naturalist.midnightconfig.butterflySpawnMaxGroupSize": "§7§oМаксимальный размер группы бабочек",
   "naturalist.midnightconfig.butterflySpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество бабочек, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.canaryRemoved": "§7Удалить канарейку",
+  "naturalist.midnightconfig.canaryRemoved": "§7Отключить канарейку",
   "naturalist.midnightconfig.canaryRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', канарейки не будут появляться, а существующие канарейки будут удалены.",
   "naturalist.midnightconfig.canarySpawnWeight": "§9Вес появления канарейки",
   "naturalist.midnightconfig.canarySpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления канареек в мире.",
@@ -343,7 +347,7 @@
   "naturalist.midnightconfig.canarySpawnMaxGroupSize": "§7§oМаксимальный размер группы канареек",
   "naturalist.midnightconfig.canarySpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество канареек, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.cardinalRemoved": "§7Удалить кардинала",
+  "naturalist.midnightconfig.cardinalRemoved": "§7Отключить кардинала",
   "naturalist.midnightconfig.cardinalRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', кардиналы не будут появляться, а существующие кардиналы будут удалены.",
   "naturalist.midnightconfig.cardinalSpawnWeight": "§9Вес появления кардинала",
   "naturalist.midnightconfig.cardinalSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления кардиналов в мире.",
@@ -352,7 +356,7 @@
   "naturalist.midnightconfig.cardinalSpawnMaxGroupSize": "§7§oМаксимальный размер группы кардиналов",
   "naturalist.midnightconfig.cardinalSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество кардиналов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.catfishRemoved": "§7Удалить сома",
+  "naturalist.midnightconfig.catfishRemoved": "§7Отключить сома",
   "naturalist.midnightconfig.catfishRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', сомы не будут появляться, а существующие сомы будут удалены.",
   "naturalist.midnightconfig.catfishSpawnWeight": "§9Вес появления сома",
   "naturalist.midnightconfig.catfishSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления сомов в мире.",
@@ -361,7 +365,7 @@
   "naturalist.midnightconfig.catfishSpawnMaxGroupSize": "§7§oМаксимальный размер группы сомов",
   "naturalist.midnightconfig.catfishSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество сомов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.coralSnakeRemoved": "§7Удалить коралловую змею",
+  "naturalist.midnightconfig.coralSnakeRemoved": "§7Отключить коралловую змею",
   "naturalist.midnightconfig.coralSnakeRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', коралловые змеи не будут появляться, а существующие коралловые змеи будут удалены.",
   "naturalist.midnightconfig.coralSnakeSpawnWeight": "§9Вес появления коралловой змеи",
   "naturalist.midnightconfig.coralSnakeSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления коралловых змей в мире.",
@@ -370,7 +374,7 @@
   "naturalist.midnightconfig.coralSnakeSpawnMaxGroupSize": "§7§oМаксимальный размер группы коралловых змей",
   "naturalist.midnightconfig.coralSnakeSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество коралловых змей, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.deerRemoved": "§7Удалить оленя",
+  "naturalist.midnightconfig.deerRemoved": "§7Отключить оленя",
   "naturalist.midnightconfig.deerRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', олени не будут появляться, а существующие олени будут удалены.",
   "naturalist.midnightconfig.deerSpawnWeight": "§9Вес появления оленя",
   "naturalist.midnightconfig.deerSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления оленей в мире.",
@@ -379,7 +383,7 @@
   "naturalist.midnightconfig.deerSpawnMaxGroupSize": "§7§oМаксимальный размер группы оленей",
   "naturalist.midnightconfig.deerSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество оленей, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.dragonflyRemoved": "§7Удалить стрекозу",
+  "naturalist.midnightconfig.dragonflyRemoved": "§7Отключить стрекозу",
   "naturalist.midnightconfig.dragonflyRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', стрекозы не будут появляться, а существующие стрекозы будут удалены.",
   "naturalist.midnightconfig.dragonflySpawnWeight": "§9Вес появления стрекозы",
   "naturalist.midnightconfig.dragonflySpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления стрекоз в мире.",
@@ -388,7 +392,7 @@
   "naturalist.midnightconfig.dragonflySpawnMaxGroupSize": "§7§oМаксимальный размер группы стрекоз",
   "naturalist.midnightconfig.dragonflySpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество стрекоз, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.duckRemoved": "§7Удалить утку",
+  "naturalist.midnightconfig.duckRemoved": "§7Отключить утку",
   "naturalist.midnightconfig.duckRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', утки не будут появляться, а существующие утки будут удалены.",
   "naturalist.midnightconfig.duckSpawnWeight": "§9Вес появления утки",
   "naturalist.midnightconfig.duckSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления уток в мире.",
@@ -397,7 +401,7 @@
   "naturalist.midnightconfig.duckSpawnMaxGroupSize": "§7§oМаксимальный размер группы уток",
   "naturalist.midnightconfig.duckSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество уток, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.elephantRemoved": "§7Удалить слона",
+  "naturalist.midnightconfig.elephantRemoved": "§7Отключить слона",
   "naturalist.midnightconfig.elephantRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', слоны не будут появляться, а существующие слоны будут удалены.",
   "naturalist.midnightconfig.elephantSpawnWeight": "§9Вес появления слона",
   "naturalist.midnightconfig.elephantSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления слонов в мире.",
@@ -406,7 +410,7 @@
   "naturalist.midnightconfig.elephantSpawnMaxGroupSize": "§7§oМаксимальный размер группы слонов",
   "naturalist.midnightconfig.elephantSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество слонов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.finchRemoved": "§7Удалить зяблика",
+  "naturalist.midnightconfig.finchRemoved": "§7Отключить зяблика",
   "naturalist.midnightconfig.finchRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', зяблики не будут появляться, а существующие зяблики будут удалены.",
   "naturalist.midnightconfig.finchSpawnWeight": "§9Вес появления зяблика",
   "naturalist.midnightconfig.finchSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления зябликов в мире.",
@@ -415,7 +419,7 @@
   "naturalist.midnightconfig.finchSpawnMaxGroupSize": "§7§oМаксимальный размер группы зябликов",
   "naturalist.midnightconfig.finchSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество зябликов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.fireflyRemoved": "§7Удалить светлячка",
+  "naturalist.midnightconfig.fireflyRemoved": "§7Отключить светлячка",
   "naturalist.midnightconfig.fireflyRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', светлячки не будут появляться, а существующие светлячки будут удалены.",
   "naturalist.midnightconfig.fireflySpawnWeight": "§9Вес появления светлячка",
   "naturalist.midnightconfig.fireflySpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления светлячков в мире.",
@@ -424,7 +428,7 @@
   "naturalist.midnightconfig.fireflySpawnMaxGroupSize": "§7§oМаксимальный размер группы светлячков",
   "naturalist.midnightconfig.fireflySpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество светлячков, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.forestFoxRemoved": "§7Удалить лесную лисицу",
+  "naturalist.midnightconfig.forestFoxRemoved": "§7Отключить лесную лисицу",
   "naturalist.midnightconfig.forestFoxRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', лесные лисицы не будут появляться, а существующие лесные лисицы будут удалены.",
   "naturalist.midnightconfig.forestFoxSpawnWeight": "§9Вес появления лесной лисицы",
   "naturalist.midnightconfig.forestFoxSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления лесных лисиц в мире.",
@@ -433,7 +437,7 @@
   "naturalist.midnightconfig.forestFoxSpawnMaxGroupSize": "§7§oМаксимальный размер группы лесных лисиц",
   "naturalist.midnightconfig.forestFoxSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество лесных лисиц, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.forestRabbitRemoved": "§7Удалить лесного кролика",
+  "naturalist.midnightconfig.forestRabbitRemoved": "§7Отключить лесного кролика",
   "naturalist.midnightconfig.forestRabbitRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', лесные кролики не будут появляться, а существующие лесные кролики будут удалены.",
   "naturalist.midnightconfig.forestRabbitSpawnWeight": "§9Вес появления лесного кролика",
   "naturalist.midnightconfig.forestRabbitSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления лесных кроликов в мире.",
@@ -442,7 +446,7 @@
   "naturalist.midnightconfig.forestRabbitSpawnMaxGroupSize": "§7§oМаксимальный размер группы лесных кроликов",
   "naturalist.midnightconfig.forestRabbitSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество лесных кроликов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.giraffeRemoved": "§7Удалить жирафа",
+  "naturalist.midnightconfig.giraffeRemoved": "§7Отключить жирафа",
   "naturalist.midnightconfig.giraffeRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', жирафы не будут появляться, а существующие жирафы будут удалены.",
   "naturalist.midnightconfig.giraffeSpawnWeight": "§9Вес появления жирафа",
   "naturalist.midnightconfig.giraffeSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления жирафов в мире.",
@@ -451,7 +455,7 @@
   "naturalist.midnightconfig.giraffeSpawnMaxGroupSize": "§7§oМаксимальный размер группы жирафов",
   "naturalist.midnightconfig.giraffeSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество жирафов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.hippoRemoved": "§7Удалить бегемота",
+  "naturalist.midnightconfig.hippoRemoved": "§7Отключить бегемота",
   "naturalist.midnightconfig.hippoRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', бегемоты не будут появляться, а существующие бегемоты будут удалены.",
   "naturalist.midnightconfig.hippoSpawnWeight": "§9Вес появления бегемота",
   "naturalist.midnightconfig.hippoSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления бегемотов в мире.",
@@ -460,7 +464,7 @@
   "naturalist.midnightconfig.hippoSpawnMaxGroupSize": "§7§oМаксимальный размер группы бегемотов",
   "naturalist.midnightconfig.hippoSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество бегемотов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.lionRemoved": "§7Удалить льва",
+  "naturalist.midnightconfig.lionRemoved": "§7Отключить льва",
   "naturalist.midnightconfig.lionRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', львы не будут появляться, а существующие львы будут удалены.",
   "naturalist.midnightconfig.lionSpawnWeight": "§9Вес появления льва",
   "naturalist.midnightconfig.lionSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления львов в мире.",
@@ -469,7 +473,7 @@
   "naturalist.midnightconfig.lionSpawnMaxGroupSize": "§7§oМаксимальный размер группы львов",
   "naturalist.midnightconfig.lionSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество львов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.lizardRemoved": "§7Удалить ящерицу",
+  "naturalist.midnightconfig.lizardRemoved": "§7Отключить ящерицу",
   "naturalist.midnightconfig.lizardRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', ящерицы не будут появляться, а существующие ящерицы будут удалены.",
   "naturalist.midnightconfig.lizardSpawnWeight": "§9Вес появления ящерицы",
   "naturalist.midnightconfig.lizardSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления ящериц в мире.",
@@ -478,7 +482,7 @@
   "naturalist.midnightconfig.lizardSpawnMaxGroupSize": "§7§oМаксимальный размер группы ящериц",
   "naturalist.midnightconfig.lizardSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество ящериц, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.rattlesnakeRemoved": "§7Удалить гремучую змею",
+  "naturalist.midnightconfig.rattlesnakeRemoved": "§7Отключить гремучую змею",
   "naturalist.midnightconfig.rattlesnakeRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', гремучие змеи не будут появляться, а существующие гремучие змеи будут удалены.",
   "naturalist.midnightconfig.rattlesnakeSpawnWeight": "§9Вес появления гремучей змеи",
   "naturalist.midnightconfig.rattlesnakeSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления гремучих змей в мире.",
@@ -487,7 +491,7 @@
   "naturalist.midnightconfig.rattlesnakeSpawnMaxGroupSize": "§7§oМаксимальный размер группы гремучих змей",
   "naturalist.midnightconfig.rattlesnakeSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество гремучих змей, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.rhinoRemoved": "§7Удалить носорога",
+  "naturalist.midnightconfig.rhinoRemoved": "§7Отключить носорога",
   "naturalist.midnightconfig.rhinoRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', носороги не будут появляться, а существующие носороги будут удалены.",
   "naturalist.midnightconfig.rhinoSpawnWeight": "§9Вес появления носорога",
   "naturalist.midnightconfig.rhinoSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления носорогов в мире.",
@@ -496,7 +500,7 @@
   "naturalist.midnightconfig.rhinoSpawnMaxGroupSize": "§7§oМаксимальный размер группы носорогов",
   "naturalist.midnightconfig.rhinoSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество носорогов, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.robinRemoved": "§7Удалить зарянку",
+  "naturalist.midnightconfig.robinRemoved": "§7Отключить зарянку",
   "naturalist.midnightconfig.robinRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', зарянки не будут появляться, а существующие зарянки будут удалены.",
   "naturalist.midnightconfig.robinSpawnWeight": "§9Вес появления зарянки",
   "naturalist.midnightconfig.robinSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления зарянок в мире.",
@@ -505,7 +509,7 @@
   "naturalist.midnightconfig.robinSpawnMaxGroupSize": "§7§oМаксимальный размер группы зарянок",
   "naturalist.midnightconfig.robinSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество зарянок, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.snailRemoved": "§7Удалить улитку",
+  "naturalist.midnightconfig.snailRemoved": "§7Отключить улитку",
   "naturalist.midnightconfig.snailRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', улитки не будут появляться, а существующие улитки будут удалены.",
   "naturalist.midnightconfig.snailSpawnWeight": "§9Вес появления улитки",
   "naturalist.midnightconfig.snailSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления улиток в мире.",
@@ -514,7 +518,7 @@
   "naturalist.midnightconfig.snailSpawnMaxGroupSize": "§7§oМаксимальный размер группы улиток",
   "naturalist.midnightconfig.snailSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество улиток, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.snakeRemoved": "§7Удалить змею",
+  "naturalist.midnightconfig.snakeRemoved": "§7Отключить змею",
   "naturalist.midnightconfig.snakeRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', змеи не будут появляться, а существующие змеи будут удалены.",
   "naturalist.midnightconfig.snakeSpawnWeight": "§9Вес появления змеи",
   "naturalist.midnightconfig.snakeSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления змей в мире.",
@@ -523,7 +527,7 @@
   "naturalist.midnightconfig.snakeSpawnMaxGroupSize": "§7§oМаксимальный размер группы змей",
   "naturalist.midnightconfig.snakeSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество змей, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.sparrowRemoved": "§7Удалить воробья",
+  "naturalist.midnightconfig.sparrowRemoved": "§7Отключить воробья",
   "naturalist.midnightconfig.sparrowRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', воробьи не будут появляться, а существующие воробьи будут удалены.",
   "naturalist.midnightconfig.sparrowSpawnWeight": "§9Вес появления воробья",
   "naturalist.midnightconfig.sparrowSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления воробьёв в мире.",
@@ -532,7 +536,7 @@
   "naturalist.midnightconfig.sparrowSpawnMaxGroupSize": "§7§oМаксимальный размер группы воробьёв",
   "naturalist.midnightconfig.sparrowSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество воробьёв, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.tortoiseRemoved": "§7Удалить сухопутную черепаху",
+  "naturalist.midnightconfig.tortoiseRemoved": "§7Отключить сухопутную черепаху",
   "naturalist.midnightconfig.tortoiseRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', сухопутные черепахи не будут появляться, а существующие сухопутные черепахи будут удалены.",
   "naturalist.midnightconfig.tortoiseSpawnWeight": "§9Вес появления сухопутной черепахи",
   "naturalist.midnightconfig.tortoiseSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления сухопутных черепах в мире.",
@@ -541,7 +545,7 @@
   "naturalist.midnightconfig.tortoiseSpawnMaxGroupSize": "§7§oМаксимальный размер группы сухопутных черепах",
   "naturalist.midnightconfig.tortoiseSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество сухопутных черепах, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.vultureRemoved": "§7Удалить стервятника",
+  "naturalist.midnightconfig.vultureRemoved": "§7Отключить стервятника",
   "naturalist.midnightconfig.vultureRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', стервятники не будут появляться, а существующие стервятники будут удалены.",
   "naturalist.midnightconfig.vultureSpawnWeight": "§9Вес появления стервятника",
   "naturalist.midnightconfig.vultureSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления стервятников в мире.",
@@ -550,7 +554,7 @@
   "naturalist.midnightconfig.vultureSpawnMaxGroupSize": "§7§oМаксимальный размер группы стервятников",
   "naturalist.midnightconfig.vultureSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o Максимальное количество стервятников, которые могут появиться в группе.",
 
-  "naturalist.midnightconfig.zebraRemoved": "§7Удалить зебру",
+  "naturalist.midnightconfig.zebraRemoved": "§7Отключить зебру",
   "naturalist.midnightconfig.zebraRemoved.tooltip": "§8§o[?]§7§o Если установлено 'Да', зебры не будут появляться, а существующие зебры будут удалены.",
   "naturalist.midnightconfig.zebraSpawnWeight": "§9Вес появления зебры",
   "naturalist.midnightconfig.zebraSpawnWeight.tooltip": "§8§o[?]§7§o Вероятность появления зебр в мире.",
