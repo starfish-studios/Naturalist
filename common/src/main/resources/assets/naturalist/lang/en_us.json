@@ -130,6 +130,10 @@
   "item.naturalist.vulture_spawn_egg": "Vulture Spawn Egg",
   "item.naturalist.zebra_spawn_egg": "Zebra Spawn Egg",
 
+  "tag.item.naturalist.bear_tempt_items": "Bear Temptables",
+  "tag.item.naturalist.bird_food_items": "Bird Food",
+  "tag.item.naturalist.tortoise_tempt_items": "Tortoise Temptables",
+
   "item.minecraft.tipped_arrow.effect.forest_dasher": "Arrow of the Forest Dasher",
   "item.minecraft.potion.effect.forest_dasher": "Potion of the Forest Dasher",
   "item.minecraft.splash_potion.effect.forest_dasher": "Splash Potion of the Forest Dasher",
