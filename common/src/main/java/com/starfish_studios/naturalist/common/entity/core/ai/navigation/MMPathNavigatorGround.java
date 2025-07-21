@@ -3,14 +3,14 @@ package com.starfish_studios.naturalist.common.entity.core.ai.navigation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.*;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class MMPathNavigatorGround extends GroundPathNavigation {
     public MMPathNavigatorGround(@NotNull Mob entity, Level world) {
@@ -21,28 +21,32 @@ public class MMPathNavigatorGround extends GroundPathNavigation {
     protected @NotNull PathFinder createPathFinder(int maxVisitedNodes) {
         this.nodeEvaluator = new WalkNodeEvaluator();
         this.nodeEvaluator.setCanPassDoors(true);
+
         return new MMPathFinder(this.nodeEvaluator, maxVisitedNodes);
     }
 
     @Override
     protected void followThePath() {
-        Path path = Objects.requireNonNull(this.path);
-        Vec3 entityPos = this.getTempMobPos();
-        int pathLength = path.getNodeCount();
-        for (int i = path.getNextNodeIndex(); i < path.getNodeCount(); i++) {
-            if (path.getNode(i).y != Math.floor(entityPos.y)) {
-                pathLength = i;
-                break;
+        Path path = this.path;
+
+        if (path != null) {
+            Vec3 entityPos = this.getTempMobPos();
+            int pathLength = path.getNodeCount();
+            for (int i = path.getNextNodeIndex(); i < path.getNodeCount(); i++) {
+                if (path.getNode(i).y != Math.floor(entityPos.y)) {
+                    pathLength = i;
+                    break;
+                }
             }
-        }
-        final Vec3 base = entityPos.add(-this.mob.getBbWidth() * 0.5F, 0.0F, -this.mob.getBbWidth() * 0.5F);
-        final Vec3 max = base.add(this.mob.getBbWidth(), this.mob.getBbHeight(), this.mob.getBbWidth());
-        if (this.tryShortcut(path, new Vec3(this.mob.getX(), this.mob.getY(), this.mob.getZ()), pathLength, base, max)) {
-            if (this.isAt(path, 0.5F) || this.atElevationChange(path) && this.isAt(path, this.mob.getBbWidth() * 0.5F)) {
-                path.setNextNodeIndex(path.getNextNodeIndex() + 1);
+            final Vec3 base = entityPos.add(-this.mob.getBbWidth() * 0.5F, 0.0F, -this.mob.getBbWidth() * 0.5F);
+            final Vec3 max = base.add(this.mob.getBbWidth(), this.mob.getBbHeight(), this.mob.getBbWidth());
+            if (this.tryShortcut(path, new Vec3(this.mob.getX(), this.mob.getY(), this.mob.getZ()), pathLength, base, max)) {
+                if (this.isAt(path, 0.5F) || this.atElevationChange(path) && this.isAt(path, this.mob.getBbWidth() * 0.5F)) {
+                    path.setNextNodeIndex(path.getNextNodeIndex() + 1);
+                }
             }
+            this.doStuckDetection(entityPos);
         }
-        this.doStuckDetection(entityPos);
     }
 
     private boolean isAt(Path path, float threshold) {
@@ -77,10 +81,29 @@ public class MMPathNavigatorGround extends GroundPathNavigation {
 
     static final float EPSILON = 1.0E-8F;
 
+    private WalkNodeEvaluator makeSweepEvaluator(){
+        WalkNodeEvaluator tempEvaluator = new WalkNodeEvaluator();
+        tempEvaluator.setCanPassDoors(true);
+
+        BlockPos blockPos = this.mob.blockPosition();
+        float followRange = (float) this.mob.getAttributeValue(Attributes.FOLLOW_RANGE);
+        int regionOffset = 8;
+        int sumOffset = (int)(followRange + (float)regionOffset);
+        PathNavigationRegion region = new PathNavigationRegion(this.level,
+                blockPos.offset(-sumOffset, -sumOffset, -sumOffset),
+                blockPos.offset(sumOffset, sumOffset, sumOffset));
+
+        tempEvaluator.prepare(region, this.mob);
+        return tempEvaluator;
+    }
+
     private boolean sweep(@NotNull Vec3 vec, Vec3 base, Vec3 max) {
         float t = 0.0F;
         float max_t = (float) vec.length();
         if (max_t < EPSILON) return true;
+
+        var sweepEvaluator = this.makeSweepEvaluator();
+
         final float[] tr = new float[3];
         final int[] ldi = new int[3];
         final int[] tri = new int[3];
@@ -129,9 +152,9 @@ public class MMPathNavigatorGround extends GroundPathNavigation {
                         BlockState block = this.level.getBlockState(pos.set(x, y, z));
                         if (!block.isPathfindable(this.level, pos, PathComputationType.LAND)) return false;
                     }
-                    BlockPathTypes below = this.nodeEvaluator.getBlockPathType(this.level, x, y0 - 1, z, this.mob);
+                    BlockPathTypes below = sweepEvaluator.getBlockPathType(this.level, x, y0 - 1, z, this.mob);
                     if (below == BlockPathTypes.WATER || below == BlockPathTypes.LAVA || below == BlockPathTypes.OPEN) return false;
-                    BlockPathTypes in = this.nodeEvaluator.getBlockPathType(this.level, x, y0, z, this.mob);
+                    BlockPathTypes in = sweepEvaluator.getBlockPathType(this.level, x, y0, z, this.mob);
                     float priority = this.mob.getPathfindingMalus(in);
                     if (priority < 0.0F || priority >= 8.0F) return false;
                     if (in == BlockPathTypes.DAMAGE_FIRE || in == BlockPathTypes.DANGER_FIRE || in == BlockPathTypes.DAMAGE_OTHER) return false;
