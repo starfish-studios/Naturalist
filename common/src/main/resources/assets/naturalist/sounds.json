@@ -496,7 +496,7 @@
   },
   "entity.giraffe.ambient": {
     "sounds": [
-      "naturalist:mob/giraffe/idle"
+      "naturalist:mob/giraffe_idle"
     ],
     "subtitle": "naturalist.subtitles.entity.giraffe.ambient"
   },
