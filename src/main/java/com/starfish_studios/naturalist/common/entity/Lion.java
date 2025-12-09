@@ -1,5 +1,6 @@
 package com.starfish_studios.naturalist.common.entity;
 
+import com.starfish_studios.naturalist.NaturalistConfig;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistAnimal;
 import com.starfish_studios.naturalist.common.entity.core.SleepingAnimal;
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.BabyHurtByTargetGoal;
@@ -116,7 +117,8 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
-                entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby()
+                entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES)
+                        && (NaturalistConfig.lionsAttackBabyHostiles || !entity.isBaby())
                         && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
     }
 
