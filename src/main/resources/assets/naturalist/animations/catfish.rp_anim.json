@@ -2,11 +2,6 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"animation.sf_nba.catfish.swim": {
-			"sound_effects": {
-				"0.0":{
-					"effect": "swim"
-				}
-			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -36,14 +31,6 @@
 			}
 		},
 		"animation.sf_nba.catfish.flop": {
-			"sound_effects": {
-				"0.08":{
-					"effect": "flop"
-				},
-				"0.58":{
-					"effect": "flop"
-				}
-			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {

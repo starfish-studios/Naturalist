@@ -378,7 +378,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     private <E extends Snail> PlayState predicate(final @NotNull AnimationState<E> event) {
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             event.getController().setAnimation(CRAWL);
-        } else if (this.isClimbing()){
+        } else if (this.isNaturalistClimbing()){
             event.getController().setAnimation(CLIMB);
         } else {
             event.getController().setAnimation(IDLE);

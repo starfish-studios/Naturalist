@@ -30,20 +30,6 @@
 			}
 		},
 		"animation.sf_nba.tortoise.walk": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "step"
-				},
-				"0.5": {
-					"effect": "step"
-				},
-				"0.88": {
-					"effect": "step"
-				},
-				"1.42": {
-					"effect": "step"
-				}
-			},
 			"loop": true,
 			"animation_length": 1.83333,
 			"bones": {
@@ -205,35 +191,6 @@
 			}
 		},
 		"animation.sf_nba.tortoise.dig": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "dig"
-				},
-				"0.250": {
-					"effect": "dig"
-				},
-				"0.50": {
-					"effect": "dig"
-				},
-				"0.75": {
-					"effect": "dig"
-				},
-				"1.0": {
-					"effect": "dig"
-				},
-				"1.250": {
-					"effect": "dig"
-				},
-				"1.50": {
-					"effect": "dig"
-				},
-				"1.75": {
-					"effect": "dig"
-				},
-				"2.0": {
-					"effect": "dig"
-				}
-			},
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
@@ -292,11 +249,6 @@
 			}
 		},
 		"animation.sf_nba.tortoise.dinnerbone": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "hurt"
-				}
-			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -442,11 +394,6 @@
 			}
 		},
 		"animation.sf_nba.tortoise.hide": {
-			"sound_effects": {
-				"0.0833": {
-					"effect": "hide"
-				}
-			},
 			"loop": "hold_on_last_frame",
 			"animation_length": 1,
 			"bones": {

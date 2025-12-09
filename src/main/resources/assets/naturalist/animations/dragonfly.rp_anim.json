@@ -2,11 +2,6 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"animation.sf_nba.dragonfly.fly": {
-			"sound_effects": {
-				"0.0":{
-					"effect": "fly"
-				}
-			},
 			"loop": true,
 			"animation_length": 2,
 			"bones": {

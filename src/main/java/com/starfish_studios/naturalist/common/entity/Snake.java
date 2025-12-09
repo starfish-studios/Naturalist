@@ -352,7 +352,7 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
         if (this.isSleeping()) {
             event.getController().setAnimation(SLEEP);
             return PlayState.CONTINUE;
-        } else if (this.isClimbing()) {
+        } else if (this.isNaturalistClimbing()) {
             event.getController().setAnimation(CLIMB);
             return PlayState.CONTINUE;
         } else if (!(event.getLimbSwingAmount() > -0.04F && event.getLimbSwingAmount() < 0.04F)) {

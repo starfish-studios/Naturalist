@@ -26,14 +26,6 @@
 						"1.5": [0, 0, 0]
 					}
 				}
-			},
-			"sound_effects": {
-				"0.0": {
-					"effect": "forward"
-				},
-				"0.75": {
-					"effect": "back"
-				}
 			}
 		},
 		"animation.sf_nba.snail.idle": {
@@ -49,14 +41,6 @@
 			}
 		},
 		"animation.sf_nba.snail.crawl": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "back"
-				},
-				"0.5": {
-					"effect": "forward"
-				}
-			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -92,14 +76,6 @@
 			}
 		},
 		"animation.sf_nba.snail.climb": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "back"
-				},
-				"0.5": {
-					"effect": "forward"
-				}
-			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -139,11 +115,6 @@
 			}
 		},
 		"animation.sf_nba.snail.hide_start": {
-			"sound_effects": {
-				"0.0":{
-					"effect": "hide"
-				}
-			},
 			"animation_length": 1.5,
 			"bones": {
 				"shell": {

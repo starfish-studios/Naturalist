@@ -84,27 +84,8 @@
 					"rotation": [0, 0, "Math.sin((query.anim_time - 0.0) * 360) * 6"]
 				}
 			},
-			"sound_effects": {
-				"0.2917": {
-					"effect": "step"
-				},
-				"0.9167": {
-					"effect": "step"
-				},
-				"1.2917": {
-					"effect": "step"
-				},
-				"1.9167": {
-					"effect": "step"
-				}
-			}
 		},
 		"animation.sf_nba.duck.swim": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "swim"
-				}
-			},
 			"loop": true,
 			"bones": {
 				"root": {
@@ -124,20 +105,6 @@
 			}
 		},
 		"animation.sf_nba.duck.flap": {
-			"sound_effects": {
-				"0.13": {
-					"effect": "wing"
-				},
-				"0.38": {
-					"effect": "wing"
-				},
-				"0.63": {
-					"effect": "wing"
-				},
-				"0.88": {
-					"effect": "wing"
-				}
-			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {

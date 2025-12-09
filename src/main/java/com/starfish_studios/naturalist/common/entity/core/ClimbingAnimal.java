@@ -41,10 +41,10 @@ public abstract class ClimbingAnimal extends NaturalistAnimal {
 
     @Override
     public boolean onClimbable() {
-        return this.isClimbing();
+        return this.isNaturalistClimbing();
     }
 
-    public boolean isClimbing() {
+    public boolean isNaturalistClimbing() {
         return (this.entityData.get(CLIMB_FLAG) & 1) != 0;
     }
 

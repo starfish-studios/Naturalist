@@ -250,36 +250,9 @@
 					}
 				}
 			},
-			"sound_effects": {
-				"0.0": {
-					"effect": "step"
-				},
-				"0.25": {
-					"effect": "step"
-				},
-				"0.5": {
-					"effect": "step"
-				},
-				"0.75": {
-					"effect": "step"
-				}
 			}
 		},
 		"animation.sf_nba.lion.run": {
-			"sound_effects": {
-				"0.5": {
-					"effect": "step_-6dB"
-				},
-				"0.54": {
-					"effect": "step"
-				},
-				"0.79": {
-					"effect": "step_-6dB"
-				},
-				"0.83": {
-					"effect": "step"
-				}
-			},
 			"loop": true,
 			"animation_length": 0.9167,
 			"bones": {
@@ -617,11 +590,6 @@
 			}
 		},
 		"animation.sf_nba.lion.swing": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "swing"
-				}
-			},
 			"animation_length": 0.25,
 			"bones": {
 				"right_arm": {
@@ -630,20 +598,6 @@
 			}
 		},
 		"animation.sf_nba.lion.prey": {
-			"sound_effects": {
-				"0.3": {
-					"effect": "step_-6dB"
-				},
-				"0.5": {
-					"effect": "step_-6dB"
-				},
-				"0.8": {
-					"effect": "step_-6dB"
-				},
-				"0.92": {
-					"effect": "step_-6dB"
-				}
-			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -804,11 +758,6 @@
 			}
 		},
 		"animation.sf_nba.lion.sleep": {
-			"sound_effects": {
-				"0.0":{
-					"effect": "sleep"
-				}
-			},
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
@@ -850,11 +799,6 @@
 			}
 		},
 		"animation.sf_nba.lion.sleep2": {
-			"sound_effects": {
-				"0.0":{
-					"effect": "sleep"
-				}
-			},
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
@@ -894,11 +838,6 @@
 			}
 		},
 		"animation.sf_nba.lion.attack": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "attack"
-				}
-			},
 			"animation_length": 0.25,
 			"bones": {
 				"right_arm": {

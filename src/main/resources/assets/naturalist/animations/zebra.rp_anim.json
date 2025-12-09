@@ -227,20 +227,6 @@
 				"back_legs": {
 					"position": [0, 0, -1]
 				}
-			},
-			"sound_effects": {
-				"0.0": {
-					"effect": "step"
-				},
-				"0.2083": {
-					"effect": "step_-6dB"
-				},
-				"0.5": {
-					"effect": "step"
-				},
-				"0.7083": {
-					"effect": "step_-6dB"
-				}
 			}
 		}
 	}

@@ -70,7 +70,7 @@ public class SnailModel extends GeoModel<Snail> {
             eyes.setScaleZ(1.0F);
         }
 
-        if (!animatable.isClimbing() || !animatable.canHide()) {
+        if (!animatable.isNaturalistClimbing() || !animatable.canHide()) {
             leftEye.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
             leftEye.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
             rightEye.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);

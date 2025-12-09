@@ -37,20 +37,6 @@
 			}
 		},
 		"animation.sf_nba.giraffe.walk": {
-			"sound_effects": {
-				"0.0": {
-					"effect": "step_-6dB"
-				},
-				"0.5": {
-					"effect": "step"
-				},
-				"0.75": {
-					"effect": "step_-6dB"
-				},
-				"1.25": {
-					"effect": "step"
-				}
-			},
 			"loop": true,
 			"animation_length": 1.5,
 			"anim_time_update": "query.anim_time + query.delta_time * v.anim_speed_multiplier * Math.min(1, q.modified_move_speed / v.anim_speed_movement_max)",
@@ -588,28 +574,9 @@
 				"front_legs": {
 					"position": [0, 0, 1]
 				}
-			},
-			"sound_effects": {
-				"0.0833": {
-					"effect": "step_-6dB"
-				},
-				"0.25": {
-					"effect": "step"
-				},
-				"0.6667": {
-					"effect": "step_-6dB"
-				},
-				"0.8333": {
-					"effect": "step"
-				}
 			}
 		},
 		"animation.sf_nba.giraffe.eat": {
-			"sound_effects": {
-				"0.0":{
-					"effect": "eat"
-				}
-			},
 			"animation_length": 0.5,
 			"bones": {
 				"snout": {
