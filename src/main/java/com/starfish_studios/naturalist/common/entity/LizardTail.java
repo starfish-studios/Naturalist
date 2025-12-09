@@ -24,6 +24,7 @@ import software.bernie.geckolib.core.animation.AnimationState;
 public class LizardTail extends Mob implements NaturalistGeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(LizardTail.class, EntityDataSerializers.INT);
+    private static final int MAX_LIFETIME_TICKS = 200;
 
 
     protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.lizard_tail.flop");
@@ -75,6 +76,10 @@ public class LizardTail extends Mob implements NaturalistGeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
+        if (!this.level().isClientSide && this.tickCount > MAX_LIFETIME_TICKS && !this.isRemoved() && !this.isDeadOrDying()) {
+            this.kill();
+            return;
+        }
         if (!this.isInWater() && this.onGround() && this.verticalCollision) {
             this.setDeltaMovement(this.getDeltaMovement().add((this.random.nextFloat() * 2.0f - 1.0f) * 0.05f, 0.4f, (this.random.nextFloat() * 2.0f - 1.0f) * 0.05f));
             this.setOnGround(false);

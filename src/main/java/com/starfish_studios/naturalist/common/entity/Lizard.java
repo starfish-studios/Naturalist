@@ -19,7 +19,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
@@ -54,7 +53,6 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity {
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.walk");
     protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.sit");
-    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.sleep");
 
     public Lizard(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -321,22 +319,4 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity {
         }
     }
 
-    static class LizardMeleeAttackGoal extends MeleeAttackGoal {
-        private final Lizard lizard;
-
-        public LizardMeleeAttackGoal(Lizard lizard, double speedModifier, boolean followingTargetEvenIfNotSeen) {
-            super(lizard, speedModifier, followingTargetEvenIfNotSeen);
-            this.lizard = lizard;
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.lizard.hasTail() && super.canUse();
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return this.lizard.hasTail() && super.canContinueToUse();
-        }
-    }
 }
