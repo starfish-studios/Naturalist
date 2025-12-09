@@ -54,7 +54,10 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     }
 
     private void addMobSpawn(ModifiableBiomeInfo.BiomeInfo.Builder builder, Holder<Biome> biome, TagKey<Biome> tag, TagKey<Biome> blacklistTag, MobCategory mobCategory, EntityType<?> entityType, int weight, int minGroupSize, int maxGroupSize) {
-        if (weight == 0) return;
+        if (weight <= 0) {
+            builder.getMobSpawnSettings().getSpawner(mobCategory).removeIf(spawnerData -> spawnerData.type == entityType);
+            return;
+        }
         if (!biome.is(tag)) return;
         if (blacklistTag != null && biome.is(blacklistTag)) return;
         builder.getMobSpawnSettings().addSpawn(mobCategory, new MobSpawnSettings.SpawnerData(entityType, weight, minGroupSize, maxGroupSize));

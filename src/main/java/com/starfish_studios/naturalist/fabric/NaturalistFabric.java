@@ -81,7 +81,16 @@ public class NaturalistFabric implements ModInitializer {
     }
 
     void addMobSpawn(TagKey<Biome> tag, TagKey<Biome> blacklistTag, MobCategory mobCategory, EntityType<?> entityType, int weight, int minGroupSize, int maxGroupSize) {
-        if (weight <= 0) return;
+        if (weight <= 0) {
+            ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+            ResourceLocation removalId = new ResourceLocation(id.getNamespace(), id.getPath() + "_removal");
+            BiomeModifications.create(removalId).add(
+                    ModificationPhase.REMOVALS,
+                    biomeSelector -> biomeSelector.hasTag(tag) && (blacklistTag == null || !biomeSelector.hasTag(blacklistTag)),
+                    context -> context.getSpawnSettings().removeSpawnsOfEntityType(entityType)
+            );
+            return;
+        }
         BiomeModifications.addSpawn(
                 biomeSelector -> biomeSelector.hasTag(tag) && (blacklistTag == null || !biomeSelector.hasTag(blacklistTag)),
                 mobCategory,

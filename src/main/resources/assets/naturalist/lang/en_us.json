@@ -312,6 +312,8 @@
     "naturalist.midnightconfig.bluejaySpawnWeight.tooltip": "§8§o[?]§7§o The chance of Bluejays spawning in the world.",
     "naturalist.midnightconfig.bluejaySpawnMinGroupSize": "§7§oBluejay Minimum Group Size",
     "naturalist.midnightconfig.bluejaySpawnMinGroupSize.tooltip": "§8§o[?]§7§o The minimum number of Bluejays that can spawn in a group.",
+    "naturalist.midnightconfig.bluejaySpawnMaxGroupSize": "§7§oBluejay Maximum Group Size",
+    "naturalist.midnightconfig.bluejaySpawnMaxGroupSize.tooltip": "§8§o[?]§7§o The maximum number of Bluejays that can spawn in a group.",
 
   "naturalist.midnightconfig.birdRemoved": "§7Remove Bird",
   "naturalist.midnightconfig.birdRemoved.tooltip": "§8§o[?]§7§o If set to 'Yes', Birds will not spawn, and existing Birds will be removed.",

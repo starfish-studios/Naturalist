@@ -83,7 +83,7 @@
 				"bowtie": {
 					"rotation": [0, 0, "Math.sin((query.anim_time - 0.0) * 360) * 6"]
 				}
-			},
+			}
 		},
 		"animation.sf_nba.duck.swim": {
 			"loop": true,
