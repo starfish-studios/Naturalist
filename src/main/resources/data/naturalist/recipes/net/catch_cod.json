@@ -1,0 +1,9 @@
+{
+  "type": "naturalist:net",
+  "entity": "minecraft:cod",
+  "priority": 1,
+  "result": {
+    "item": "minecraft:cod"
+  }
+}
+

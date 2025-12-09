@@ -1,0 +1,14 @@
+{
+  "type": "naturalist:net",
+  "entity": "minecraft:cod",
+  "priority": 0,
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    }
+  ],
+  "result": {
+    "item": "minecraft:cod_bucket"
+  }
+}
+

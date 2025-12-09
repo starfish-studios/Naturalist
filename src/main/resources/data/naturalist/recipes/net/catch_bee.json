@@ -1,0 +1,8 @@
+{
+  "type": "naturalist:net",
+  "entity": "minecraft:bee",
+  "result": {
+    "item": "minecraft:honeycomb"
+  }
+}
+

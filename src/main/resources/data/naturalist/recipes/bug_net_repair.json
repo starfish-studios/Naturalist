@@ -1,0 +1,13 @@
+{
+  "type": "naturalist:bug_net_repair",
+  "tool": {
+    "item": "naturalist:bug_net"
+  },
+  "repair_material": {
+    "item": "minecraft:string"
+  },
+  "result": {
+    "item": "naturalist:bug_net"
+  }
+}
+

@@ -1,8 +1,0 @@
-{
-  "type": "naturalist:net",
-  "entity_type": "minecraft:bee",
-  "result": {
-    "item": "minecraft:dirt",
-    "count": 1
-  }
-}
