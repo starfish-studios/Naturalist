@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity {
-    private static final Logger LOGGER = LogManager.getLogger();
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
 
