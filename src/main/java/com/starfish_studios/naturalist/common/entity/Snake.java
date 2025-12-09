@@ -38,11 +38,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.pathfinder.Path;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -59,6 +60,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
 
@@ -325,12 +327,20 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
 
     private boolean canRattle() {
         List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
-        if(!players.isEmpty() && this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get()) && !players.get(0).isCreative()){
-            this.setTarget(players.get(0));
-        } else {
+        boolean isRattlesnake = this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get());
+        if (!isRattlesnake) return false;
+
+        if (!players.isEmpty() && !players.get(0).isCreative()) {
+            if (this.getTarget() == null || this.getTarget() instanceof Player) {
+                this.setTarget(players.get(0));
+            }
+            return true;
+        }
+
+        if (this.getTarget() instanceof Player) {
             this.setTarget(null);
         }
-        return !players.isEmpty() && this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get());
+        return false;
     }
 
     @Override
@@ -415,37 +425,13 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
 
     static class SnakeMeleeAttackGoal extends MeleeAttackGoal {
 
-        private long lastCanUseCheck;
-
         public SnakeMeleeAttackGoal(@NotNull PathfinderMob mob, double speedModifier, boolean pFollowingTargetEvenIfNotSeen) {
             super(mob, speedModifier, pFollowingTargetEvenIfNotSeen);
         }
 
         @Override
         public boolean canUse() {
-            return mob.getMainHandItem().isEmpty() && testUse();
-        }
-
-        boolean testUse(){
-            long l = this.mob.level().getGameTime();
-            if (l - this.lastCanUseCheck < 20L) {
-                return false;
-            } else {
-                this.lastCanUseCheck = l;
-                LivingEntity livingEntity = this.mob.getTarget();
-                if (livingEntity == null) {
-                    return false;
-                } else if (!livingEntity.isAlive()) {
-                    return false;
-                } else {
-                    Path path = this.mob.getNavigation().createPath(livingEntity, 0);
-                    if (path != null) {
-                        return true;
-                    } else {
-                        return this.getAttackReachSqr(livingEntity) >= this.mob.distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
-                    }
-                }
-            }
+            return mob.getMainHandItem().isEmpty() && super.canUse();
         }
 
         @Override

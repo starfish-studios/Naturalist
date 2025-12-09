@@ -28,6 +28,9 @@ public class SearchForItemsGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (mob.getTarget() != null || mob.getLastHurtByMob() != null) {
+            return false;
+        }
         if (mob.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()) {
             List<ItemEntity> list = mob.level().getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(horizontalSearchRange, verticalSearchRange, horizontalSearchRange), itemEntity -> ingredient.test(itemEntity.getItem()));
             return !list.isEmpty() && mob.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
