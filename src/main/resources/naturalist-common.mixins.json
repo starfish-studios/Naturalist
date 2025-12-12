@@ -9,7 +9,8 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "ClientLevelMixin",
-    "ClientPacketListenerMixin"
+    "ClientPacketListenerMixin",
+    "MidnightConfigMixin"
   ],
   "mixins": [
     "BottleItemMixin",

@@ -475,6 +475,7 @@
   "naturalist.midnightconfig.lionSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o The maximum number of Lions that can spawn in a group.",
   "naturalist.midnightconfig.lionsAttackBabyHostiles": "§cLion Baby Murder",
   "naturalist.midnightconfig.lionsAttackBabyHostiles.tooltip": "§8§o[?]§7§o If set to 'Yes', Lions will kill babies. You monster.",
+  "naturalist.midnightconfig.search": "Search Configs",
 
   "naturalist.midnightconfig.lizardRemoved": "§7Remove Lizard",
   "naturalist.midnightconfig.lizardRemoved.tooltip": "§8§o[?]§7§o If set to 'Yes', Lizards will not spawn, and existing Lizards will be removed.",
