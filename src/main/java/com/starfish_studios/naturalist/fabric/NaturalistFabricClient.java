@@ -23,9 +23,9 @@ public class NaturalistFabricClient implements ClientModInitializer {
         ItemProperties.register(NaturalistItems.BUTTERFLY.get(), new ResourceLocation("variant"), (stack, world, entity, num) -> {
             CompoundTag compoundTag = stack.getTag();
             if (compoundTag != null && compoundTag.contains("Variant")) {
-                return (float)compoundTag.getInt("Variant") / 5;
+                return (float)compoundTag.getInt("Variant") / 4;
             }
-            return 0.2F;
+            return 0.0F;
         });
 
         ItemProperties.register(NaturalistItems.SNAIL_BUCKET.get(), new ResourceLocation("color"), (stack, world, entity, num) -> {
