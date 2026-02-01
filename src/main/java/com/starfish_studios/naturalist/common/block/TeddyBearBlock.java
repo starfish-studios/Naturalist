@@ -10,9 +10,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.mojang.serialization.MapCodec;
 import org.jetbrains.annotations.NotNull;
 
 public class TeddyBearBlock extends HorizontalDirectionalBlock {
+    public static final MapCodec<TeddyBearBlock> CODEC = simpleCodec(TeddyBearBlock::new);
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
+    }
+
     private static final VoxelShape X_AXIS_AABB = Block.box(3, 0, 2, 13, 15, 14);
     private static final VoxelShape Z_AXIS_AABB = Block.box(2, 0, 3, 14, 15, 13);
 
@@ -27,7 +35,8 @@ public class TeddyBearBlock extends HorizontalDirectionalBlock {
 
     @SuppressWarnings("deprecation")
     @Override
-    public @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    public @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos,
+            @NotNull CollisionContext context) {
         return state.getValue(FACING).getAxis() == Direction.Axis.X ? X_AXIS_AABB : Z_AXIS_AABB;
     }
 

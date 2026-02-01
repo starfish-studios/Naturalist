@@ -1,5 +1,7 @@
 package com.starfish_studios.naturalist.common.entity;
 
+import net.minecraft.world.item.Items;
+
 import com.starfish_studios.naturalist.common.entity.core.NaturalistAnimal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
@@ -11,6 +13,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -24,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -31,16 +36,17 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BREAD); // TODO: Fix
+                                                                             // Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
     public float flap;
     public float flapSpeed;
     public float oFlapSpeed;
@@ -51,7 +57,6 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
-
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.duck.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.duck.walk");
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.duck.swim");
@@ -61,7 +66,6 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
         super(entityType, level);
         this.eggTime = this.random.nextInt(6000) + 6000;
     }
-
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
@@ -80,13 +84,11 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
-    @Override
-    protected float getStandingEyeHeight(@NotNull Pose pose, @NotNull EntityDimensions dimensions) {
-        return this.isBaby() ? dimensions.height * 0.85F : dimensions.height * 0.92F;
-    }
+    // getStandingEyeHeight removed in 1.21 - EntityDimensions.height is private
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 4.0).add(Attributes.MOVEMENT_SPEED, 0.25);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 4.0).add(Attributes.MOVEMENT_SPEED, 0.25)
+                .add(Attributes.TEMPT_RANGE, 10.0D);
     }
 
     @Override
@@ -102,12 +104,19 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public Duck getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.DUCK.get().create(serverLevel);
+        return NaturalistEntityTypes.DUCK.get().create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @SuppressWarnings("unused")
-    public static boolean checkDuckSpawnRules(EntityType<? extends Duck> type, @NotNull ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
-        return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.DUCKS_SPAWNABLE_ON) || level.getBlockState(pos.below()).getFluidState().is(FluidTags.WATER);
+    public static boolean checkDuckSpawnRules(EntityType<Duck> entityType, ServerLevelAccessor levelAccessor,
+            EntitySpawnReason spawnType, BlockPos blockPos, RandomSource randomSource) {
+        return levelAccessor.getBlockState(blockPos.below()).is(NaturalistTags.BlockTags.DUCKS_SPAWNABLE_ON)
+                && isBrightEnoughToSpawn(levelAccessor, blockPos);
+    }
+
+    private static boolean isBrightEnoughToSpawn(LevelAccessor levelAccessor, BlockPos blockPos) {
+        return levelAccessor.getLightEmission(blockPos) > 8
+                || levelAccessor.getBlockState(blockPos.below()).getFluidState().is(FluidTags.WATER);
     }
 
     @Nullable
@@ -146,8 +155,8 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.2D);
         } else {
@@ -174,79 +183,80 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
         }
 
         this.flap += this.flapping * 2.0F;
-        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && --this.eggTime <= 0) {
-            this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-            this.spawnAtLocation(NaturalistItems.DUCK_EGG.get());
+        if (!this.level().isClientSide() && this.isAlive() && !this.isBaby() && --this.eggTime <= 0) {
+            this.playSound(SoundEvents.CHICKEN_EGG, 1.0F,
+                    (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+            this.spawnAtLocation((net.minecraft.server.level.ServerLevel) this.level(), NaturalistItems.DUCK_EGG.get());
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(6000) + 6000;
         }
 
     }
 
+    // getExperienceReward() signature changed in 1.21
+    // @Override
+    // public int getExperienceReward() {
+    // return 10;
+    // }
+
     @Override
-    public int getExperienceReward() {
-        return 10;
+    public void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.store("EggLayTime", com.mojang.serialization.Codec.INT, this.eggTime);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        if (compound.contains("EggLayTime")) {
-            this.eggTime = compound.getInt("EggLayTime");
-        }
-
+    public void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.eggTime = input.read("EggLayTime", com.mojang.serialization.Codec.INT).orElse(0);
     }
-
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("EggLayTime", this.eggTime);
-    }
-
-
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
 
-    protected <E extends Duck> PlayState predicate(final AnimationState<E> event) {
+    protected <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState predicate(
+            final AnimationTest<E> state) {
+        software.bernie.geckolib.animatable.processing.AnimationController<E> controller = state.controller();
         if (this.isInWater()) {
-            event.getController().setAnimation(SWIM);
-            event.getController().setAnimationSpeed(1.0D);
+            controller.setAnimation(SWIM);
+            controller.setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-             if (this.isSprinting()) {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(2.0D);
+            if (this.isSprinting()) {
+                controller.setAnimation(WALK);
+                controller.setAnimationSpeed(2.0D);
                 return PlayState.CONTINUE;
             } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.5D);
+                controller.setAnimation(WALK);
+                controller.setAnimationSpeed(1.5D);
                 return PlayState.CONTINUE;
             }
         } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
+            controller.setAnimation(IDLE);
+            controller.setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
 
-    protected <E extends Duck> PlayState flapPredicate(final AnimationState<E> event) {
+    protected <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState flapPredicate(
+            software.bernie.geckolib.animatable.processing.AnimationTest<E> state) {
+        AnimationController<E> controller = state.controller();
         if (!this.onGround() && !this.isInWater()) {
-            event.getController().setAnimation(FLAP);
-            event.getController().setAnimationSpeed(1.0D);
+            controller.setAnimation(FLAP);
+            controller.setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
-        event.getController().forceAnimationReset();
-        
+        state.controller().forceAnimationReset();
+
         return PlayState.STOP;
     }
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "flapController", 2, this::flapPredicate));
+        controllers.add(new AnimationController<Duck>("controller", 5, this::predicate));
+        controllers.add(new AnimationController<Duck>("flapController", 2, this::flapPredicate));
     }
 
 }

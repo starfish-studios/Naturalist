@@ -23,10 +23,14 @@ public class NaturalistTags {
         public static final TagKey<Block> VULTURE_PERCH_BLOCKS = tag("vulture_perch_blocks");
         public static final TagKey<Block> ALLIGATOR_EGG_LAYABLE_ON = tag("alligator_egg_layable_on");
         public static final TagKey<Block> TORTOISE_EGG_LAYABLE_ON = tag("tortoise_egg_layable_on");
-
+        public static final TagKey<Block> BIRDS_SPAWNABLE_ON = tag("birds_spawnable_on");
+        public static final TagKey<Block> HIPPOS_SPAWNABLE_ON = tag("hippos_spawnable_on");
+        public static final TagKey<Block> ALLIGATORS_SPAWNABLE_ON = tag("alligators_spawnable_on");
+        public static final TagKey<Block> BIRDS_PERCH_ON = tag("birds_perch_on");
 
         private static TagKey<Block> tag(@NotNull String name) {
-            return TagKey.create(BuiltInRegistries.BLOCK.key(), new ResourceLocation(Naturalist.MOD_ID, name));
+            return TagKey.create(BuiltInRegistries.BLOCK.key(),
+                    ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
         }
     }
 
@@ -40,9 +44,11 @@ public class NaturalistTags {
         public static final TagKey<Item> LIZARD_TEMPT_ITEMS = tag("lizard_tempt_items");
         public static final TagKey<Item> TORTOISE_TEMPT_ITEMS = tag("tortoise_tempt_items");
         public static final TagKey<Item> DUCK_FOOD_ITEMS = tag("duck_food_items");
+        public static final TagKey<Item> BIRD_TEMPT_ITEMS = tag("bird_tempt_items");
 
         private static TagKey<Item> tag(String name) {
-            return TagKey.create(BuiltInRegistries.ITEM.key(), new ResourceLocation(Naturalist.MOD_ID, name));
+            return TagKey.create(BuiltInRegistries.ITEM.key(),
+                    ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
         }
     }
 
@@ -59,7 +65,8 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> NATURALIST_ENTITIES = tag("naturalist_entities");
 
         private static @NotNull TagKey<EntityType<?>> tag(String name) {
-            return TagKey.create(BuiltInRegistries.ENTITY_TYPE.key(), new ResourceLocation(Naturalist.MOD_ID, name));
+            return TagKey.create(BuiltInRegistries.ENTITY_TYPE.key(),
+                    ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
         }
     }
 
@@ -126,10 +133,16 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_VULTURE = tag("blacklist/blacklist_vulture");
         public static final TagKey<Biome> BLACKLIST_ZEBRA = tag("blacklist/blacklist_zebra");
 
-
-
         private static @NotNull TagKey<Biome> tag(String name) {
-            return TagKey.create(Registries.BIOME, new ResourceLocation(Naturalist.MOD_ID, name));
+            return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
+        }
+    }
+
+    public static class Fluids {
+        public static final TagKey<net.minecraft.world.level.material.Fluid> WATERS = tag("waters");
+
+        private static TagKey<net.minecraft.world.level.material.Fluid> tag(String name) {
+            return TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
         }
     }
 }

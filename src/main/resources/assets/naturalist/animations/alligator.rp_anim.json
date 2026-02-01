@@ -5,7 +5,7 @@
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
-				"tailRot": {
+				"tail": {
 					"rotation": [0, "Math.cos((query.anim_time - 0.2) * 180) * -4", 0],
 					"position": [0, 1, 0]
 				},
@@ -22,7 +22,7 @@
 					"rotation": [0, "Math.cos((query.anim_time - 0.3) * 280) * -2", "Math.cos((query.anim_time - 0.0) * 280) * 8"],
 					"position": [0, "1+Math.cos((query.anim_time - 0.4) * 280) * 0.25", 0]
 				},
-				"tailRot": {
+				"tail": {
 					"rotation": [-7.5, "Math.cos((query.anim_time - 0.3) * 280) * -8", "Math.cos((query.anim_time - 0.0) * 280) * -5"],
 					"position": [-0.13073, 1.49429, 0.0003]
 				},
@@ -104,7 +104,7 @@
 						"1.2917": [0, 0, 3]
 					}
 				},
-				"headRot": {
+				"head": {
 					"rotation": [0, "Math.cos((query.anim_time - 0.2) * 280) * 3", "Math.cos((query.anim_time - 0.0) * 280) * -4"]
 				},
 				"tail2": {
@@ -119,13 +119,13 @@
 				"root": {
 					"rotation": [0, "Math.cos((query.anim_time - 0.0) * 360) * -7.5", 0]
 				},
-				"tailRot": {
+				"tail": {
 					"rotation": [0, "Math.sin((query.anim_time - 0.0) * 360) * -22.5", 0]
 				},
 				"tail2": {
 					"rotation": [0, "Math.sin((query.anim_time - 0.2) * 360) * -22.5", 0]
 				},
-				"headRot": {
+				"head": {
 					"rotation": [0, "Math.sin((query.anim_time - 0.8) * 360) * 12.5", 0]
 				},
 				"left_arm": {
@@ -157,19 +157,45 @@
 			}
 		},
 		"animation.sf_nba.alligator.bite": {
-			"loop": "hold_on_last_frame",
-			"animation_length": 0.125,
+			"animation_length": 0.5,
 			"bones": {
-				"headRot": {
-					"rotation": {
-						"0.0": [-22.5, 0, 0],
-						"0.125": [0, 0, 0]
-					}
-				},
 				"lower_jaw": {
 					"rotation": {
-						"0.0": [67.5, 0, 0],
-						"0.125": [0, 0, 0]
+						"0.0": {
+							"post": [67.5, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.125": {
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				},
+				"headRot": {
+					"rotation": {
+						"0.0": {
+							"post": [-22.5, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.125": {
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
+					},
+					"position": {
+						"0.0625": {
+							"pre": [0, 0, 0],
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.125": {
+							"post": [0, -1, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.1875": {
+							"post": [0, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
 					}
 				}
 			}
@@ -177,7 +203,7 @@
 		"animation.sf_nba.alligator.baby_transform": {
 			"loop": true,
 			"bones": {
-				"headRot": {
+				"head": {
 					"scale": 1.5
 				}
 			}

@@ -109,6 +109,11 @@
 						"0.75": [0, 0, 0]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.125": {
+					"effect": "idle"
+				}
 			}
 		},
 		"animation.sf_nba.snake.attack": {
@@ -127,6 +132,11 @@
 			}
 		},
 		"animation.sf_nba.snake.rattle": {
+			"sound_effects": {
+				"0.0": {
+					"effect": "rattle"
+				}
+			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -136,6 +146,11 @@
 			}
 		},
 		"animation.sf_nba.snake.rattling": {
+			"sound_effects": {
+				"0.0":{
+					"effect": "rattleshort"
+				}
+			},
 			"loop": true,
 			"animation_length": 0.05
 		},

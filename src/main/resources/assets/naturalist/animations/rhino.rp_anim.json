@@ -29,6 +29,20 @@
 			}
 		},
 		"animation.sf_nba.rhino.walk": {
+			"sound_effects": {
+				"0.0":{
+					"effect": "step_-6dB"
+				},
+				"0.58":{
+					"effect": "step"
+				},
+				"0.71":{
+					"effect": "step_-6dB"
+				},
+				"1.33":{
+					"effect": "step"
+				}
+			},
 			"loop": true,
 			"animation_length": 1.5,
 			"bones": {
@@ -293,6 +307,20 @@
 			}
 		},
 		"animation.sf_nba.rhino.run": {
+			"sound_effects": {
+				"0.17":{
+					"effect": "step_-6dB"
+				},
+				"0.29":{
+					"effect": "step"
+				},
+				"0.58":{
+					"effect": "step_-6dB"
+				},
+				"0.67":{
+					"effect": "step"
+				}
+			},
 			"loop": true,
 			"animation_length": 0.75,
 			"bones": {
@@ -587,6 +615,11 @@
 			}
 		},
 		"animation.sf_nba.rhino.attack": {
+			"sound_effects": {
+				"0.0": {
+					"effect": "attack"
+				}
+			},
 			"animation_length": 0.5,
 			"bones": {
 				"head": {
@@ -678,9 +711,22 @@
 						"2.0": [0.2, 4.23, 0]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.16": {
+					"effect": "scrape"
+				},
+				"1.16": {
+					"effect": "scrape"
+				}
 			}
 		},
 		"animation.sf_nba.rhino.stunned": {
+			"sound_effects": {
+				"0.0":{
+					"effect": "stun"
+				}
+			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -712,6 +758,11 @@
 			}
 		},
 		"animation.sf_nba.rhino.stunned2": {
+			"sound_effects": {
+				"0.0":{
+					"effect": "stun"
+				}
+			},
 			"loop": true,
 			"animation_length": 1.5,
 			"bones": {
@@ -1051,6 +1102,23 @@
 			}
 		},
 		"animation.sf_nba.rhino.charge": {
+			"sound_effects": {
+				"0.17":{
+					"effect": "step_-6dB"
+				},
+				"0.29":{
+					"effect": "step"
+				},
+				"0.50": {
+					"effect": "charge"
+				},
+				"0.58":{
+					"effect": "step_-6dB"
+				},
+				"0.67":{
+					"effect": "step"
+				}
+			},
 			"loop": true,
 			"animation_length": 0.75,
 			"bones": {

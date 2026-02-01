@@ -4,6 +4,7 @@ import com.starfish_studios.naturalist.NaturalistConfig;
 import com.starfish_studios.naturalist.common.entity.Firefly;
 import com.starfish_studios.naturalist.core.registry.NaturalistTags;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -26,9 +27,12 @@ public abstract class MobMixin extends LivingEntity {
         super(entityType, level);
     }
 
+    // MC 1.21 changed doHurtTarget(Entity) to doHurtTarget(ServerLevel, Entity)
     @Inject(method = "doHurtTarget", at = @At("HEAD"))
-    private void naturalist$onDoHurtTarget(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.FROG))
+    private void naturalist$onDoHurtTarget(ServerLevel serverLevel, Entity entity,
+            CallbackInfoReturnable<Boolean> cir) {
+        if (BuiltInRegistries.ENTITY_TYPE.getKey(this.getType())
+                .equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.FROG))
                 && entity instanceof Firefly) {
             this.addEffect(new MobEffectInstance(MobEffects.GLOWING, 60));
         }
@@ -53,15 +57,18 @@ public abstract class MobMixin extends LivingEntity {
     @Unique
     private boolean naturalist$shouldRemoveVanillaFarmAnimal() {
         EntityType<?> type = this.getType();
-        if (!(type == EntityType.COW || type == EntityType.PIG || type == EntityType.SHEEP || type == EntityType.CHICKEN)) {
+        if (!(type == EntityType.COW || type == EntityType.PIG || type == EntityType.SHEEP
+                || type == EntityType.CHICKEN)) {
             return false;
         }
 
-        if (NaturalistConfig.removeSwampFarmAnimals && this.level().getBiome(this.blockPosition()).is(NaturalistTags.Biomes.REMOVE_SWAMP_FARM_ANIMALS)) {
+        if (NaturalistConfig.removeSwampFarmAnimals
+                && this.level().getBiome(this.blockPosition()).is(NaturalistTags.Biomes.REMOVE_SWAMP_FARM_ANIMALS)) {
             return true;
         }
 
-        if (NaturalistConfig.removeSavannaFarmAnimals && this.level().getBiome(this.blockPosition()).is(NaturalistTags.Biomes.REMOVE_SAVANNA_FARM_ANIMALS)) {
+        if (NaturalistConfig.removeSavannaFarmAnimals
+                && this.level().getBiome(this.blockPosition()).is(NaturalistTags.Biomes.REMOVE_SAVANNA_FARM_ANIMALS)) {
             return true;
         }
 
@@ -88,7 +95,6 @@ public abstract class MobMixin extends LivingEntity {
             return false;
         }
     }
-
 
     @Unique
     private String naturalist$toCamelCase(String input) {

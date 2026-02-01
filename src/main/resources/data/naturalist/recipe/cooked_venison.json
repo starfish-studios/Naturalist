@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": "naturalist:venison",
+  "result": {
+    "id": "naturalist:cooked_venison"
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

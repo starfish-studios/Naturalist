@@ -6,11 +6,10 @@
   "injectors": {
     "defaultRequire": 1
   },
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "client": [
     "ClientLevelMixin",
-    "ClientPacketListenerMixin",
-    "MidnightConfigMixin"
+    "ClientPacketListenerMixin"
   ],
   "mixins": [
     "BottleItemMixin",

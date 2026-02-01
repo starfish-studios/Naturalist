@@ -30,12 +30,14 @@ public class SnailEggBlock extends Block {
     }
 
     @SuppressWarnings("deprecation")
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos,
+            @NotNull CollisionContext context) {
         return SHAPE;
     }
 
     @SuppressWarnings("deprecation")
-    public void onPlace(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
+    public void onPlace(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState oldState,
+            boolean movedByPiston) {
         level.scheduleTick(pos, this, getSnailEggHatchDelay(level.getRandom()));
     }
 
@@ -45,13 +47,19 @@ public class SnailEggBlock extends Block {
         return random.nextInt(minHatchTickDelay, maxHatchTickDelay);
     }
 
-    @SuppressWarnings("deprecation")
-    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
-    }
+    /*
+     * @SuppressWarnings("deprecation")
+     * public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull
+     * Direction direction, @NotNull BlockState neighborState, @NotNull
+     * LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
+     * return super.updateShape(state, direction, neighborState, level, pos,
+     * neighborPos);
+     * }
+     */
 
     @SuppressWarnings("deprecation")
-    public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+    public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos,
+            @NotNull RandomSource random) {
         this.hatchSnailEgg(level, pos, random);
     }
 
@@ -76,13 +84,16 @@ public class SnailEggBlock extends Block {
     private void spawnBabySnails(ServerLevel level, @NotNull BlockPos pos, RandomSource random) {
         int i = random.nextInt(2, 6);
 
-        for(int j = 1; j <= i; ++j) {
-            Snail snail = NaturalistEntityTypes.SNAIL.get().create(level);
+        for (int j = 1; j <= i; ++j) {
+            Snail snail = NaturalistEntityTypes.SNAIL.get().create(level,
+                    net.minecraft.world.entity.EntitySpawnReason.BREEDING);
             if (snail != null) {
-                double d = (double)pos.getX() + this.getRandomSnailPositionOffset(random);
-                double e = (double)pos.getZ() + this.getRandomSnailPositionOffset(random);
+                double d = (double) pos.getX() + this.getRandomSnailPositionOffset(random);
+                double e = (double) pos.getZ() + this.getRandomSnailPositionOffset(random);
                 int k = random.nextInt(1, 361);
-                snail.moveTo(d, pos.getY(), e, (float)k, 0.0F);
+                snail.setPos(d, pos.getY(), e);
+                snail.setXRot(0.0F);
+                snail.setYRot((float) k);
                 snail.setPersistenceRequired();
                 snail.setAge(-6000);
                 level.addFreshEntity(snail);

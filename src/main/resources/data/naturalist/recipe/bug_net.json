@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  #",
+    " #S",
+    "#SS"
+  ],
+  "key": {
+    "#": "minecraft:bamboo",
+    "S": "minecraft:string"
+  },
+  "result": {
+    "count": 1,
+    "id": "naturalist:bug_net"
+  }
+}

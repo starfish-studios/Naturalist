@@ -4,39 +4,65 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.starfish_studios.naturalist.client.model.HippoModel;
 import com.starfish_studios.naturalist.common.entity.Hippo;
-//? if fabric {
-/*import net.fabricmc.api.EnvType;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-*///?} else if forge {
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-//?}
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.GeoRenderer;
-//? if forge {
-import net.minecraftforge.client.model.data.ModelData;
-//?}
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-//? if fabric {
-/*@Environment(EnvType.CLIENT)
-*///?} else if forge {
-@OnlyIn(Dist.CLIENT)
-//?}
-public class HippoRenderer extends GeoEntityRenderer<Hippo> {
+import java.util.HashMap;
+import java.util.Map;
+
+@Environment(EnvType.CLIENT)
+public class HippoRenderer extends GeoEntityRenderer<Hippo, HippoRenderer.HippoRenderState> {
     public HippoRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new HippoModel());
         this.shadowRadius = 1.1F;
+    }
+
+    @Override
+    public void extractRenderState(Hippo entity, HippoRenderState state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        state.isBaby = entity.isBaby();
+    }
+
+    public static class HippoRenderState extends LivingEntityRenderState implements GeoRenderState {
+        public boolean isBaby;
+        private final Map<DataTicket<?>, Object> data = new HashMap<>();
+
+        @Override
+        public <D> void addGeckolibData(DataTicket<D> ticket, D data) {
+            this.data.put(ticket, data);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <D> D getGeckolibData(DataTicket<D> ticket) {
+            return (D) this.data.get(ticket);
+        }
+
+        @Override
+        public boolean hasGeckolibData(DataTicket<?> ticket) {
+            return this.data.containsKey(ticket);
+        }
+
+        @Override
+        public Map<DataTicket<?>, Object> getDataMap() {
+            return this.data;
+        }
+
+        @Override
+        public <D> D getOrDefaultGeckolibData(DataTicket<D> ticket, D defaultValue) {
+            D data = getGeckolibData(ticket);
+            return data != null ? data : defaultValue;
+        }
     }
 
     @Override
@@ -44,39 +70,33 @@ public class HippoRenderer extends GeoEntityRenderer<Hippo> {
         return 0.000001f;
     }
 
-    @Override
-    public void render(Hippo entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        if (entity.isBaby()) {
-            poseStack.scale(0.5F, 0.5F, 0.5F);
-        }else{
-            poseStack.scale(1.0F, 1.0F, 1.0F);
-        }
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
-
-   public RenderType getRenderType(Hippo entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
+    public RenderType getRenderType(Hippo entity, float partialTicks, PoseStack stack,
+            @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn,
+            ResourceLocation textureLocation) {
         return RenderType.entityCutoutNoCull(textureLocation);
     }
 
-    @SuppressWarnings("deprecation")
+    // TODO: Re-enable and adapt to GeckoLib 5 API
+    /*
+     * @Override
+     * public void renderRecursively(PoseStack stack, Hippo entity, GeoBone bone,
+     * RenderType renderType,
+     * MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender,
+     * float partialTick,
+     * int packedLight,
+     * int packedOverlay, float red, float green, float blue, float alpha) {
+     * if (bone.getName().equals("botjaw") && animatable.getMainHandItem().getItem()
+     * instanceof BlockItem blockItem) {
+     * // ...
+     * }
+     * super.renderRecursively(stack, entity, bone, renderType, bufferSource,
+     * buffer, isReRender, partialTick,
+     * packedLight, packedOverlay, red, green, blue, alpha);
+     * }
+     */
+
     @Override
-    public void renderRecursively(PoseStack stack, Hippo entity, @NotNull GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-                                  int packedOverlay, float red, float green, float blue, float alpha) {
-        if (bone.getName().equals("botjaw") && animatable.getMainHandItem().getItem() instanceof BlockItem blockItem) {
-            stack.pushPose();
-            stack.mulPose(new Quaternionf());
-            stack.translate(-0.4D, 0.76D, -1.8D);
-            stack.scale(0.675F,0.675F,0.675F);
-            var blockState = blockItem.getBlock().defaultBlockState();
-            var blockRenderType = ItemBlockRenderTypes.getChunkRenderType(blockState);
-            //? if forge {
-            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(blockState, stack, bufferSource, packedLight, packedOverlay, ModelData.EMPTY, blockRenderType);
-            //?} else {
-            /*Minecraft.getInstance().getBlockRenderer().renderSingleBlock(blockState, stack, bufferSource, packedLight, packedOverlay);
-            *///?}
-            stack.popPose();
-            buffer = bufferSource.getBuffer(RenderType.entityTranslucent(((GeoRenderer<Hippo>)this).getTextureLocation(entity)));
-        }
-        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+    public HippoRenderer.HippoRenderState createRenderState(Hippo entity, Void unused) {
+        return new HippoRenderer.HippoRenderState();
     }
 }

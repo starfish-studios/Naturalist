@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "naturalist:spectral_arrow",
+  "pattern": [
+    "###",
+    "#A#",
+    "###"
+  ],
+  "key": {
+    "#": "naturalist:glow_goop",
+    "A": "minecraft:arrow"
+  },
+  "result": {
+    "count": 2,
+    "id": "minecraft:spectral_arrow"
+  }
+}

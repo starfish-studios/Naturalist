@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": "naturalist:bushmeat",
+  "result": {
+    "id": "naturalist:cooked_bushmeat"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

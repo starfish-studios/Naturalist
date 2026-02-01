@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "count": 2,
+  "ingredient": "naturalist:shellstone_bricks",
+  "result": {
+    "id": "naturalist:shellstone_brick_slab"
+  }
+}

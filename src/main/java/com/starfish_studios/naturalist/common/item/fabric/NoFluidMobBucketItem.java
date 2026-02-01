@@ -5,7 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -19,18 +19,21 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public class NoFluidMobBucketItem extends MobBucketItem {
-    public NoFluidMobBucketItem(EntityType<?> entitySupplier, Fluid fluid, @NotNull SoundEvent emptyingSound, Properties settings) {
+    public NoFluidMobBucketItem(EntityType<? extends net.minecraft.world.entity.Mob> entitySupplier, Fluid fluid,
+            @NotNull SoundEvent emptyingSound,
+            Properties settings) {
         super(entitySupplier, fluid, emptyingSound, settings);
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player,
+            @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         BlockHitResult blockhitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         if (blockhitresult.getType() == HitResult.Type.MISS) {
-            return InteractionResultHolder.pass(itemstack);
+            return InteractionResult.PASS;
         } else if (blockhitresult.getType() != HitResult.Type.BLOCK) {
-            return InteractionResultHolder.pass(itemstack);
+            return InteractionResult.PASS;
         } else {
             BlockPos pos = blockhitresult.getBlockPos();
             Direction direction = blockhitresult.getDirection();
@@ -39,9 +42,14 @@ public class NoFluidMobBucketItem extends MobBucketItem {
                 this.checkExtraContent(player, level, itemstack, pos);
                 this.playEmptySound(player, level, pos);
                 player.awardStat(Stats.ITEM_USED.get(this));
-                return InteractionResultHolder.sidedSuccess(getEmptySuccessItem(itemstack, player), level.isClientSide());
+                // In 1.21, use InteractionResult directly instead of InteractionResultHolder
+                ItemStack emptyStack = getEmptySuccessItem(itemstack, player);
+                if (!player.getAbilities().instabuild) {
+                    player.setItemInHand(hand, emptyStack);
+                }
+                return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
             } else {
-                return InteractionResultHolder.fail(itemstack);
+                return InteractionResult.FAIL;
             }
         }
     }

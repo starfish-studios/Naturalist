@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": "naturalist:azure_froglass"
+  },
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 16,
+    "id": "naturalist:azure_froglass_pane"
+  },
+  "show_notification": true
+}

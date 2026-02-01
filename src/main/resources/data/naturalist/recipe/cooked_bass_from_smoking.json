@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": "naturalist:bass",
+  "result": {
+    "id": "naturalist:cooked_bass"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

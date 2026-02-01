@@ -1,18 +1,21 @@
 package com.starfish_studios.naturalist.common.entity;
 
-import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import com.starfish_studios.naturalist.common.entity.core.ai.goal.FollowAdultGoal;
-import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
-import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
+import net.minecraft.world.entity.ai.util.LandRandomPos;
+
+import com.starfish_studios.naturalist.common.entity.core.NaturalistAnimal;
 import com.starfish_studios.naturalist.core.registry.NaturalistTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,166 +26,143 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.ai.util.LandRandomPos;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
-import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Bird extends ShoulderRidingEntity implements FlyingAnimal, NaturalistGeoEntity {
+import java.util.EnumSet;
+
+public class Bird extends NaturalistAnimal implements FlyingAnimal, NaturalistGeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private BirdAvoidEntityGoal<Player> avoidPlayersGoal;
-    private static final Ingredient TAME_FOOD = Ingredient.of(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
+    private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Bird.class,
+            EntityDataSerializers.INT);
+    protected static final RawAnimation OLD_FLY = RawAnimation.begin().thenLoop("animation.bird.fly");
+    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.bird.fly");
+    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.bird.idle");
+    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.bird.sit");
+    protected static final RawAnimation EAT = RawAnimation.begin().thenLoop("animation.sf_nba.bird.eat");
+    protected static final RawAnimation HOP = RawAnimation.begin().thenLoop("animation.sf_nba.bird.hop");
     public float flap;
     public float flapSpeed;
     public float oFlapSpeed;
     public float oFlap;
     private float flapping = 1.0F;
     private float nextFlap = 1.0F;
+    private int eatAnimationTick;
 
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.bird.idle");
-    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.bird.fly");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.bird.sit");
-
-    public Bird(@NotNull EntityType<? extends ShoulderRidingEntity> entityType, @NotNull Level level) {
+    public Bird(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 10, false);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0F);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.COCOA, -1.0F);
     }
+
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.WHEAT_SEEDS);
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(0, new PanicGoal(this, 1.25D));
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new BirdTemptGoal(this, 1.0D, TAME_FOOD, true));
-        this.goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.5D, 5.0F, 1.0F, true));
-        this.goalSelector.addGoal(4, new BirdWanderGoal(this, 1.0D));
-        this.goalSelector.addGoal(5, new BirdFlockGoal(this, 1.0D, 6.0F, 12.0F));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-    }
-
-    public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0D).add(Attributes.FLYING_SPEED, 0.8F).add(Attributes.MOVEMENT_SPEED, 0.2D);
-    }
-
-    @SuppressWarnings("unused")
-    public static boolean checkBirdSpawnRules(EntityType<Bird> entityType, @NotNull LevelAccessor state, MobSpawnType type, @NotNull BlockPos pos, RandomSource random) {
-        return state.getBlockState(pos.below()).is(BlockTags.PARROTS_SPAWNABLE_ON) && isBrightEnoughToSpawn(state, pos);
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return null;
-    }
-
-    public boolean isBaby() {
-        return false;
+        this.goalSelector.addGoal(1, new BirdTemptGoal(this, 1.0D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(2, new BirdWanderGoal(this, 1.0D));
+        // 1.21: FollowOwnerGoal constructor is (animal, speed, startDistance,
+        // stopDistance)
+        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.5D, 5.0F, 1.0F));
+        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
     }
 
     @Override
-    protected float getStandingEyeHeight(@NotNull Pose pose, @NotNull EntityDimensions size) {
-        return size.height * 0.6f;
-    }
-
-    @Override
-    public boolean canMate(@NotNull Animal otherAnimal) {
-        return false;
-    }
-
-    @Override
-    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (!this.isTame() && TAME_FOOD.test(stack)) {
-            if (!player.getAbilities().instabuild) {
-                stack.shrink(1);
-            }
-
-            if (!this.isSilent()) {
-                this.level().playSound(null, this.getX(), this.getY(), this.getZ(), NaturalistSoundEvents.BIRD_EAT.get(), this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
-            }
-
-            if (!this.level().isClientSide) {
-                if (this.random.nextInt(10) == 0) {
-                    this.tame(player);
-                    this.level().broadcastEntityEvent(this, (byte)7);
-                } else {
-                    this.level().broadcastEntityEvent(this, (byte)6);
-                }
-            }
-
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-        } else if (this.isTame() && this.isOwnedBy(player)) {
-            if (TAME_FOOD.test(stack) && this.getHealth() < this.getMaxHealth()) {
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-                this.heal(1.0F);
-                if (this.getHealth() == this.getMaxHealth()) {
-                    this.spawnTamingParticles(true);
-                }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-            } else if (!this.isFlying()) {
-                if (!this.level().isClientSide) {
-                    this.setOrderedToSit(!this.isOrderedToSit());
-                }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-            }
-
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, @NotNull DifficultyInstance difficulty,
+            @NotNull EntitySpawnReason reason,
+            @Nullable SpawnGroupData spawnData) {
+        this.setVariant(this.random.nextInt(4));
+        if (spawnData == null) {
+            spawnData = new AgeableMobGroupData(false);
         }
-        return super.mobInteract(player, hand);
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0D).add(Attributes.FLYING_SPEED, 0.8F)
+                .add(Attributes.MOVEMENT_SPEED, 0.2F).add(Attributes.TEMPT_RANGE, 10.0D);
+    }
+
+    public static boolean checkBirdSpawnRules(EntityType<? extends Bird> entityType, ServerLevelAccessor levelAccessor,
+            EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource randomSource) {
+        return (levelAccessor.getBlockState(blockPos.below()).is(NaturalistTags.BlockTags.BIRDS_SPAWNABLE_ON)
+                || levelAccessor.getBlockState(blockPos).is(BlockTags.LEAVES))
+                && isBrightEnoughToSpawn(levelAccessor, blockPos);
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
-            return false;
-        } else {
-            if (!this.level().isClientSide) {
-                this.setOrderedToSit(false);
-            }
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
+        FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
+        navigation.setCanOpenDoors(false);
+        navigation.setCanFloat(true);
+        // setCanPassDoors removed in 1.21
+        return navigation;
+    }
 
-            return super.hurt(source, amount);
+    public int getVariant() {
+        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 3);
+    }
+
+    public void setVariant(int variant) {
+        this.entityData.set(VARIANT_ID, variant);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(VARIANT_ID, 0);
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return stack.is(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        this.calculateFlapping();
+        if (this.level().isClientSide()) {
+            this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
         }
     }
 
-
-    @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    protected void reassessTameGoals() {
-        if (this.avoidPlayersGoal == null) {
-            this.avoidPlayersGoal = new BirdAvoidEntityGoal<>(this, Player.class, 16.0F, 2.0D, 2.0D);
+    private void calculateFlapping() {
+        this.oFlap = this.flap;
+        this.oFlapSpeed = this.flapSpeed;
+        this.flapSpeed += (float) (this.onGround() || this.isPassenger() ? -1 : 4) * 0.3F;
+        this.flapSpeed = Mth.clamp(this.flapSpeed, 0.0F, 1.0F);
+        if (!this.onGround() && this.flapping < 1.0F) {
+            this.flapping = 1.0F;
         }
-
-        this.goalSelector.removeGoal(this.avoidPlayersGoal);
-        if (!this.isTame()) {
-            this.goalSelector.addGoal(2, this.avoidPlayersGoal);
+        this.flapping *= 0.9F;
+        Vec3 vec3 = this.getDeltaMovement();
+        if (!this.onGround() && vec3.y < 0.0D) {
+            this.setDeltaMovement(vec3.multiply(1.0D, 0.6D, 1.0D));
         }
-
+        this.flap += this.flapping * 2.0F;
     }
 
     @Override
@@ -191,36 +171,81 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     }
 
     @Override
-    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
-        FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
-        navigation.setCanOpenDoors(false);
-        navigation.setCanFloat(true);
-        navigation.setCanPassDoors(true);
-        return navigation;
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (this.isTame()) {
+            if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) { // Heal
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                this.heal(2);
+                this.playSound(SoundEvents.PARROT_EAT, 1.0f, 1.0f);
+                this.eatAnimationTick = 40;
+                return InteractionResult.SUCCESS;
+            } else if (this.isOwnedBy(player) && !this.isFood(stack)) { // Sit
+                InteractionResult interactionResult = super.mobInteract(player, hand);
+                if (interactionResult.consumesAction() && !this.isBaby() || !this.isOwnedBy(player))
+                    return interactionResult;
+                this.setOrderedToSit(!this.isOrderedToSit());
+                return InteractionResult.SUCCESS;
+            }
+        } else if (stack.is(NaturalistTags.ItemTags.BIRD_TEMPT_ITEMS)) { // Tame
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            if (!this.level().isClientSide()) {
+                if (this.random.nextInt(3) == 0) {
+                    this.tame(player);
+                    this.navigation.stop();
+                    this.setTarget(null);
+                    this.setOrderedToSit(true);
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                } else {
+                    this.level().broadcastEntityEvent(this, (byte) 6);
+                }
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        return super.mobInteract(player, hand);
     }
 
     @Override
-    public void aiStep() {
-        super.aiStep();
-        this.calculateFlapping();
+    public void handleEntityEvent(byte id) {
+        if (id == 10) {
+            this.eatAnimationTick = 40;
+        } else {
+            super.handleEntityEvent(id);
+        }
     }
 
-    private void calculateFlapping() {
-        this.oFlap = this.flap;
-        this.oFlapSpeed = this.flapSpeed;
-        this.flapSpeed += (float)(!this.onGround() && !this.isPassenger() ? 4 : -1) * 0.3F;
-        this.flapSpeed = Mth.clamp(this.flapSpeed, 0.0F, 1.0F);
-        if (!this.onGround() && this.flapping < 1.0F) {
-            this.flapping = 1.0F;
-        }
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob otherParent) {
+        return null; // Birds don't breed
+    }
 
-        this.flapping *= 0.9F;
-        Vec3 vec3 = this.getDeltaMovement();
-        if (!this.onGround() && vec3.y < 0.0D) {
-            this.setDeltaMovement(vec3.multiply(1.0D, 0.6D, 1.0D));
-        }
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundEvents.PARROT_AMBIENT;
+    }
 
-        this.flap += this.flapping * 2.0F;
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(@NotNull DamageSource source) {
+        return SoundEvents.PARROT_HURT;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.PARROT_DEATH;
+    }
+
+    @Override
+    protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
+        this.playSound(SoundEvents.PARROT_STEP, 0.15F, 1.0F);
     }
 
     @Override
@@ -230,17 +255,8 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
 
     @Override
     protected void onFlap() {
-        this.playSound(NaturalistSoundEvents.BIRD_FLY.get(), 0.15F, 1.0F);
+        this.playSound(SoundEvents.PARROT_FLY, 0.15F, 1.0F);
         this.nextFlap = this.flyDist + this.flapSpeed / 2.0F;
-    }
-
-    @Override
-    public boolean causeFallDamage(float fallDistance, float pMultiplier, @NotNull DamageSource source) {
-        return false;
-    }
-
-    @Override
-    protected void checkFallDamage(double pY, boolean onGround, @NotNull BlockState state, @NotNull BlockPos pos) {
     }
 
     @Override
@@ -249,98 +265,58 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     }
 
     @Override
-    protected void doPush(@NotNull Entity entity) {
+    protected void doPush(Entity entity) {
         if (!(entity instanceof Player)) {
             super.doPush(entity);
         }
     }
 
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return NaturalistSoundEvents.BIRD_HURT.get();
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getDeathSound() {
-        return NaturalistSoundEvents.BIRD_DEATH.get();
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound() {
-        if (this.level().isNight()) {
-            return null;
-        } else {
-            if (this.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_BLUEJAY.get();
-            } else if (this.getType().equals(NaturalistEntityTypes.CANARY.get())) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_CANARY.get();
-            } else if (this.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_CARDINAL.get();
-            } else if (this.getType().equals((NaturalistEntityTypes.FINCH.get()))) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_FINCH.get();
-            } else if (this.getType().equals((NaturalistEntityTypes.SPARROW.get()))) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_SPARROW.get();
-            }
-            else {
-                return NaturalistSoundEvents.BIRD_AMBIENT_ROBIN.get();
-            }
-        }
+    // @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
+        return false;
     }
 
     @Override
-    public void playAmbientSound() {
-        super.playAmbientSound();
-        if (this.level() instanceof ServerLevel serverLevel && !this.level().isNight()) {
-            float f = (float)level().getRandom().nextInt(4) / 24.0f;
-            serverLevel.sendParticles(ParticleTypes.NOTE, this.getX(), this.getY() + 1, this.getZ(), 0, f, 0.0, 0.0, 1.0);
-        }
+    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
     }
 
-
-    @Override
-    public double getBoneResetTime() {
-        return 2;
-    }
-
-    @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
 
-    protected <E extends Bird> @NotNull PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.isInSittingPose()) {
-            event.getController().setAnimation(SIT);
+    // GeckoLib 5: predicate uses plain Bird type instead of generic E
+    protected @NotNull PlayState predicate(final @NotNull AnimationTest<Bird> state) {
+        software.bernie.geckolib.animatable.processing.AnimationController<Bird> controller = state.controller();
+        if (this.eatAnimationTick > 0) {
+            controller.setAnimation(EAT);
+            return PlayState.CONTINUE;
+        } else if (this.isInSittingPose()) {
+            controller.setAnimation(SIT);
             return PlayState.CONTINUE;
         } else if (this.isFlying()) {
-            event.getController().setAnimation(FLY);
+            controller.setAnimation(FLY);
+            return PlayState.CONTINUE;
+        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+            controller.setAnimation(HOP);
             return PlayState.CONTINUE;
         } else {
-            event.getController().setAnimation(IDLE);
+            controller.setAnimation(IDLE);
             return PlayState.CONTINUE;
         }
     }
 
     @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        // GeckoLib 5: constructor is (name, ticks, predicate) - no "this" parameter
+        controllers.add(new AnimationController<Bird>("controller", 5, this::predicate));
     }
 
     static class BirdWanderGoal extends WaterAvoidingRandomFlyingGoal {
-        private final @NotNull Bird bird;
-
-        public BirdWanderGoal(@NotNull Bird mob, double speedModifier) {
+        public BirdWanderGoal(PathfinderMob mob, double speedModifier) {
             super(mob, speedModifier);
-            this.bird = mob;
         }
 
+        @Override
         @Nullable
         protected Vec3 getPosition() {
             Vec3 vec3 = null;
@@ -357,101 +333,39 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
 
         @Nullable
         private Vec3 getTreePos() {
-            BlockPos mobPos = this.mob.blockPosition();
-            BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-            BlockPos.MutableBlockPos mutable1 = new BlockPos.MutableBlockPos();
+            BlockPos blockPos = this.mob.blockPosition();
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos mutableBlockPos2 = new BlockPos.MutableBlockPos();
 
-            for(BlockPos pos : BlockPos.betweenClosed(Mth.floor(this.mob.getX() - 3.0D), Mth.floor(this.mob.getY() - 6.0D), Mth.floor(this.mob.getZ() - 3.0D), Mth.floor(this.mob.getX() + 3.0D), Mth.floor(this.mob.getY() + 6.0D), Mth.floor(this.mob.getZ() + 3.0D))) {
-                if (!mobPos.equals(pos)) {
-                    BlockState blockstate = this.mob.level().getBlockState(mutable1.setWithOffset(pos, Direction.DOWN));
-                    boolean flag = blockstate.getBlock() instanceof LeavesBlock || blockstate.is(BlockTags.LOGS);
-                    if (flag && this.mob.level().isEmptyBlock(pos) && this.mob.level().isEmptyBlock(mutable.setWithOffset(pos, Direction.UP))) {
-                        return Vec3.atBottomCenterOf(pos);
+            for (BlockPos blockPos2 : BlockPos.betweenClosed(Mth.floor(this.mob.getX() - 3.0D),
+                    Mth.floor(this.mob.getY() - 6.0D), Mth.floor(this.mob.getZ() - 3.0D),
+                    Mth.floor(this.mob.getX() + 3.0D), Mth.floor(this.mob.getY() + 6.0D),
+                    Mth.floor(this.mob.getZ() + 3.0D))) {
+                if (!blockPos.equals(blockPos2)) {
+                    BlockState blockState = this.mob.level()
+                            .getBlockState(mutableBlockPos2.setWithOffset(blockPos2, Direction.DOWN));
+                    boolean bl = blockState.is(NaturalistTags.BlockTags.BIRDS_PERCH_ON);
+                    if (bl && this.mob.level().isEmptyBlock(blockPos2)
+                            && this.mob.level().isEmptyBlock(mutableBlockPos.setWithOffset(blockPos2, Direction.UP))) {
+                        return Vec3.atBottomCenterOf(blockPos2);
                     }
                 }
             }
 
             return null;
         }
-
-
-        @Override
-        public boolean canUse() {
-            return !this.bird.isTame() && super.canUse();
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return !this.bird.isTame() && super.canContinueToUse();
-        }
-    }
-
-    static class BirdFlockGoal extends FollowAdultGoal {
-        private final @NotNull Bird bird;
-
-        public BirdFlockGoal(@NotNull Bird mob, double speedModifier, float pStopDistance, float pAreaSize) {
-            super(mob, speedModifier, pStopDistance, pAreaSize);
-            this.bird = mob;
-        }
-
-        @Override
-        public boolean canUse() {
-            return !this.bird.isTame() && super.canUse();
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return !this.bird.isTame() && super.canContinueToUse();
-        }
     }
 
     static class BirdTemptGoal extends TemptGoal {
-        @Nullable
-        private Player selectedPlayer;
-        private final @NotNull Bird bird;
-
-        public BirdTemptGoal(@NotNull Bird bird, double speedModifier, @NotNull Ingredient temptItems, boolean canScare) {
-            super(bird, speedModifier, temptItems, canScare);
-            this.bird = bird;
-        }
-
-        @Override
-        public void tick() {
-            super.tick();
-            if (this.selectedPlayer == null && this.mob.getRandom().nextInt(this.adjustedTickDelay(600)) == 0) {
-                this.selectedPlayer = this.player;
-            } else if (this.mob.getRandom().nextInt(this.adjustedTickDelay(500)) == 0) {
-                this.selectedPlayer = null;
-            }
-        }
-
-        @Override
-        protected boolean canScare() {
-            return (this.selectedPlayer == null || !this.selectedPlayer.equals(this.player)) && super.canScare();
+        public BirdTemptGoal(PathfinderMob mob, double speedModifier, Ingredient items, boolean canScare) {
+            super(mob, speedModifier, items, canScare);
         }
 
         @Override
         public boolean canUse() {
-            return super.canUse() && !this.bird.isTame();
-        }
-    }
-
-    static class BirdAvoidEntityGoal<T extends LivingEntity> extends AvoidEntityGoal<T> {
-        private final @NotNull Bird bird;
-
-        public BirdAvoidEntityGoal(@NotNull Bird bird, @NotNull Class<T> toAvoid, float maxDistance, double walkSpeed, double sprintSpeed) {
-            super(bird, toAvoid, maxDistance, walkSpeed, sprintSpeed, EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
-            this.bird = bird;
-        }
-
-        @Override
-        public boolean canUse() {
-            return !this.bird.isTame() && super.canUse();
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return !this.bird.isTame() && super.canContinueToUse();
+            // In 1.21 isNight is deprecated/removed in some contexts, using isDay() check.
+            long time = this.mob.level().getDayTime() % 24000;
+            return (time >= 13000 && time <= 23000) && super.canUse();
         }
     }
 }

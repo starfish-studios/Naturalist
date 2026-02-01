@@ -2,40 +2,40 @@ package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.common.entity.Dragonfly;
-//? if fabric {
-/*import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-*///?} else if forge {
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-//?}
-import net.minecraft.resources.ResourceLocation;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-//? if fabric {
-/*@Environment(EnvType.CLIENT)
-*///?} else if forge {
-@OnlyIn(Dist.CLIENT)
-//?}
-public class DragonflyModel extends GeoModel<Dragonfly> {
-    public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[]{
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/dragonfly/blue.png"),
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/dragonfly/green.png"),
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/dragonfly/red.png")
+@Environment(EnvType.CLIENT)public class DragonflyModel extends GeoModel<Dragonfly> {
+    private static final DataTicket<Integer> VARIANT_ID = DataTicket.create("dragonfly_variant", Integer.class);
+
+    public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[] {
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/blue.png"),
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/green.png"),
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/red.png")
     };
 
     @Override
-    public ResourceLocation getModelResource(Dragonfly dragonfly) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/dragonfly.geo.json");
+    public void addAdditionalStateData(Dragonfly animatable, GeoRenderState state) {
+        state.addGeckolibData(VARIANT_ID, animatable.getVariant());
     }
 
     @Override
-    public ResourceLocation getTextureResource(Dragonfly dragonfly) {
-        return TEXTURE_LOCATIONS[dragonfly.getVariant()];
+    public ResourceLocation getModelResource(GeoRenderState state) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "entity/dragonfly");
+    }
+
+    @Override
+    public ResourceLocation getTextureResource(GeoRenderState state) {
+        int variant = state.getOrDefaultGeckolibData(VARIANT_ID, 0);
+        return TEXTURE_LOCATIONS[variant];
     }
 
     @Override
     public ResourceLocation getAnimationResource(Dragonfly dragonfly) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/dragonfly.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "dragonfly");
     }
 }
+

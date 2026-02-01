@@ -1,80 +1,86 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
+import com.starfish_studios.naturalist.client.NaturalistDataTickets;
 import com.starfish_studios.naturalist.common.entity.Bear;
-//? if fabric {
-/*import net.fabricmc.api.EnvType;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-*///?} else if forge {
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-//?}
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.model.data.EntityModelData;
 
-//? if fabric {
-/*@Environment(EnvType.CLIENT)
-*///?} else if forge {
-@OnlyIn(Dist.CLIENT)
-//?}
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.animatable.processing.AnimationState;
+
+@Environment(EnvType.CLIENT)
 public class BearModel extends GeoModel<Bear> {
     @Override
-    public @NotNull ResourceLocation getModelResource(Bear bear) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/bear.geo.json");
+    public @NotNull ResourceLocation getModelResource(GeoRenderState state) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "entity/bear");
     }
 
     @Override
-    public ResourceLocation getTextureResource(@NotNull Bear bear) {
-        if (bear.isAngry()) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear_angry.png");
-        } else if (bear.isSleeping()) {
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear_sleep.png");
-        } else if (bear.isEating()) {
-            if (bear.getMainHandItem().is(Items.SWEET_BERRIES)) {
-                return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear_berries.png");
-            } else if (bear.getMainHandItem().is(Items.HONEYCOMB)) {
-                return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear_honey.png");
-            }
-            return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
+    public ResourceLocation getTextureResource(@NotNull GeoRenderState state) {
+        if (state.getOrDefaultGeckolibData(NaturalistDataTickets.IS_ANGRY, false)) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_angry.png");
+        } else if (state.getOrDefaultGeckolibData(NaturalistDataTickets.IS_SLEEPING, false)) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_sleep.png");
+        } else if (state.getOrDefaultGeckolibData(NaturalistDataTickets.IS_EATING, false)) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_eat.png");
         }
 
-        return new ResourceLocation(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
+    }
+
+    @Override
+    public void addAdditionalStateData(Bear bear, GeoRenderState state) {
+        state.addGeckolibData(NaturalistDataTickets.IS_ANGRY, bear.isAngry());
+        state.addGeckolibData(NaturalistDataTickets.IS_SLEEPING, bear.isSleeping());
+        state.addGeckolibData(NaturalistDataTickets.IS_EATING, bear.isEating());
+        state.addGeckolibData(NaturalistDataTickets.IS_BABY, bear.isBaby());
     }
 
     @Override
     public ResourceLocation getAnimationResource(Bear bear) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/bear.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "bear");
     }
 
     @Override
-    public void setCustomAnimations(Bear entity, long instanceId, AnimationState<Bear> animationState) {
-        super.setCustomAnimations(entity, instanceId, animationState);
+    public void setCustomAnimations(AnimationState<Bear> state) {
+        super.setCustomAnimations(state);
 
-        if (animationState == null) return;
-
-        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        CoreGeoBone head = this.getAnimationProcessor().getBone("head");
-
-        if (entity.isBaby()) {
-            head.setScaleX(1.8F);
-            head.setScaleY(1.8F);
-            head.setScaleZ(1.8F);
+        if (Boolean.TRUE.equals(state.getData(NaturalistDataTickets.IS_BABY))) {
+            getBone("root").ifPresent(root -> {
+                root.setScaleX(0.5f);
+                root.setScaleY(0.5f);
+                root.setScaleZ(0.5f);
+            });
         } else {
-            head.setScaleX(1.0F);
-            head.setScaleY(1.0F);
-            head.setScaleZ(1.0F);
+            // Fix: Reset scale for adults to prevent state contamination when model
+            // instance is reused
+            getBone("root").ifPresent(root -> {
+                root.setScaleX(1.0f);
+                root.setScaleY(1.0f);
+                root.setScaleZ(1.0f);
+            });
         }
 
-        if (!entity.isSleeping() && !entity.isEating() && !entity.isSitting()) {
-            head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-            head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+        if (Boolean.TRUE.equals(state.getData(NaturalistDataTickets.IS_EATING))) {
+            // V18 Fix: Manually Force Head Rotation to 15 degrees (matching JSON)
+            // This overrides LookAt (Head Tracking) AND ensures the correct "Look Down"
+            // angle.
+            // 15 degrees = 0.261 radians
+            getBone("head").ifPresent(head -> {
+                head.setRotX((float) Math.toRadians(-35)); // V22 Fix: Negative X = Look DOWN (Positive was Up)
+                head.setRotY(0f);
+                head.setRotZ(0f);
+            });
+            getBone("head_rot").ifPresent(headRot -> {
+                // Also lock the parent bone to ensure no other animations interfere
+                headRot.setRotX(0f);
+                headRot.setRotY(0f);
+                headRot.setRotZ(0f);
+            });
         }
     }
 }

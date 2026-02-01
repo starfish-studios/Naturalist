@@ -17,15 +17,14 @@ public class NaturalistCreativeTabContents {
         add(output, NaturalistBlocks.TORTOISE_EGG);
         add(output, NaturalistItems.COOKED_EGG);
 
-
         add(output, NaturalistItems.BUG_NET);
-        add(output, NaturalistItems.GLOW_GOOP);
+        add(output, NaturalistBlocks.GLOW_GOOP_ITEM);
         add(output, NaturalistItems.CATERPILLAR);
         add(output, NaturalistItems.BUTTERFLY);
         add(output, NaturalistItems.SNAIL_SHELL);
         add(output, NaturalistItems.ANTLER);
         add(output, NaturalistItems.FUR);
-        add(output, NaturalistItems.CHRYSALIS);
+        add(output, NaturalistBlocks.CHRYSALIS_ITEM);
 
         add(output, NaturalistItems.DUCK);
         add(output, NaturalistItems.COOKED_DUCK);
@@ -101,4 +100,3 @@ public class NaturalistCreativeTabContents {
         add(output, NaturalistItems.ZEBRA_SPAWN_EGG);
     }
 }
-

@@ -9,12 +9,12 @@ import net.minecraft.client.renderer.RenderType;
 public class NaturalistClient {
     public static void init() {
         ClientPlatformHelper.setRenderLayer(NaturalistBlocks.CHRYSALIS_BLOCK, RenderType.cutout());
-        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.AZURE_FROGLASS, RenderType.translucent());
-        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.AZURE_FROGLASS_PANE, RenderType.translucent());
-        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.VERDANT_FROGLASS, RenderType.translucent());
-        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.VERDANT_FROGLASS_PANE, RenderType.translucent());
-        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.CRIMSON_FROGLASS, RenderType.translucent());
-        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.CRIMSON_FROGLASS_PANE, RenderType.translucent());
+        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.AZURE_FROGLASS, RenderType.cutout());
+        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.AZURE_FROGLASS_PANE, RenderType.cutout());
+        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.VERDANT_FROGLASS, RenderType.cutout());
+        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.VERDANT_FROGLASS_PANE, RenderType.cutout());
+        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.CRIMSON_FROGLASS, RenderType.cutout());
+        ClientPlatformHelper.setRenderLayer(NaturalistBlocks.CRIMSON_FROGLASS_PANE, RenderType.cutout());
         ClientPlatformHelper.setRenderLayer(NaturalistBlocks.SNAIL_EGGS, RenderType.cutout());
 
         ClientPlatformHelper.registerEntityRenderers(NaturalistEntityTypes.SNAIL, SnailRenderer::new);

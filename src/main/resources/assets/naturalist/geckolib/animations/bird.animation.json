@@ -1,0 +1,146 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.sf_nba.bird.sit": {
+			"loop": true,
+			"bones": {
+				"body": {
+					"position": [0, -3.25, 0]
+				},
+				"left_leg": {
+					"position": [0, 3.5, 0]
+				},
+				"right_leg": {
+					"position": [0, 3.5, 0]
+				},
+				"left_wing": {
+					"rotation": [0, 0, 0],
+					"position": [0, 0, 1]
+				},
+				"right_wing": {
+					"rotation": [0, 0, 0],
+					"position": [0, 0, 1]
+				},
+				"tail": {
+					"rotation": ["Math.cos((query.anim_time - 0.2) * 180) * -2", 0, 0]
+				}
+			}
+		},
+		"animation.sf_nba.bird.walk": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"body": {
+					"position": [0, "1 + Math.cos((query.anim_time - 0.1) * 720) * 1", 0]
+				},
+				"tail": {
+					"rotation": ["Math.cos((query.anim_time - 0.4) * 720) * -8", 0, 0]
+				},
+				"left_leg": {
+					"rotation": ["Math.cos((query.anim_time - 0.0) * 720) * 45", 0, 0],
+					"position": [0, "1 + Math.cos((query.anim_time - 0.1) * 720) * 1", 0]
+				},
+				"right_leg": {
+					"rotation": ["Math.cos((query.anim_time - 0.0) * 720) * 45", 0, 0],
+					"position": [0, "1 + Math.cos((query.anim_time - 0.1) * 720) * 1", 0]
+				},
+				"left_wing": {
+					"rotation": ["22.5 + Math.cos((query.anim_time - 0.2) * 720) * 4", 0, -22.5],
+					"position": [0, "Math.cos((query.anim_time - 0.2) * 720) * 0.5", 0]
+				},
+				"right_wing": {
+					"rotation": ["22.5 + Math.cos((query.anim_time - 0.2) * 720) * 4", 0, 22.5],
+					"position": [0, "Math.cos((query.anim_time - 0.2) * 720) * 0.5", 0]
+				},
+				"head": {
+					"position": [0, "Math.cos((query.anim_time - 0.2) * 720) * -0.25", 0]
+				}
+			}
+		},
+		"animation.sf_nba.bird.fly": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"body": {
+					"rotation": ["20+Math.sin((query.anim_time - 0.0) * 720) * 1", 0, 0],
+					"position": [0, "0.5 + Math.cos((query.anim_time - 0.3) * 720) * 0.2", 0]
+				},
+				"tail": {
+					"rotation": ["Math.cos((query.anim_time - 0.2) * 720) * -12.5", 0, 0]
+				},
+				"leftLeg": {
+					"rotation": [80, 0, 0]
+				},
+				"rightLeg": {
+					"rotation": [70, 0, 0]
+				},
+				"leftWing": {
+					"rotation": [0, "Math.cos((query.anim_time - 0.1) * 1440) * 12.5", "-90 + Math.sin((query.anim_time - 0.1) * 1440) * 45"],
+					"position": [-1, 0, 0]
+				},
+				"rightWing": {
+					"rotation": [0, "Math.cos((query.anim_time - 0.1) * 1440) * -12.5", "90 + Math.sin((query.anim_time - 0.1) * 1440) * -45"],
+					"position": [1, 0, 0]
+				},
+				"headRot": {
+					"rotation": ["-17.5+Math.sin((query.anim_time - 0.0) * 720) * 1", 0, 0]
+				}
+			}
+		},
+		"animation.sf_nba.bird.peck": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"body": {
+					"rotation": [22.5, 0, 0],
+					"position": [0, -0.5, 0]
+				},
+				"tail": {
+					"rotation": ["67.5 + Math.sin((query.anim_time - 0.3) * 1440) * 5", 0, 0]
+				},
+				"left_leg": {
+					"rotation": [-22.5, 0, 0]
+				},
+				"right_leg": {
+					"rotation": [-22.5, 0, 0]
+				},
+				"head": {
+					"rotation": ["67.5 + Math.sin((query.anim_time - 0.4) * 1440) * 8", 0, 0],
+					"position": [0, "-1 + Math.cos((query.anim_time - 0.1) * 1440) * 1", "-1 + Math.cos((query.anim_time - 0.1) * 1440) * 0.5"]
+				},
+				"left_wing": {
+					"rotation": [7.41742, 4.57959, "-19.2784 + Math.sin((query.anim_time - 0.3) * 720) * 1"],
+					"position": [-0.25, 0.75, -0.25]
+				},
+				"right_wing": {
+					"rotation": [7.4174, -4.5796, "19.2784 + Math.sin((query.anim_time - 0.3) * 720) * -1"],
+					"position": [0.25, 0.75, -0.25]
+				}
+			}
+		},
+		"animation.sf_nba.bird.baby_transform": {
+			"loop": true,
+			"bones": {
+				"head": {
+					"scale": 1.4
+				}
+			}
+		},
+		"animation.sf_nba.bird.idle": {
+			"loop": true,
+			"bones": {
+				"left_wing": {
+					"rotation": [0, 0, 0],
+					"position": [0, 0, 1]
+				},
+				"right_wing": {
+					"rotation": [0, 0, 0],
+					"position": [0, 0, 1]
+				},
+				"tail": {
+					"rotation": ["Math.cos((query.anim_time - 0.2) * 180) * -2", 0, 0]
+				}
+			}
+		}
+	}
+}

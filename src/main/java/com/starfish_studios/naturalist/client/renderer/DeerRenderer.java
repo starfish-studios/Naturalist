@@ -4,13 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.starfish_studios.naturalist.client.model.DeerModel;
 import com.starfish_studios.naturalist.common.entity.Deer;
-//? if fabric {
-/*import net.fabricmc.api.EnvType;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-*///?} else if forge {
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-//?}
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -19,15 +14,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-//? if fabric {
-/*@Environment(EnvType.CLIENT)
-*///?} else if forge {
-@OnlyIn(Dist.CLIENT)
-//?}
-public class DeerRenderer extends GeoEntityRenderer<Deer> {
+@Environment(EnvType.CLIENT)
+public class DeerRenderer extends GeoEntityRenderer<Deer, NaturalistGeoRenderState> {
     public DeerRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new DeerModel());
         this.shadowRadius = 0.8F;
+    }
+
+    @Override
+    public void extractRenderState(Deer entity, NaturalistGeoRenderState state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
     }
 
     @Override
@@ -35,12 +31,16 @@ public class DeerRenderer extends GeoEntityRenderer<Deer> {
         return 0.000001f;
     }
 
-    @Override
-    public void render(Deer entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+    // render() method removed as it is final in GeckoLib 5.
+
+    public @NotNull RenderType getRenderType(Deer entity, float partialTicks, PoseStack stack,
+            @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn,
+            ResourceLocation textureLocation) {
+        return RenderType.entityCutoutNoCull(textureLocation);
     }
 
-   public @NotNull RenderType getRenderType(Deer entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
+    @Override
+    public NaturalistGeoRenderState createRenderState(Deer entity, Void unused) {
+        return new NaturalistGeoRenderState();
     }
 }

@@ -1,5 +1,7 @@
 package com.starfish_studios.naturalist.common.entity;
 
+import net.minecraft.world.item.Items;
+
 import com.starfish_studios.naturalist.common.entity.core.NaturalistAnimal;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.BabyPanicGoal;
@@ -8,7 +10,8 @@ import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
 import com.starfish_studios.naturalist.core.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -34,12 +37,12 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.UUID;
@@ -47,7 +50,7 @@ import java.util.function.Predicate;
 
 public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.CARROT);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private int remainingPersistentAngerTime;
     @Nullable
@@ -61,20 +64,20 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         super(entityType, level);
     }
 
-
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
         return new GroundPathNavigation(this, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 14.0).add(Attributes.MOVEMENT_SPEED, 0.2).add(Attributes.ATTACK_DAMAGE, 1.0D);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 14.0).add(Attributes.MOVEMENT_SPEED, 0.2)
+                .add(Attributes.ATTACK_DAMAGE, 1.0D).add(Attributes.TEMPT_RANGE, 10.0D);
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob otherParent) {
-        return NaturalistEntityTypes.BOAR.get().create(level);
+        return NaturalistEntityTypes.BOAR.get().create(level, net.minecraft.world.entity.EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -82,7 +85,8 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.2, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(3, new BoarAvoidPlayerGoal(this, Player.class, 16.0f, 1.5D, 1.5D, entity -> !entity.isHolding(FOOD_ITEMS)));
+        this.goalSelector.addGoal(3, new BoarAvoidPlayerGoal(this, Player.class, 16.0f, 1.5D, 1.5D,
+                entity -> !entity.isHolding(FOOD_ITEMS)));
         this.goalSelector.addGoal(4, new BoarMeleeAttackGoal(this, 1.2, false));
         this.goalSelector.addGoal(5, new BabyPanicGoal(this, 1.4));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1));
@@ -90,7 +94,8 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+        this.targetSelector.addGoal(2,
+                new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -106,24 +111,25 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (!this.isAggro()) {
                 this.stopBeingAngry();
             }
-            this.updatePersistentAnger((ServerLevel)this.level(), true);
+            this.updatePersistentAnger((ServerLevel) this.level(), true);
         }
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag compoundTag) {
-        super.finalizeSpawn(level, difficulty, reason, spawnData, compoundTag);
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty,
+            @NotNull EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
+        super.finalizeSpawn(level, difficulty, reason, spawnData);
 
         return spawnData;
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.2D);
         } else {
@@ -156,16 +162,17 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
 
     @Override
     public float getVoicePitch() {
-        return this.isBaby() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.75F : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F;
+        return this.isBaby() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.75F
+                : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F;
     }
 
     @Override
     public void thunderHit(@NotNull ServerLevel level, @NotNull LightningBolt lightning) {
         super.thunderHit(level, lightning);
         if (level.getDifficulty() != Difficulty.PEACEFUL) {
-            Zoglin zoglin = EntityType.ZOGLIN.create(level);
+            Zoglin zoglin = EntityType.ZOGLIN.create(level, net.minecraft.world.entity.EntitySpawnReason.BREEDING);
             assert zoglin != null;
-            zoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+            zoglin.teleportTo(this.getX(), this.getY(), this.getZ());
             zoglin.setNoAi(this.isNoAi());
             zoglin.setBaby(this.isBaby());
             if (this.hasCustomName()) {
@@ -194,6 +201,18 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     }
 
     @Override
+    public void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        this.addPersistentAngerSaveData(output);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.readPersistentAngerSaveData(this.level(), input);
+    }
+
+    @Override
     public void setPersistentAngerTarget(@Nullable UUID persistentAngerTarget) {
         this.persistentAngerTarget = persistentAngerTarget;
     }
@@ -203,29 +222,33 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     public UUID getPersistentAngerTarget() {
         return this.persistentAngerTarget;
     }
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
-    protected <E extends Boar> PlayState predicate(final @NotNull AnimationState<E> event) {
+
+    protected <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState predicate(
+            final @NotNull AnimationTest<E> state) {
+        AnimationController<E> controller = state.controller();
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.0D);
+                controller.setAnimation(RUN);
+                controller.setAnimationSpeed(2.0D);
             } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.5D);
+                controller.setAnimation(WALK);
+                controller.setAnimationSpeed(1.5D);
             }
         } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
+            controller.setAnimation(IDLE);
+            controller.setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 10, this::predicate));
+        controllers.add(new AnimationController<Boar>("controller", 10, this::predicate));
     }
 
     static class BoarMeleeAttackGoal extends MeleeAttackGoal {
@@ -250,7 +273,8 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     static class BoarAvoidPlayerGoal extends AvoidEntityGoal<Player> {
         private final Boar boar;
 
-        public BoarAvoidPlayerGoal(Boar mob, Class<Player> entityClassToAvoid, float maxDistance, double walkSpeedModifier, double sprintSpeedModifier, Predicate<LivingEntity> predicateOnAvoidEntity) {
+        public BoarAvoidPlayerGoal(Boar mob, Class<Player> entityClassToAvoid, float maxDistance,
+                double walkSpeedModifier, double sprintSpeedModifier, Predicate<LivingEntity> predicateOnAvoidEntity) {
             super(mob, entityClassToAvoid, maxDistance, walkSpeedModifier, sprintSpeedModifier, predicateOnAvoidEntity);
             this.boar = mob;
         }

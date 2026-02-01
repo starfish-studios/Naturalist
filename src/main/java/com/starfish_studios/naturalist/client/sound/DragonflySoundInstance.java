@@ -2,24 +2,13 @@ package com.starfish_studios.naturalist.client.sound;
 
 import com.starfish_studios.naturalist.common.entity.Dragonfly;
 import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
-//? if fabric {
-/*import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-*///?} else if forge {
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-//?}
-import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 
-//? if fabric {
-/*@Environment(EnvType.CLIENT)
-*///?} else if forge {
-@OnlyIn(Dist.CLIENT)
-//?}
-public class DragonflySoundInstance extends AbstractTickableSoundInstance {
+@Environment(EnvType.CLIENT)public class DragonflySoundInstance extends AbstractTickableSoundInstance {
     protected final Dragonfly dragonfly;
 
     public DragonflySoundInstance(Dragonfly dragonfly) {

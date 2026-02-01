@@ -1,5 +1,6 @@
 package com.starfish_studios.naturalist.common.entity;
 
+import net.minecraft.world.item.Items;
 
 import com.starfish_studios.naturalist.core.registry.NaturalistItems;
 import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
@@ -12,12 +13,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
@@ -60,7 +62,6 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
         return NaturalistSoundEvents.BASS_FLOP.get();
     }
 
-
     @Override
     public double getBoneResetTime() {
         return 2;
@@ -71,18 +72,19 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
         return this.geoCache;
     }
 
-    protected <E extends Bass> @NotNull PlayState predicate(final AnimationState<E> event) {
+    protected <E extends GeoAnimatable> @NotNull PlayState predicate(final AnimationTest<E> state) {
+        AnimationController<E> controller = state.controller();
         if (!this.isInWater()) {
-            event.getController().setAnimation(FLOP);
+            controller.setAnimation(FLOP);
         } else {
-            event.getController().setAnimation(SWIM);
+            controller.setAnimation(SWIM);
         }
         return PlayState.CONTINUE;
     }
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 2, this::predicate));
+        controllers.add(new AnimationController<Bass>("controller", 2, this::predicate));
     }
 
 }

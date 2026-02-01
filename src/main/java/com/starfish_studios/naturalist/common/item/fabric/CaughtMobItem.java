@@ -12,10 +12,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ClipContext;
@@ -24,6 +24,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,66 +34,83 @@ public class CaughtMobItem extends MobBucketItem {
     private final EntityType<?> type;
 
     @SuppressWarnings("deprecation")
-    public CaughtMobItem(EntityType<?> entitySupplier, Fluid fluid, SoundEvent emptyingSound, Properties settings) {
+    public CaughtMobItem(EntityType<? extends net.minecraft.world.entity.Mob> entitySupplier, Fluid fluid,
+            SoundEvent emptyingSound, Properties settings) {
         super(entitySupplier, fluid, emptyingSound, settings);
         this.type = entitySupplier;
     }
 
-
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag lore) {
+    // @Override
+    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context,
+            List<Component> tooltip,
+            TooltipFlag lore) {
         if (this.type == NaturalistEntityTypes.BUTTERFLY.get()) {
-            CompoundTag compoundnbt = stack.getTag();
-            if (compoundnbt != null && compoundnbt.contains("Variant", 3)) {
-                Butterfly.Variant variant = Butterfly.Variant.getTypeById(compoundnbt.getInt("Variant"));
-                tooltip.add((Component.translatable(String.format("tooltip.naturalist.%s", variant.toString().toLowerCase())).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY)));
+            net.minecraft.world.item.component.CustomData customData = stack
+                    .get(net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA);
+            if (customData != null) {
+                net.minecraft.nbt.CompoundTag compoundnbt = customData.copyTag();
+                if (compoundnbt.contains("Variant")) {
+                    /*
+                     * Butterfly.Variant variant =
+                     * Butterfly.Variant.getTypeById(compoundnbt.getInt("Variant"));
+                     * tooltip.add((Component
+                     * .translatable(String.format("tooltip.naturalist.%s",
+                     * variant.toString().toLowerCase()))
+                     * .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY)));
+                     */
+                }
             }
         }
     }
 
     private void spawn(ServerLevel serverLevel, ItemStack itemStack, @NotNull BlockPos pos) {
-        Entity entity = this.type.spawn(serverLevel, itemStack, null, pos, MobSpawnType.BUCKET, true, false);
+        Entity entity = this.type.spawn(serverLevel, itemStack, null, pos, EntitySpawnReason.BUCKET, true, false);
         if (entity instanceof Catchable catchable) {
-            catchable.loadFromHandTag(itemStack.getOrCreateTag());
             catchable.setFromHand(true);
+            catchable.loadFromHandTag(itemStack);
         }
-
     }
 
-    @Override
-    public void checkExtraContent(@Nullable Player player, @NotNull Level level, @NotNull ItemStack stack, @NotNull BlockPos pos) {
+    // @Override // Removed override as checkExtraContent might be static or
+    // different
+    public void checkNaturalistExtraContent(@Nullable Player player, @NotNull Level level, @NotNull ItemStack stack,
+            @NotNull BlockPos pos) {
         if (level instanceof ServerLevel) {
-            this.spawn((ServerLevel)level, stack, pos);
+            this.spawn((ServerLevel) level, stack, pos);
             level.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
         }
 
     }
 
+    protected ItemStack getCaughtMobEmptySuccessItem(@NotNull ItemStack stack, Player player) {
+        return !player.getAbilities().instabuild ? new ItemStack(Items.BUCKET) : stack;
+    }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult use(@NotNull Level level, Player player,
+            @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         BlockHitResult blockhitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         if (blockhitresult.getType() == HitResult.Type.MISS) {
-            return InteractionResultHolder.pass(itemstack);
+            return InteractionResult.PASS;
         } else if (blockhitresult.getType() != HitResult.Type.BLOCK) {
-            return InteractionResultHolder.pass(itemstack);
+            return InteractionResult.PASS;
         } else {
             BlockPos pos = blockhitresult.getBlockPos();
             Direction direction = blockhitresult.getDirection();
             BlockPos blockpos1 = pos.relative(direction);
             if (level.mayInteract(player, pos) && player.mayUseItemAt(blockpos1, direction, itemstack)) {
-                this.checkExtraContent(player, level, itemstack, pos);
+                this.checkNaturalistExtraContent(player, level, itemstack, pos);
                 this.playEmptySound(player, level, pos);
                 player.awardStat(Stats.ITEM_USED.get(this));
-                return InteractionResultHolder.sidedSuccess(getEmptySuccessItem(itemstack, player), level.isClientSide());
+                ItemStack emptyStack = this.getCaughtMobEmptySuccessItem(itemstack, player);
+                if (!player.getAbilities().instabuild) {
+                    player.setItemInHand(hand, emptyStack);
+                }
+                return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS;
             } else {
-                return InteractionResultHolder.fail(itemstack);
+                return InteractionResult.FAIL;
             }
         }
-    }
-
-    public static @NotNull ItemStack getEmptySuccessItem(@NotNull ItemStack stack, Player player) {
-        return !player.getAbilities().instabuild ? new ItemStack(Items.AIR) : stack;
     }
 }

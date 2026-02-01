@@ -7,6 +7,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+
 public class NaturalistRecipes {
 
     public static final RecipeType<BugNetInteractionRecipe> BUG_NET = new RecipeType<>() {
@@ -25,10 +29,17 @@ public class NaturalistRecipes {
         }
     };
 
-    public static final RecipeSerializer<?> BUG_NET_REPAIR_SERIALIZER = new BugNetRepairRecipe.Serializer();
+    public static final RecipeSerializer<BugNetRepairRecipe> BUG_NET_REPAIR_SERIALIZER = new BugNetRepairRecipe.Serializer();
 
     public static void register() {
-        CommonPlatformHelper.registerRecipes("net", () -> BUG_NET,  () -> BUG_NET_SERIALIZER);
-        CommonPlatformHelper.registerRecipes("bug_net_repair", () -> BUG_NET_REPAIR, () -> BUG_NET_REPAIR_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
+                ResourceLocation.fromNamespaceAndPath("naturalist", "net"), BUG_NET_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_TYPE, ResourceLocation.fromNamespaceAndPath("naturalist", "net"),
+                BUG_NET);
+
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
+                ResourceLocation.fromNamespaceAndPath("naturalist", "bug_net_repair"), BUG_NET_REPAIR_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_TYPE,
+                ResourceLocation.fromNamespaceAndPath("naturalist", "bug_net_repair"), BUG_NET_REPAIR);
     }
 }

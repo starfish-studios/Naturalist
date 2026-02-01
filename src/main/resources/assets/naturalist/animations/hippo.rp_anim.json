@@ -58,6 +58,20 @@
 			}
 		},
 		"animation.sf_nba.hippo.walk": {
+			"sound_effects": {
+				"0.0": {
+					"effect": "step"
+				},
+				"0.26": {
+					"effect": "step_-6dB"
+				},
+				"0.51": {
+					"effect": "step"
+				},
+				"0.75": {
+					"effect": "step_-6dB"
+				}
+			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -119,6 +133,20 @@
 			}
 		},
 		"animation.sf_nba.hippo.run": {
+			"sound_effects": {
+				"0.33": {
+					"effect": "step_-6dB"
+				},
+				"0.5": {
+					"effect": "step"
+				},
+				"0.58": {
+					"effect": "step_-6dB"
+				},
+				"0.79": {
+					"effect": "step"
+				}
+			},
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -249,6 +277,11 @@
 				"root": {
 					"position": [0, "Math.sin((query.anim_time - 0.2) * 360) * 0.5", 0]
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "swim"
+				}
 			}
 		},
 		"animation.sf_nba.hippo.swim_idle": {
@@ -281,6 +314,11 @@
 				"root": {
 					"position": [0, "Math.sin((query.anim_time - 0.2) * 180) * 0.1", 0]
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "swim"
+				}
 			}
 		},
 		"animation.sf_nba.hippo.bite": {
@@ -309,6 +347,11 @@
 						"0.0417": [87.5, 0, 0],
 						"0.1667": [0, 0, 0]
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "bite"
 				}
 			}
 		}

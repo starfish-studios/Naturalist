@@ -4,7 +4,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -35,11 +35,14 @@ public class FollowAdultGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        List<? extends Mob> list = this.mob.level().getEntitiesOfClass(this.mob.getClass(), this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
+        List<? extends Mob> list = this.mob.level().getEntitiesOfClass(this.mob.getClass(),
+                this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
         if (!list.isEmpty()) {
             for (Mob mob : list) {
-                if (mob.isBaby()) continue;
-                if (mob.isInvisible()) continue;
+                if (mob.isBaby())
+                    continue;
+                if (mob.isInvisible())
+                    continue;
                 this.followingMob = mob;
                 return true;
             }
@@ -49,21 +52,22 @@ public class FollowAdultGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return this.followingMob != null && !this.navigation.isDone() && this.mob.distanceToSqr(this.followingMob) > (double)(this.stopDistance * this.stopDistance);
+        return this.followingMob != null && !this.navigation.isDone()
+                && this.mob.distanceToSqr(this.followingMob) > (double) (this.stopDistance * this.stopDistance);
     }
 
     @Override
     public void start() {
         this.timeToRecalcPath = 0;
-        this.oldWaterCost = this.mob.getPathfindingMalus(BlockPathTypes.WATER);
-        this.mob.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
+        this.oldWaterCost = this.mob.getPathfindingMalus(PathType.WATER);
+        this.mob.setPathfindingMalus(PathType.WATER, 0.0f);
     }
 
     @Override
     public void stop() {
         this.followingMob = null;
         this.navigation.stop();
-        this.mob.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
+        this.mob.setPathfindingMalus(PathType.WATER, this.oldWaterCost);
     }
 
     @Override
@@ -79,11 +83,13 @@ public class FollowAdultGoal extends Goal {
         }
         this.timeToRecalcPath = this.adjustedTickDelay(10);
         double x = this.mob.getX() - this.followingMob.getX();
-        double distanceToMob = x * x + (y = this.mob.getY() - this.followingMob.getY()) * y + (z = this.mob.getZ() - this.followingMob.getZ()) * z;
-        if (distanceToMob <= (double)(this.stopDistance * this.stopDistance)) {
+        double distanceToMob = x * x + (y = this.mob.getY() - this.followingMob.getY()) * y
+                + (z = this.mob.getZ() - this.followingMob.getZ()) * z;
+        if (distanceToMob <= (double) (this.stopDistance * this.stopDistance)) {
             this.navigation.stop();
             LookControl lookControl = this.followingMob.getLookControl();
-            if (distanceToMob <= (double)this.stopDistance || lookControl.getWantedX() == this.mob.getX() && lookControl.getWantedY() == this.mob.getY() && lookControl.getWantedZ() == this.mob.getZ()) {
+            if (distanceToMob <= (double) this.stopDistance || lookControl.getWantedX() == this.mob.getX()
+                    && lookControl.getWantedY() == this.mob.getY() && lookControl.getWantedZ() == this.mob.getZ()) {
                 double h = this.followingMob.getX() - this.mob.getX();
                 double i = this.followingMob.getZ() - this.mob.getZ();
                 this.navigation.moveTo(this.mob.getX() - h, this.mob.getY(), this.mob.getZ() - i, this.speedModifier);

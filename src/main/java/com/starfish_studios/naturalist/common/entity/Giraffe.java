@@ -11,6 +11,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import com.mojang.serialization.Codec;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -37,12 +40,12 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
@@ -50,19 +53,21 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.run");
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
+    // private static final Ingredient FOOD_ITEMS =
+    // Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.APPLE, Items.GOLDEN_APPLE, Items.HAY_BLOCK);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final EntityDataAccessor<Integer> TAME_TICKS = SynchedEntityData.defineId(Giraffe.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TAME_TICKS = SynchedEntityData.defineId(Giraffe.class,
+            EntityDataSerializers.INT);
 
     public Giraffe(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(1.0f);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.25F);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.25F)
+                .add(Attributes.TEMPT_RANGE, 10.0D);
     }
-
 
     @Override
     public int getMaxHeadYRot() {
@@ -92,8 +97,8 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.3D);
         } else {
@@ -104,25 +109,23 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.GIRAFFE.get().create(serverLevel);
+        return NaturalistEntityTypes.GIRAFFE.get().create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(TAME_TICKS, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TAME_TICKS, 0);
     }
 
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compoundTag) {
-        super.addAdditionalSaveData(compoundTag);
-        compoundTag.putInt("TameTicks", this.getTameTicks());
+    public void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.store("TameTicks", Codec.INT, this.getTameTicks());
     }
 
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compoundTag) {
-        super.readAdditionalSaveData(compoundTag);
-        this.setTameTicks(compoundTag.getInt("TameTicks"));
+    public void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.setTameTicks(input.read("TameTicks", Codec.INT).orElse(0));
     }
 
     public void setTameTicks(int ticks) {
@@ -146,7 +149,7 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     public void aiStep() {
         super.aiStep();
         if (!this.level().isClientSide()) {
-            if ( this.getControllingPassenger() != null) {
+            if (this.getControllingPassenger() != null) {
                 this.setTameTicks(Math.max(0, this.getTameTicks() - 1));
                 if (!this.isTame()) {
                     this.getControllingPassenger().stopRiding();
@@ -157,7 +160,7 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     protected void doPlayerRide(@NotNull Player player) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
             player.startRiding(this);
@@ -177,10 +180,12 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
                         stack.shrink(1);
                     }
                 } else {
-                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.LLAMA_ANGRY, this.getSoundSource(), 1.0f, 1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
+                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.LLAMA_ANGRY,
+                            this.getSoundSource(), 1.0f,
+                            1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
                 }
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return this.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         }
         if (this.isBaby()) {
             return super.mobInteract(player, hand);
@@ -188,7 +193,7 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
         if (this.isTame()) {
             this.doPlayerRide(player);
         }
-        return InteractionResult.sidedSuccess(this.level().isClientSide);
+        return this.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
     protected boolean handleEating(Player player, @NotNull ItemStack stack) {
@@ -207,11 +212,11 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
             ageUpAmount = 20;
             if (!this.level().isClientSide()) {
                 if (this.getTameTicks() > 0) {
-                    this.level().broadcastEntityEvent(this, (byte)6);
+                    this.level().broadcastEntityEvent(this, (byte) 6);
                 } else {
                     shouldEat = true;
                     this.setTameTicks(600);
-                    this.level().broadcastEntityEvent(this, (byte)7);
+                    this.level().broadcastEntityEvent(this, (byte) 7);
                 }
             }
         }
@@ -220,14 +225,16 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
             shouldEat = true;
         }
         if (this.isBaby() && ageUpAmount > 0) {
-            this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
-            if (!this.level().isClientSide) {
+            this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5,
+                    this.getRandomZ(1.0), 0.0, 0.0, 0.0);
+            if (!this.level().isClientSide()) {
                 this.ageUp(ageUpAmount);
             }
             shouldEat = true;
         }
         if (shouldEat) {
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.HORSE_EAT, this.getSoundSource(), 1.0f, 1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.HORSE_EAT,
+                    this.getSoundSource(), 1.0f, 1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
             this.swing(InteractionHand.MAIN_HAND);
             this.gameEvent(GameEvent.EAT);
         }
@@ -251,14 +258,14 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
         this.yHeadRot = this.yBodyRot = this.getYRot();
         float f = livingEntity.xxa * 0.5f;
         float g = livingEntity.zza;
-        if (this.isControlledByLocalInstance()) {
-            this.setSpeed((float)this.getAttributeValue(Attributes.MOVEMENT_SPEED));
+        if (this.isVehicle() && this.getControllingPassenger() instanceof Player) {
+            this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED));
             super.travel(new Vec3(f, travelVector.y, g));
         } else if (livingEntity instanceof Player) {
             this.setDeltaMovement(Vec3.ZERO);
         }
         this.calculateEntityAnimation(false);
-        this.tryCheckInsideBlocks();
+        // this.checkInsideBlocks();
     }
 
     @Override
@@ -277,7 +284,8 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
             double d = this.random.nextGaussian() * 0.02;
             double e = this.random.nextGaussian() * 0.02;
             double f = this.random.nextGaussian() * 0.02;
-            this.level().addParticle(particleOptions, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d, e, f);
+            this.level().addParticle(particleOptions, this.getRandomX(1.0), this.getRandomY() + 0.5,
+                    this.getRandomZ(1.0), d, e, f);
         }
     }
 
@@ -292,7 +300,6 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
         }
     }
 
-
     @Override
     protected void positionRider(@NotNull Entity passenger, @NotNull MoveFunction callback) {
         super.positionRider(passenger, callback);
@@ -301,16 +308,19 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
             this.yBodyRot = mob.yBodyRot;
         }
 
-        callback.accept(passenger, this.getX(), this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset(), this.getZ());
+        // In 1.21.1, use getPassengerAttachmentPoint instead of deprecated offset
+        // methods
+        Vec3 attachmentPoint = this.getPassengerAttachmentPoint(passenger, this.getDimensions(this.getPose()), 1.0F);
+        callback.accept(passenger, this.getX() + attachmentPoint.x, this.getY() + attachmentPoint.y,
+                this.getZ() + attachmentPoint.z);
 
         if (passenger instanceof LivingEntity livingEntity) {
             livingEntity.yBodyRot = this.yBodyRot;
         }
     }
 
-    @Override
-    public double getPassengersRidingOffset() {
-        return this.getBbHeight() * 0.6;
+    protected Vec3 getPassengerAttachmentPoint(Entity entity, EntityDimensions dimensions, float partialTick) {
+        return new Vec3(0.0F, this.getBbHeight() * 0.6F, 0.0F);
     }
 
     @Override
@@ -328,7 +338,6 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
         return null;
     }
 
-
     @Nullable
     private Vec3 getDismountLocationInDirection(Vec3 direction, LivingEntity passenger) {
         double d = this.getX() + direction.x;
@@ -341,25 +350,30 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
             do {
                 Vec3 vec3;
                 double h = this.level().getBlockFloorHeight(mutableBlockPos);
-                if ((double)mutableBlockPos.getY() + h > g) continue block0;
-                if (DismountHelper.isBlockFloorValid(h) && DismountHelper.canDismountTo(this.level(), passenger, passenger.getLocalBoundsForPose(pose).move(vec3 = new Vec3(d, (double)mutableBlockPos.getY() + h, f)))) {
+                if ((double) mutableBlockPos.getY() + h > g)
+                    continue block0;
+                if (DismountHelper.isBlockFloorValid(h)
+                        && DismountHelper.canDismountTo(this.level(), passenger, passenger.getLocalBoundsForPose(pose)
+                                .move(vec3 = new Vec3(d, (double) mutableBlockPos.getY() + h, f)))) {
                     passenger.setPose(pose);
                     return vec3;
                 }
                 mutableBlockPos.move(Direction.UP);
-            } while ((double)mutableBlockPos.getY() < g);
+            } while ((double) mutableBlockPos.getY() < g);
         }
         return null;
     }
 
     @Override
     public @NotNull Vec3 getDismountLocationForPassenger(@NotNull LivingEntity passenger) {
-        Vec3 vec3 = AbstractHorse.getCollisionHorizontalEscapeVector(this.getBbWidth(), passenger.getBbWidth(), this.getYRot() + (passenger.getMainArm() == HumanoidArm.RIGHT ? 90.0f : -90.0f));
+        Vec3 vec3 = AbstractHorse.getCollisionHorizontalEscapeVector(this.getBbWidth(), passenger.getBbWidth(),
+                this.getYRot() + (passenger.getMainArm() == HumanoidArm.RIGHT ? 90.0f : -90.0f));
         Vec3 vec32 = this.getDismountLocationInDirection(vec3, passenger);
         if (vec32 != null) {
             return vec32;
         }
-        Vec3 vec33 = AbstractHorse.getCollisionHorizontalEscapeVector(this.getBbWidth(), passenger.getBbWidth(), this.getYRot() + (passenger.getMainArm() == HumanoidArm.LEFT ? 90.0f : -90.0f));
+        Vec3 vec33 = AbstractHorse.getCollisionHorizontalEscapeVector(this.getBbWidth(), passenger.getBbWidth(),
+                this.getYRot() + (passenger.getMainArm() == HumanoidArm.LEFT ? 90.0f : -90.0f));
         Vec3 vec34 = this.getDismountLocationInDirection(vec33, passenger);
         if (vec34 != null) {
             return vec34;
@@ -377,31 +391,33 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
         return this.geoCache;
     }
 
-    private <E extends Giraffe> PlayState predicate(final AnimationState<E> event) {
+    private <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState predicate(
+            final software.bernie.geckolib.animatable.processing.AnimationTest<E> state) {
+        software.bernie.geckolib.animatable.processing.AnimationController<E> controller = state.controller();
         if (this.isBaby()) {
-            event.setControllerSpeed(1.4f + event.getLimbSwingAmount());
+            controller.setAnimationSpeed(1.4f + this.walkAnimation.speed());
         } else {
-            event.setControllerSpeed(1.0f + event.getLimbSwingAmount());
+            controller.setAnimationSpeed(1.0f + this.walkAnimation.speed());
         }
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting() || !this.getPassengers().isEmpty()) {
-                event.getController().setAnimation(RUN);
+                controller.setAnimation(RUN);
                 if (this.isBaby()) {
-                    event.getController().setAnimationSpeed(1.4D + event.getLimbSwingAmount());
+                    controller.setAnimationSpeed(1.4D + this.walkAnimation.speed());
                 } else {
-                    event.getController().setAnimationSpeed(1.2D + event.getLimbSwingAmount());
+                    controller.setAnimationSpeed(1.2D + this.walkAnimation.speed());
                 }
             } else {
-                event.getController().setAnimation(WALK);
+                controller.setAnimation(WALK);
             }
         } else {
-            event.getController().setAnimation(IDLE);
+            controller.setAnimation(IDLE);
         }
         return PlayState.CONTINUE;
     }
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 4, this::predicate));
+        controllers.add(new AnimationController<Giraffe>("controller", 4, this::predicate));
     }
 }

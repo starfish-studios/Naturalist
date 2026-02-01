@@ -1,7 +1,7 @@
 package com.starfish_studios.naturalist.mixin;
 
-
 import com.starfish_studios.naturalist.core.registry.NaturalistBlocks;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,8 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Monster.class)
 public class MonsterMixin {
+    // MC 1.21 changed isPreventingPlayerRest(Player) to
+    // isPreventingPlayerRest(ServerLevel, Player)
     @Inject(method = "isPreventingPlayerRest", at = @At(value = "HEAD"), cancellable = true)
-    private void onIsPreventingPlayerRest(Player player, CallbackInfoReturnable<Boolean> cir) {
+    private void onIsPreventingPlayerRest(ServerLevel serverLevel, Player player, CallbackInfoReturnable<Boolean> cir) {
         if (player.isHolding(NaturalistBlocks.TEDDY_BEAR.get().asItem())) {
             cir.setReturnValue(false);
         }

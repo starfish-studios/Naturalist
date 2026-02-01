@@ -11,6 +11,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -29,12 +30,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class Zebra extends AbstractChestedHorse {
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.WHEAT, Items.SUGAR, Blocks.HAY_BLOCK.asItem(), Items.APPLE, Items.GOLDEN_CARROT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.WHEAT, Items.SUGAR, Blocks.HAY_BLOCK.asItem(),
+            Items.APPLE, Items.GOLDEN_CARROT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
 
     public Zebra(@NotNull EntityType<? extends AbstractChestedHorse> entityType, @NotNull Level level) {
         super(entityType, level);
     }
-
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
@@ -43,9 +44,12 @@ public class Zebra extends AbstractChestedHorse {
 
     @Override
     protected void randomizeAttributes(@NotNull RandomSource randomSource) {
-        Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(this.generateRandomMaxHealth(randomSource));
-        Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(this.generateRandomSpeed(randomSource));
-        Objects.requireNonNull(this.getAttribute(Attributes.JUMP_STRENGTH)).setBaseValue(this.generateRandomJumpStrength(randomSource));
+        Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH))
+                .setBaseValue(this.generateRandomMaxHealth(randomSource));
+        Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED))
+                .setBaseValue(this.generateRandomSpeed(randomSource));
+        Objects.requireNonNull(this.getAttribute(Attributes.JUMP_STRENGTH))
+                .setBaseValue(this.generateRandomJumpStrength(randomSource));
     }
 
     protected float generateRandomMaxHealth(@NotNull RandomSource randomSource) {
@@ -57,7 +61,8 @@ public class Zebra extends AbstractChestedHorse {
     }
 
     protected double generateRandomSpeed(@NotNull RandomSource randomSource) {
-        return (0.5f + randomSource.nextDouble() * 0.3 + randomSource.nextDouble() * 0.3 + randomSource.nextDouble() * 0.3) * 0.25;
+        return (0.5f + randomSource.nextDouble() * 0.3 + randomSource.nextDouble() * 0.3
+                + randomSource.nextDouble() * 0.3) * 0.25;
     }
 
     @Override
@@ -79,7 +84,7 @@ public class Zebra extends AbstractChestedHorse {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        AbstractHorse zebra = NaturalistEntityTypes.ZEBRA.get().create(serverLevel);
+        AbstractHorse zebra = NaturalistEntityTypes.ZEBRA.get().create(serverLevel, EntitySpawnReason.BREEDING);
         assert zebra != null;
         this.setOffspringAttributes(ageableMob, zebra);
         return zebra;
@@ -103,13 +108,9 @@ public class Zebra extends AbstractChestedHorse {
     protected void playGallopSound(@NotNull SoundType soundType) {
         super.playGallopSound(soundType);
         if (this.random.nextInt(10) == 0) {
-            this.playSound(NaturalistSoundEvents.ZEBRA_BREATHE.get(), soundType.getVolume() * 0.6f, soundType.getPitch());
+            this.playSound(NaturalistSoundEvents.ZEBRA_BREATHE.get(), soundType.getVolume() * 0.6f,
+                    soundType.getPitch());
         }
-    }
-
-    @Override
-    public double getPassengersRidingOffset() {
-        return super.getPassengersRidingOffset() + 0;
     }
 
     @Override
@@ -155,7 +156,8 @@ public class Zebra extends AbstractChestedHorse {
         private final Zebra zebra;
 
         public ZebraAvoidPlayersGoal(Zebra zebra, float maxDistance, double walkSpeed, double sprintSpeed) {
-            super(zebra, Player.class, maxDistance, walkSpeed, sprintSpeed, EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+            super(zebra, Player.class, maxDistance, walkSpeed, sprintSpeed,
+                    EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
             this.zebra = zebra;
         }
 

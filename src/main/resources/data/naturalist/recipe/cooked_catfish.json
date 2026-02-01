@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": "naturalist:catfish",
+  "result": {
+    "id": "naturalist:cooked_catfish"
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

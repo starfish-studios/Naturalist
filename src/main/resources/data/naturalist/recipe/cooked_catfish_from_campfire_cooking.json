@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": "naturalist:catfish",
+  "result": {
+    "id": "naturalist:cooked_catfish"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

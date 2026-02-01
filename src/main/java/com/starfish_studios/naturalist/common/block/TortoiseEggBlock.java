@@ -41,55 +41,67 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block,BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(VARIANT);
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public @NotNull ItemStack getCloneItemStack(@NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        ItemStack stack = super.getCloneItemStack(level, pos, state);
-        stack.getOrCreateTag().putInt("Variant", state.getValue(VARIANT));
-        return stack;
-    }
+    /*
+     * @SuppressWarnings("deprecation")
+     * public @NotNull ItemStack getCloneItemStack(@NotNull BlockGetter
+     * level, @NotNull BlockPos pos,
+     * 
+     * @NotNull BlockState state) {
+     * ItemStack stack = super.getCloneItemStack(level, pos, state);
+     * stack.getOrCreateTag().putInt("Variant", state.getValue(VARIANT));
+     * return stack;
+     * }
+     */
 
     @Override
-    public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        if (!this.shouldUpdateHatchLevel(level)) { return; }
+    public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos,
+            @NotNull RandomSource random) {
+        if (!this.shouldUpdateHatchLevel(level)) {
+            return;
+        }
         int hatchStage = state.getValue(HATCH);
         if (hatchStage < 2) {
-            level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_CRACK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + random.nextFloat() * 0.2f);
+            level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_CRACK.get(), SoundSource.BLOCKS, 0.7f,
+                    0.9f + random.nextFloat() * 0.2f);
             level.setBlock(pos, state.setValue(HATCH, hatchStage + 1), 2);
         } else {
-            level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_HATCH.get(), SoundSource.BLOCKS, 0.7f, 0.9f + random.nextFloat() * 0.2f);
+            level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_HATCH.get(), SoundSource.BLOCKS, 0.7f,
+                    0.9f + random.nextFloat() * 0.2f);
 
             int eggCount = state.getValue(EGGS);
-            int variant  = state.getValue(VARIANT);
+            int variant = state.getValue(VARIANT);
 
             level.removeBlock(pos, false);
 
             for (int i = 0; i < eggCount; i++) {
                 level.levelEvent(2001, pos, Block.getId(state));
 
-                Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level);
+                Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level,
+                        net.minecraft.world.entity.EntitySpawnReason.BREEDING);
                 if (baby != null) {
                     baby.setVariant(variant);
                     baby.setAge(-24000);
                     double x = pos.getX() + 0.3 + i * 0.2;
                     double y = pos.getY();
                     double z = pos.getZ() + 0.3;
-                    baby.moveTo(x, y, z, 0.0F, 0.0F);
+                    baby.setPos(x, y, z);
+                    baby.setXRot(0.0F);
+                    baby.setYRot(0.0F);
                     level.addFreshEntity(baby);
                 }
             }
         }
     }
 
-
     @Override
-    public void onPlace(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean isMoving) {
-        if (!level.isClientSide) {
+    public void onPlace(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState oldState,
+            boolean isMoving) {
+        if (!level.isClientSide()) {
             level.levelEvent(2005, pos, 0);
         }
     }
@@ -106,8 +118,8 @@ public class TortoiseEggBlock extends TurtleEggBlock {
         super.stepOn(level, pos, state, entity);
     }
 
-    @Override
-    public void fallOn(@NotNull Level level, @NotNull BlockState state, @NotNull BlockPos pos, @NotNull Entity entity, float fallDistance) {
+    public void fallOn(@NotNull Level level, @NotNull BlockState state, @NotNull BlockPos pos, @NotNull Entity entity,
+            float fallDistance) {
         if (!(entity instanceof Zombie)) {
             this.destroyEgg(level, state, pos, entity, 3);
         }
@@ -118,16 +130,17 @@ public class TortoiseEggBlock extends TurtleEggBlock {
         if (!this.canDestroyEgg(level, entity)) {
             return;
         }
-        if (!level.isClientSide && level.random.nextInt(chance) == 0 && state.is(Blocks.TURTLE_EGG)) {
+        if (!level.isClientSide() && level.random.nextInt(chance) == 0 && state.is(Blocks.TURTLE_EGG)) {
             this.decreaseEggs(level, pos, state);
         }
     }
 
     @Override
-    public void playerDestroy(@NotNull Level level, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable BlockEntity blockEntity, @NotNull ItemStack stack) {
+    public void playerDestroy(@NotNull Level level, @NotNull Player player, @NotNull BlockPos pos,
+            @NotNull BlockState state, @Nullable BlockEntity blockEntity, @NotNull ItemStack stack) {
         super.playerDestroy(level, player, pos, state, blockEntity, stack);
 
-        if (!level.isClientSide && stack.getItem() == Items.COMMAND_BLOCK) {
+        if (!level.isClientSide() && stack.getItem() == Items.COMMAND_BLOCK) {
             int variant = state.getValue(VARIANT);
             int eggCount = state.getValue(EGGS);
 
@@ -138,14 +151,17 @@ public class TortoiseEggBlock extends TurtleEggBlock {
             level.removeBlock(pos, false);
 
             for (int i = 0; i < eggCount; i++) {
-                Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level);
+                Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level,
+                        net.minecraft.world.entity.EntitySpawnReason.BREEDING);
                 if (baby != null) {
                     baby.setVariant(variant);
                     baby.setAge(-24000);
                     double dx = pos.getX() + 0.3 + i * 0.2;
                     double dy = pos.getY();
                     double dz = pos.getZ() + 0.3;
-                    baby.moveTo(dx, dy, dz, 0F, 0F);
+                    baby.setPos(dx, dy, dz);
+                    baby.setXRot(0F);
+                    baby.setYRot(0F);
                     level.addFreshEntity(baby);
                 }
             }
@@ -157,7 +173,8 @@ public class TortoiseEggBlock extends TurtleEggBlock {
             if (!(entity instanceof LivingEntity)) {
                 return false;
             } else {
-                return entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+                return entity instanceof Player || (level instanceof net.minecraft.server.level.ServerLevel sl
+                        && sl.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING));
             }
         } else {
             return false;
@@ -165,7 +182,8 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     private void decreaseEggs(Level level, BlockPos pos, BlockState state) {
-        level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.2f);
+        level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f,
+                0.9f + level.random.nextFloat() * 0.2f);
         int i = state.getValue(EGGS);
         if (i <= 1) {
             level.destroyBlock(pos, false);

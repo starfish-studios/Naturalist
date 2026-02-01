@@ -1,25 +1,17 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.common.entity.Zebra;
-//? if fabric {
-/*import net.fabricmc.api.EnvType;
+import com.starfish_studios.naturalist.client.renderer.ZebraRenderer;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-*///?} else if forge {
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-//?}
 import net.minecraft.client.model.HorseModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-//? if fabric {
-/*@Environment(value= EnvType.CLIENT)
-*///?} else if forge {
-@OnlyIn(Dist.CLIENT)
-//?}
-public class ZebraModel extends HorseModel<Zebra> {
+@Environment(value = EnvType.CLIENT)
+public class ZebraModel extends HorseModel {
     private final @NotNull ModelPart leftChest;
     private final @NotNull ModelPart rightChest;
 
@@ -33,16 +25,20 @@ public class ZebraModel extends HorseModel<Zebra> {
         MeshDefinition meshDefinition = HorseModel.createBodyMesh(CubeDeformation.NONE);
         PartDefinition partDefinition = meshDefinition.getRoot();
         PartDefinition partDefinition2 = partDefinition.getChild("body");
-        CubeListBuilder cubeListBuilder = CubeListBuilder.create().texOffs(26, 21).addBox(-4.0f, 0.0f, -2.0f, 8.0f, 8.0f, 3.0f);
-        partDefinition2.addOrReplaceChild("left_chest", cubeListBuilder, PartPose.offsetAndRotation(6.0f, -8.0f, 0.0f, 0.0f, -1.5707964f, 0.0f));
-        partDefinition2.addOrReplaceChild("right_chest", cubeListBuilder, PartPose.offsetAndRotation(-6.0f, -8.0f, 0.0f, 0.0f, 1.5707964f, 0.0f));
+        CubeListBuilder cubeListBuilder = CubeListBuilder.create().texOffs(26, 21).addBox(-4.0f, 0.0f, -2.0f, 8.0f,
+                8.0f, 3.0f);
+        partDefinition2.addOrReplaceChild("left_chest", cubeListBuilder,
+                PartPose.offsetAndRotation(6.0f, -8.0f, 0.0f, 0.0f, -1.5707964f, 0.0f));
+        partDefinition2.addOrReplaceChild("right_chest", cubeListBuilder,
+                PartPose.offsetAndRotation(-6.0f, -8.0f, 0.0f, 0.0f, 1.5707964f, 0.0f));
         return LayerDefinition.create(meshDefinition, 64, 64);
     }
 
-    @Override
-    public void setupAnim(@NotNull Zebra entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        if (entity.hasChest()) {
+    // @Override
+    public void setupAnim(@NotNull ZebraRenderer.ZebraRenderState state, float limbSwing, float limbSwingAmount,
+            float ageInTicks, float netHeadYaw, float headPitch) {
+        super.setupAnim(state);
+        if (state.hasChest) {
             this.leftChest.visible = true;
             this.rightChest.visible = true;
         } else {

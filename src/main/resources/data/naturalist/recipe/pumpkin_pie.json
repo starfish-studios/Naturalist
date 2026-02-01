@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "naturalist:pumpkin_pie",
+  "ingredients": [
+    "minecraft:pumpkin",
+    "minecraft:sugar",
+    "naturalist:duck_egg"
+  ],
+  "result": {
+    "id": "minecraft:pumpkin_pie"
+  }
+}

@@ -1,11 +1,10 @@
 package com.starfish_studios.naturalist.common.block;
 
-
-import com.starfish_studios.naturalist.core.registry.NaturalistItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -30,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
@@ -39,15 +39,36 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
     public static final @NotNull ToIntFunction<BlockState> LIGHT_EMISSION;
     public static IntegerProperty GOOP;
 
+    // Flag to track if registry initialization is complete
+    private static volatile boolean registryInitComplete = false;
+    // Cached item supplier - set after initialization
+    private static Supplier<Item> cachedGlowGoopItem = null;
+
+    /**
+     * Called after NaturalistItems is fully initialized to enable item features
+     */
+    public static void completeInit(Supplier<Item> glowGoopItemSupplier) {
+        cachedGlowGoopItem = glowGoopItemSupplier;
+        registryInitComplete = true;
+    }
+
+    private static Item getGlowGoopItemSafe() {
+        if (registryInitComplete && cachedGlowGoopItem != null) {
+            return cachedGlowGoopItem.get();
+        }
+        return null;
+    }
+
     public GlowGoopBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
-            .setValue(GOOP, MIN_GOOP)
-            .setValue(WATERLOGGED, false));
+                .setValue(GOOP, MIN_GOOP)
+                .setValue(WATERLOGGED, false));
     }
 
     private void decreaseGoop(Level level, BlockPos pos, BlockState state) {
-        level.playSound(null, pos, SoundEvents.HONEY_BLOCK_BREAK, SoundSource.BLOCKS, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
+        level.playSound(null, pos, SoundEvents.HONEY_BLOCK_BREAK, SoundSource.BLOCKS, 0.7F,
+                0.9F + level.random.nextFloat() * 0.2F);
         int i = state.getValue(GOOP);
         if (i <= 1) {
             level.destroyBlock(pos, false);
@@ -57,15 +78,21 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
             level.levelEvent(2001, pos, Block.getId(state));
         }
     }
-    public void playerDestroy(@NotNull Level level, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable BlockEntity blockEntity, @NotNull ItemStack stack) {
+
+    public void playerDestroy(@NotNull Level level, @NotNull Player player, @NotNull BlockPos pos,
+            @NotNull BlockState state, @Nullable BlockEntity blockEntity, @NotNull ItemStack stack) {
         super.playerDestroy(level, player, pos, state, blockEntity, stack);
         this.decreaseGoop(level, pos, state);
     }
 
     @SuppressWarnings("deprecation")
-    @Override
-    public @NotNull ItemStack getCloneItemStack(@NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        return NaturalistItems.GLOW_GOOP.get().asItem().getDefaultInstance();
+    public @NotNull ItemStack getCloneItemStack(@NotNull BlockGetter level, @NotNull BlockPos pos,
+            @NotNull BlockState state) {
+        Item item = getGlowGoopItemSafe();
+        if (item != null) {
+            return item.getDefaultInstance();
+        }
+        return this.asItem().getDefaultInstance();
     }
 
     @Override
@@ -100,9 +127,11 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
 
         if (!stack.is(this.asItem())) {
             if (!level.isClientSide()) {
-                ItemStack itemStack = new ItemStack(NaturalistItems.GLOW_GOOP.get(), currentGoop);
-                popResource(level, pos, itemStack);
-
+                Item item = getGlowGoopItemSafe();
+                if (item != null) {
+                    ItemStack itemStack = new ItemStack(item, currentGoop);
+                    popResource(level, pos, itemStack);
+                }
                 level.removeBlock(pos, false);
             }
             return true;
@@ -110,8 +139,6 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
 
         return super.canBeReplaced(state, context);
     }
-
-
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
@@ -124,17 +151,27 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @SuppressWarnings("deprecation")
-    @Override
-    public boolean isPathfindable(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull PathComputationType type) {
+    public boolean isPathfindable(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos,
+            @NotNull PathComputationType type) {
         return true;
     }
 
     @SuppressWarnings("deprecation")
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, CollisionContext context) {
-        return context.isHoldingItem(NaturalistItems.GLOW_GOOP.get()) ? Shapes.block() : Shapes.empty();
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos,
+            CollisionContext context) {
+        // During block registration, items aren't available - just return empty shape
+        if (!registryInitComplete) {
+            return Shapes.empty();
+        }
+        Item item = getGlowGoopItemSafe();
+        if (item != null) {
+            return context.isHoldingItem(item) ? Shapes.block() : Shapes.empty();
+        }
+        return Shapes.empty();
     }
 
-    public boolean propagatesSkylightDown(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+    public boolean propagatesSkylightDown(@NotNull BlockState state, @NotNull BlockGetter level,
+            @NotNull BlockPos pos) {
         return true;
     }
 

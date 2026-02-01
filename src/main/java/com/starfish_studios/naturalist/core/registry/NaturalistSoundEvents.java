@@ -106,7 +106,7 @@ public class NaturalistSoundEvents {
 
     private static Supplier<SoundEvent> register(String path) {
         String soundPath = Objects.requireNonNull(path, "sound path");
-        ResourceLocation id = new ResourceLocation(Naturalist.MOD_ID, soundPath);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, soundPath);
         return CommonPlatformHelper.registerSoundEvent(soundPath, () -> SoundEvent.createVariableRangeEvent(id));
     }
 

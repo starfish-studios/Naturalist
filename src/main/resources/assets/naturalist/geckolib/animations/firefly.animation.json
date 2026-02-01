@@ -1,0 +1,27 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.sf_nba.firefly.fly": {
+			"animation_length": 2,
+			"bones": {
+				"left_wing": {
+					"rotation": ["Math.cos((query.anim_time - 0.1) * 2880) * -15", 22.5, "-45 + Math.cos((query.anim_time - 0.2) * 2880) * 45"]
+				},
+				"right_wing": {
+					"rotation": ["Math.cos((query.anim_time - 0.1) * 2880) * -15", -22.5, "45 + Math.cos((query.anim_time - 0.2) * 2880) * -45"]
+				},
+				"body": {
+					"rotation": ["-12.5+Math.sin((query.anim_time - 0.0) * 720) * 1", 0, 0],
+					"position": [0, "0.5 + Math.cos((query.anim_time - 0.3) * 720) * 0.2", -1]
+				},
+				"antennae": {
+					"rotation": ["Math.sin((query.anim_time - 0.0) * 720) * 4", 0, 0],
+					"position": [0, 0, 0]
+				},
+				"headRot": {
+					"rotation": [12.5, 0, 0]
+				}
+			}
+		}
+	}
+}

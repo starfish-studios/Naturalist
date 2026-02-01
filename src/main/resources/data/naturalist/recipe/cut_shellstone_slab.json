@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": "naturalist:cut_shellstone"
+  },
+  "result": {
+    "count": 6,
+    "id": "naturalist:cut_shellstone_slab"
+  }
+}

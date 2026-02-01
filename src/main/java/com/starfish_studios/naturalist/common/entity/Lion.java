@@ -1,6 +1,9 @@
 package com.starfish_studios.naturalist.common.entity;
 
 import com.starfish_studios.naturalist.NaturalistConfig;
+import com.starfish_studios.naturalist.Naturalist;
+import com.mojang.serialization.Codec;
+
 import com.starfish_studios.naturalist.common.entity.core.NaturalistAnimal;
 import com.starfish_studios.naturalist.common.entity.core.SleepingAnimal;
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.BabyHurtByTargetGoal;
@@ -10,7 +13,9 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
 import com.starfish_studios.naturalist.core.registry.NaturalistTags;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -31,17 +36,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -50,9 +56,10 @@ import java.util.function.Predicate;
 
 public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, SleepingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
-
+    private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class,
+            EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class,
+            EntityDataSerializers.BOOLEAN);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.lion.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.lion.walk");
@@ -63,9 +70,7 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
 
     public Lion(@NotNull EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(1.0f);
     }
-
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
@@ -80,27 +85,34 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason,
-                                        @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-        super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty,
+            @NotNull EntitySpawnReason reason,
+            @Nullable SpawnGroupData spawnData) {
+        spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData);
         AgeableMobGroupData ageableMobGroupData;
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(true);
             this.setHasMane(this.getRandom().nextBoolean());
         }
-        if ((ageableMobGroupData = (AgeableMobGroupData)spawnData).getGroupSize() > 2) {
+        if (spawnData instanceof AgeableMobGroupData data && data.getGroupSize() > 2) {
             this.setAge(-24000);
         }
-        ageableMobGroupData.increaseGroupSizeByOne();
+        if (spawnData instanceof AgeableMobGroupData data) {
+            data.increaseGroupSizeByOne();
+        }
+
         RandomSource random = level.getRandom();
-        Objects.requireNonNull(this.getAttribute(Attributes.FOLLOW_RANGE)).addPermanentModifier(new AttributeModifier("Random spawn bonus", random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.MULTIPLY_BASE));
+        Objects.requireNonNull(this.getAttribute(Attributes.FOLLOW_RANGE))
+                .addPermanentModifier(new AttributeModifier(
+                        ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "random_spawn_bonus"),
+                        random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         return spawnData;
     }
 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.LION.get().create(serverLevel);
+        return NaturalistEntityTypes.LION.get().create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -116,10 +128,11 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
-                entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES)
-                        && (NaturalistConfig.lionsAttackBabyHostiles || !entity.isBaby())
-                        && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
+        this.targetSelector.addGoal(2,
+                new NearestAttackableTargetGoal<LivingEntity>(this, LivingEntity.class, 10, true, false,
+                        (entity, level) -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES)
+                                && (NaturalistConfig.lionsAttackBabyHostiles || !entity.isBaby())
+                                && !this.isSleeping() && !this.isBaby()));
     }
 
     @Override
@@ -128,22 +141,22 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(SLEEPING, false);
-        this.entityData.define(HAS_MANE, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SLEEPING, false);
+        builder.define(HAS_MANE, false);
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compoundTag) {
-        super.addAdditionalSaveData(compoundTag);
-        compoundTag.putBoolean("Mane", this.hasMane());
+    public void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.store("Mane", Codec.BOOL, this.hasMane());
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compoundTag) {
-        super.readAdditionalSaveData(compoundTag);
-        this.setHasMane(compoundTag.getBoolean("Mane"));
+    public void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.setHasMane(input.read("Mane", Codec.BOOL).orElse(false));
     }
 
     @Override
@@ -173,10 +186,10 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel serverLevel) {
         if (this.getMoveControl().hasWanted()) {
             double speedModifier = this.getMoveControl().getSpeedModifier();
-                if (speedModifier >= 1.25D && this.onGround()) {
+            if (speedModifier >= 1.25D && this.onGround()) {
                 this.setPose(Pose.STANDING);
                 this.setSprinting(true);
             } else {
@@ -233,34 +246,38 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
         return this.geoCache;
     }
 
-    private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
+    private <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState predicate(
+            final software.bernie.geckolib.animatable.processing.AnimationTest<E> state) {
+        software.bernie.geckolib.animatable.processing.AnimationController<E> controller = state.controller();
         if (this.isSleeping() && this.hasMane()) {
-            event.getController().setAnimation(SLEEP2);
+            controller.setAnimation(SLEEP2);
         } else if (this.isSleeping() && !this.hasMane()) {
-            event.getController().setAnimation(SLEEP);
+            controller.setAnimation(SLEEP);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.5F);
+                controller.setAnimation(RUN);
+                controller.setAnimationSpeed(2.5F);
             } else if (this.isCrouching()) {
-                event.getController().setAnimation(PREY);
-                event.getController().setAnimationSpeed(0.8F);
+                controller.setAnimation(PREY);
+                controller.setAnimationSpeed(0.8F);
             } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.0F);
+                controller.setAnimation(WALK);
+                controller.setAnimationSpeed(1.0F);
             }
         } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0F);
+            controller.setAnimation(IDLE);
+            controller.setAnimationSpeed(1.0F);
         }
         return PlayState.CONTINUE;
     }
 
-    private <E extends Lion> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            event.getController().forceAnimationReset();
-        
-            event.getController().setAnimation(RawAnimation.begin().thenPlay("attack"));
+    private <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState attackPredicate(
+            software.bernie.geckolib.animatable.processing.AnimationTest<E> state) {
+        software.bernie.geckolib.animatable.processing.AnimationController<E> controller = state.controller();
+        if (this.swinging && controller.getAnimationState().equals(AnimationController.State.STOPPED)) {
+            controller.forceAnimationReset();
+
+            controller.setAnimation(RawAnimation.begin().thenPlay("attack"));
             this.swinging = false;
         }
         return PlayState.CONTINUE;
@@ -268,10 +285,9 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+        controllers.add(new AnimationController<Lion>("controller", 5, this::predicate));
+        controllers.add(new AnimationController<Lion>("attackController", 0, this::attackPredicate));
     }
-
 
     static class LionFollowLeaderGoal extends Goal {
         private final Lion mob;
@@ -300,18 +316,23 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
             if (this.mob.isBaby() || this.mob.hasMane()) {
                 return false;
             }
-            List<Lion> nearbyLions = this.mob.level().getEntitiesOfClass(Lion.class, this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
+            List<Lion> nearbyLions = this.mob.level().getEntitiesOfClass(Lion.class,
+                    this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
             if (!nearbyLions.isEmpty()) {
                 for (Lion lion : nearbyLions) {
-                    if (!lion.hasMane()) continue;
-                    if (lion.isInvisible()) continue;
+                    if (!lion.hasMane())
+                        continue;
+                    if (lion.isInvisible())
+                        continue;
                     this.followingMob = lion;
                     return true;
                 }
                 if (this.followingMob == null) {
                     for (Lion lion : nearbyLions) {
-                        if (lion.isBaby()) continue;
-                        if (lion.isInvisible()) continue;
+                        if (lion.isBaby())
+                            continue;
+                        if (lion.isInvisible())
+                            continue;
                         this.followingMob = lion;
                         return true;
                     }
@@ -322,21 +343,22 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
 
         @Override
         public boolean canContinueToUse() {
-            return this.followingMob != null && !this.navigation.isDone() && this.mob.distanceToSqr(this.followingMob) > (double)(this.stopDistance * this.stopDistance);
+            return this.followingMob != null && !this.navigation.isDone()
+                    && this.mob.distanceToSqr(this.followingMob) > (double) (this.stopDistance * this.stopDistance);
         }
 
         @Override
         public void start() {
             this.timeToRecalcPath = 0;
-            this.oldWaterCost = this.mob.getPathfindingMalus(BlockPathTypes.WATER);
-            this.mob.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
+            this.oldWaterCost = this.mob.getPathfindingMalus(PathType.WATER);
+            this.mob.setPathfindingMalus(PathType.WATER, 0.0f);
         }
 
         @Override
         public void stop() {
             this.followingMob = null;
             this.navigation.stop();
-            this.mob.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
+            this.mob.setPathfindingMalus(PathType.WATER, this.oldWaterCost);
         }
 
         @Override
@@ -352,14 +374,17 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
             }
             this.timeToRecalcPath = this.adjustedTickDelay(10);
             double d = this.mob.getX() - this.followingMob.getX();
-            double g = d * d + (e = this.mob.getY() - this.followingMob.getY()) * e + (f = this.mob.getZ() - this.followingMob.getZ()) * f;
-            if (g <= (double)(this.stopDistance * this.stopDistance)) {
+            double g = d * d + (e = this.mob.getY() - this.followingMob.getY()) * e
+                    + (f = this.mob.getZ() - this.followingMob.getZ()) * f;
+            if (g <= (double) (this.stopDistance * this.stopDistance)) {
                 this.navigation.stop();
                 LookControl lookControl = this.followingMob.getLookControl();
-                if (g <= (double)this.stopDistance || lookControl.getWantedX() == this.mob.getX() && lookControl.getWantedY() == this.mob.getY() && lookControl.getWantedZ() == this.mob.getZ()) {
+                if (g <= (double) this.stopDistance || lookControl.getWantedX() == this.mob.getX()
+                        && lookControl.getWantedY() == this.mob.getY() && lookControl.getWantedZ() == this.mob.getZ()) {
                     double h = this.followingMob.getX() - this.mob.getX();
                     double i = this.followingMob.getZ() - this.mob.getZ();
-                    this.navigation.moveTo(this.mob.getX() - h, this.mob.getY(), this.mob.getZ() - i, this.speedModifier);
+                    this.navigation.moveTo(this.mob.getX() - h, this.mob.getY(), this.mob.getZ() - i,
+                            this.speedModifier);
                 }
                 return;
             }

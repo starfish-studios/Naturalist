@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": "naturalist:shellstone_bricks"
+  },
+  "result": {
+    "count": 4,
+    "id": "naturalist:shellstone_brick_stairs"
+  }
+}

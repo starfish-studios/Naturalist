@@ -27,12 +27,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
@@ -50,9 +50,7 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
 
     public Deer(EntityType<? extends NaturalistAnimal> entityType, @NotNull Level level) {
         super(entityType, level);
-        this.setMaxUpStep(2.0F);
     }
-
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
@@ -62,11 +60,13 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        return NaturalistEntityTypes.DEER.get().create(level);
+        // 1.21: EntityType.create() requires EntitySpawnReason parameter
+        return NaturalistEntityTypes.DEER.get().create(level, net.minecraft.world.entity.EntitySpawnReason.BREEDING);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.2F);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.2F)
+                .add(Attributes.TEMPT_RANGE, 10.0D);
     }
 
     @Override
@@ -76,9 +76,13 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(1, new BigPanicGoal(this, 1.6D));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.of(Items.APPLE), true));
-        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Player.class, 8.0F, 1.5D, 2.0D, livingEntity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity) && !livingEntity.isDiscrete()));
+        this.goalSelector.addGoal(4,
+                new AvoidEntityGoal<>(this, Player.class, 8.0F, 1.5D, 2.0D,
+                        livingEntity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity)
+                                && !livingEntity.isDiscrete()));
         this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Monster.class, 4.0F, 1.5D, 2.0D));
-        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Animal.class, 10.0F, 1.5D, 2.0D, livingEntity -> livingEntity.getType().is(NaturalistTags.EntityTypes.DEER_PREDATORS)));
+        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Animal.class, 10.0F, 1.5D, 2.0D,
+                livingEntity -> livingEntity.getType().is(NaturalistTags.EntityTypes.DEER_PREDATORS)));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.5D));
         EatBlockGoal eatBlockGoal = new EatBlockGoal(this);
         this.goalSelector.addGoal(6, eatBlockGoal);
@@ -98,10 +102,12 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
     protected SoundEvent getAmbientSound() {
         return this.isBaby() ? NaturalistSoundEvents.DEER_AMBIENT_BABY.get() : NaturalistSoundEvents.DEER_AMBIENT.get();
     }
+
     @Override
     public float getVoicePitch() {
         return this.isBaby() ? super.getVoicePitch() * 0.65F : super.getVoicePitch();
     }
+
     @Override
     public boolean isFood(ItemStack stack) {
         return stack.is(Items.APPLE);
@@ -109,7 +115,7 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
 
     @Override
     public void aiStep() {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
         }
         super.aiStep();
@@ -136,30 +142,32 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         this.setSprinting(this.getMoveControl().hasWanted() &&
                 this.getMoveControl().getSpeedModifier() >= 1.5D);
     }
 
-    @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        boolean lastHurt = super.hurt(source, amount);
-        if (lastHurt) {
-            int ticks = 100 + this.random.nextInt(100);
-            this.panicTicks = ticks;
-            List<? extends Deer> deers = this.level().getEntitiesOfClass(Deer.class, this.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
-            for (Deer deer : deers) {
-                deer.panicTicks = ticks;
-            }
-        }
-        return lastHurt;
-    }
+    // hurt() returns void in 1.21
+    // @Override
+    // public boolean hurt(@NotNull DamageSource source, float amount) {
+    // boolean lastHurt = super.hurt(source, amount);
+    // if (lastHurt) {
+    // int ticks = 100 + this.random.nextInt(100);
+    // this.panicTicks = ticks;
+    // List<? extends Deer> deers = this.level().getEntitiesOfClass(Deer.class,
+    // this.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
+    // for (Deer deer : deers) {
+    // deer.panicTicks = ticks;
+    // }
+    // }
+    // return lastHurt;
+    // }
 
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (panicTicks >= 0) {
                 panicTicks--;
             }
@@ -174,38 +182,42 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
         return this.geoCache;
     }
 
-    protected <E extends Deer> PlayState predicate(final @NotNull AnimationState<E> event) {
+    protected <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState predicate(
+            final @NotNull software.bernie.geckolib.animatable.processing.AnimationTest<E> state) {
+        software.bernie.geckolib.animatable.processing.AnimationController<E> controller = state.controller();
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
                 if (this.isBaby()) {
-                    event.getController().setAnimation(BABY_RUN);
-                    event.getController().setAnimationSpeed(1.0D);
+                    controller.setAnimation(BABY_RUN);
+                    controller.setAnimationSpeed(1.0D);
                 } else {
-                    event.getController().setAnimation(RUN);
-                    event.getController().setAnimationSpeed(2.3D);
+                    controller.setAnimation(RUN);
+                    controller.setAnimationSpeed(2.3D);
                 }
             } else {
-                event.getController().setAnimation(WALK);
+                controller.setAnimation(WALK);
                 if (this.isBaby()) {
-                    event.getController().setAnimationSpeed(1.2D);
+                    controller.setAnimationSpeed(1.2D);
                 } else {
-                    event.getController().setAnimationSpeed(1.0D);
+                    controller.setAnimationSpeed(1.0D);
                 }
             }
         } else {
-            event.getController().setAnimation(IDLE);
+            controller.setAnimation(IDLE);
             if (this.isBaby()) {
-                event.getController().setAnimationSpeed(1.5D);
+                controller.setAnimationSpeed(1.5D);
             } else {
-                event.getController().setAnimationSpeed(1.0D);
+                controller.setAnimationSpeed(1.0D);
             }
         }
         return PlayState.CONTINUE;
     }
 
-    protected <E extends Deer> PlayState eatPredicate(final @NotNull AnimationState<E> event) {
+    protected <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState eatPredicate(
+            final @NotNull software.bernie.geckolib.animatable.processing.AnimationTest<E> state) {
+        software.bernie.geckolib.animatable.processing.AnimationController<E> controller = state.controller();
         if (this.isEating()) {
-            event.getController().setAnimation(EAT);
+            controller.setAnimation(EAT);
             return PlayState.CONTINUE;
         }
         return PlayState.STOP;
@@ -213,7 +225,7 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "eat_controller", 5, this::eatPredicate));
+        controllers.add(new AnimationController<Deer>("controller", 5, this::predicate));
+        controllers.add(new AnimationController<Deer>("eat_controller", 5, this::eatPredicate));
     }
 }

@@ -2,41 +2,41 @@ package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
 import com.starfish_studios.naturalist.common.entity.LizardTail;
-//? if fabric {
-/*import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-*///?} else if forge {
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-//?}
-import net.minecraft.resources.ResourceLocation;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-//? if fabric {
-/*@Environment(EnvType.CLIENT)
-*///?} else if forge {
-@OnlyIn(Dist.CLIENT)
-//?}
-public class LizardTailModel extends GeoModel<LizardTail> {
-    public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[]{
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/green_tail.png"),
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/brown_tail.png"),
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/beardie_tail.png"),
-            new ResourceLocation(Naturalist.MOD_ID, "textures/entity/lizard/leopard_gecko_tail.png"),
+@Environment(EnvType.CLIENT)public class LizardTailModel extends GeoModel<LizardTail> {
+    private static final DataTicket<Integer> VARIANT_ID = DataTicket.create("lizard_tail_variant", Integer.class);
+
+    public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[] {
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lizard/green_tail.png"),
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lizard/brown_tail.png"),
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lizard/beardie_tail.png"),
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lizard/leopard_gecko_tail.png"),
     };
 
     @Override
-    public ResourceLocation getModelResource(LizardTail lizard) {
-        return new ResourceLocation(Naturalist.MOD_ID, "geo/entity/lizard_tail.geo.json");
+    public void addAdditionalStateData(LizardTail animatable, GeoRenderState state) {
+        state.addGeckolibData(VARIANT_ID, animatable.getVariant());
     }
 
     @Override
-    public ResourceLocation getTextureResource(LizardTail lizard) {
-        return TEXTURE_LOCATIONS[lizard.getVariant()];
+    public ResourceLocation getModelResource(GeoRenderState state) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "entity/lizard_tail");
+    }
+
+    @Override
+    public ResourceLocation getTextureResource(GeoRenderState state) {
+        int variant = state.getOrDefaultGeckolibData(VARIANT_ID, 0);
+        return TEXTURE_LOCATIONS[variant];
     }
 
     @Override
     public ResourceLocation getAnimationResource(LizardTail lizard) {
-        return new ResourceLocation(Naturalist.MOD_ID, "animations/lizard_tail.rp_anim.json");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "lizard_tail");
     }
 }
+

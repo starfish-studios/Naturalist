@@ -142,6 +142,7 @@ tasks {
         group = "publishing"
         doLast { logger.lifecycle("CurseForge publishing skipped.") }
     }
+
 }
 
 java {
@@ -149,11 +150,13 @@ java {
     val javaCompat = if (stonecutter.eval(stonecutter.current.version, ">=1.21")) {
         JavaVersion.VERSION_21
     } else {
-        JavaVersion.VERSION_17
+        JavaVersion.VERSION_21
     }
     sourceCompatibility = javaCompat
     targetCompatibility = javaCompat
 }
+
+
 
 // publishMods {
 //     val additionalVersions: List<String> = (findProperty("publish.additionalVersions") as String?)

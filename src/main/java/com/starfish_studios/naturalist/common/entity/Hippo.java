@@ -7,6 +7,7 @@ import com.starfish_studios.naturalist.common.entity.core.ai.goal.DistancedFollo
 import com.starfish_studios.naturalist.common.entity.core.ai.goal.SmoothFloatGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import com.starfish_studios.naturalist.core.registry.NaturalistEntityTypes;
+import com.starfish_studios.naturalist.core.registry.NaturalistTags;
 import com.starfish_studios.naturalist.core.registry.NaturalistSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -22,7 +23,17 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
@@ -36,19 +47,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.starfish_studios.naturalist.common.entity.core.NaturalistGeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
@@ -69,10 +80,8 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
 
     public Hippo(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
-        this.setMaxUpStep(1.0f);
+        this.setPathfindingMalus(PathType.WATER, 0.0f);
     }
-
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
@@ -85,28 +94,19 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.2D)
                 .add(Attributes.ATTACK_DAMAGE, 6.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.6D);
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
+                .add(Attributes.TEMPT_RANGE, 10.0D);
     }
 
-    @SuppressWarnings({"deprecation", "unused"})
-    public static boolean checkHippoSpawnRules(EntityType<? extends NaturalistAnimal> entityType, LevelAccessor levelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
-        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-        if (levelAccessor.getBlockState(blockPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && Animal.isBrightEnoughToSpawn(levelAccessor, blockPos)) {
-            for (int x = -16; x <= 16; x++) {
-                for (int y = -1; y <= 1; y++) {
-                    for (int z = -16; z <= 16; z++) {
-                        mutableBlockPos.setWithOffset(blockPos, x, y, z);
-                        if (!levelAccessor.hasChunkAt(mutableBlockPos)) {
-                            continue;
-                        }
-                        if (levelAccessor.getFluidState(mutableBlockPos).is(FluidTags.WATER)) {
-                            return true;
-                        }
-                    }
-                }
-            }
+    @SuppressWarnings({ "deprecation", "unused" })
+
+    public static boolean checkHippoSpawnRules(EntityType<Hippo> entityType, ServerLevelAccessor levelAccessor,
+            EntitySpawnReason spawnType, BlockPos blockPos, RandomSource randomSource) {
+        if (levelAccessor.getFluidState(blockPos).is(FluidTags.WATER)) {
+            return true;
         }
-        return false;
+        return levelAccessor.getBlockState(blockPos.below()).is(NaturalistTags.BlockTags.HIPPOS_SPAWNABLE_ON)
+                && isBrightEnoughToSpawn(levelAccessor, blockPos);
     }
 
     @Override
@@ -133,12 +133,13 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && entity.isInWater()));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
+                (entity, level) -> !this.isBaby() && entity.isInWater()));
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.0D);
         } else {
@@ -151,13 +152,19 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
         ItemStack itemStack = player.getItemInHand(hand);
         if (this.isFood(itemStack)) {
             int age = this.getAge();
-            if (!this.level().isClientSide && age == 0 && this.canFallInLove()) {
+            if (!this.level().isClientSide() && age == 0 && this.canFallInLove()) {
                 this.eatingTicks = 10;
                 this.setItemSlot(EquipmentSlot.MAINHAND, itemStack.copy());
                 this.swing(InteractionHand.MAIN_HAND);
                 float yRot = (this.getYRot() + 90) * Mth.DEG_TO_RAD;
-                ((ServerLevel)level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MELON.defaultBlockState()), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
-                ((ServerLevel)level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.MELON_SLICE)), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
+                ((ServerLevel) level()).sendParticles(
+                        new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MELON.defaultBlockState()),
+                        this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100,
+                        this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
+                ((ServerLevel) level()).sendParticles(
+                        new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.MELON_SLICE)),
+                        this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100,
+                        this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
                 this.playSound(SoundEvents.HORSE_EAT);
                 this.playSound(SoundEvents.WOOD_BREAK);
                 this.usePlayerItem(player, hand, itemStack);
@@ -167,9 +174,9 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
             if (this.isBaby()) {
                 this.usePlayerItem(player, hand, itemStack);
                 this.ageUp(Animal.getSpeedUpSecondsWhenFeeding(-age), true);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
-            if (this.level().isClientSide) {
+            if (this.level().isClientSide()) {
                 return InteractionResult.CONSUME;
             }
         }
@@ -179,7 +186,7 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.eatingTicks > 0) {
                 this.eatingTicks--;
             } else {
@@ -197,15 +204,17 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
         }
     }
 
-    @Override
-    public @NotNull EntityDimensions getDimensions(@NotNull Pose pose) {
-        if (this.isBaby()) {
-            return super.getDimensions(pose).scale(1.5F);
-
-        } else {
-            return super.getDimensions(pose);
-        }
-    }
+    /*
+     * @Override
+     * public @NotNull EntityDimensions getDimensions(@NotNull Pose pose) {
+     * if (this.isBaby()) {
+     * return super.getDimensions(pose).scale(1.5F);
+     * 
+     * } else {
+     * return super.getDimensions(pose);
+     * }
+     * }
+     */
 
     @Override
     protected float getWaterSlowDown() {
@@ -217,10 +226,14 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
         return this.isInWater() && otherAnimal.isInWater() && super.canMate(otherAnimal);
     }
 
+    public boolean isInvulnerableTo(@NotNull ServerLevel level, @NotNull DamageSource source) {
+        return source.equals(this.damageSources().cactus()) || super.isInvulnerableTo(level, source);
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.HIPPO.get().create(serverLevel);
+        return NaturalistEntityTypes.HIPPO.get().create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @Nullable
@@ -240,34 +253,38 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     @SuppressWarnings("all")
-    private <E extends Hippo> PlayState predicate(final @NotNull AnimationState<E> event) {
-        event.getController().setAnimationSpeed(0.8D + event.getLimbSwingAmount());
+    private <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState predicate(
+            final @NotNull AnimationTest<E> state) {
+        software.bernie.geckolib.animatable.processing.AnimationController<E> controller = state.controller();
+        controller.setAnimationSpeed(0.8D + this.walkAnimation.speed());
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (!this.isInWater()) {
                 if (this.isSprinting()) {
-                    event.getController().setAnimation(RUN);
+                    controller.setAnimation(RUN);
                 } else {
-                    event.getController().setAnimation(WALK);
+                    controller.setAnimation(WALK);
                 }
             } else if (this.isInWater()) {
-                event.getController().setAnimation(SWIM);
+                controller.setAnimation(SWIM);
             }
             return PlayState.CONTINUE;
         } else {
             if (this.isInWater()) {
-                event.getController().setAnimation(SWIM_IDLE);
+                controller.setAnimation(SWIM_IDLE);
             } else {
-                event.getController().setAnimation(IDLE);
+                controller.setAnimation(IDLE);
             }
         }
         return PlayState.CONTINUE;
     }
 
-    private <E extends Hippo> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            event.getController().forceAnimationReset();
-        
-            event.getController().setAnimation(BITE);
+    private <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState attackPredicate(
+            software.bernie.geckolib.animatable.processing.AnimationTest<E> state) {
+        AnimationController<E> controller = state.controller();
+        if (this.swinging && state.controller().getAnimationState().equals(AnimationController.State.STOPPED)) {
+            state.controller().forceAnimationReset();
+
+            controller.setAnimation(BITE);
             this.swinging = false;
         }
         return PlayState.CONTINUE;
@@ -275,10 +292,9 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+        controllers.add(new AnimationController<Hippo>("controller", 5, this::predicate));
+        controllers.add(new AnimationController<Hippo>("attackController", 0, this::attackPredicate));
     }
-
 
     static class HippoAttackBoatsGoal extends Goal {
         protected final PathfinderMob mob;
@@ -308,7 +324,8 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
                 return false;
             }
             this.lastCanUseCheck = gameTime;
-            List<Boat> entities = this.mob.level().getEntitiesOfClass(Boat.class, this.mob.getBoundingBox().inflate(8, 4, 8));
+            List<Boat> entities = this.mob.level().getEntitiesOfClass(Boat.class,
+                    this.mob.getBoundingBox().inflate(8, 4, 8));
             if (!entities.isEmpty()) {
                 this.target = entities.get(0);
             }
@@ -322,7 +339,8 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
             if (this.path != null) {
                 return true;
             }
-            return this.getAttackReachSqr(this.target) >= this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
+            return this.getAttackReachSqr(this.target) >= this.mob.distanceToSqr(this.target.getX(), this.target.getY(),
+                    this.target.getZ());
         }
 
         @Override
@@ -367,7 +385,11 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
             this.mob.getLookControl().setLookAt(this.target, 30.0f, 30.0f);
             double d = this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
             this.ticksUntilNextPathRecalculation = Math.max(this.ticksUntilNextPathRecalculation - 1, 0);
-            if ((this.mob.getSensing().hasLineOfSight(this.target)) && this.ticksUntilNextPathRecalculation <= 0 && (this.pathedTargetX == 0.0 && this.pathedTargetY == 0.0 && this.pathedTargetZ == 0.0 || this.target.distanceToSqr(this.pathedTargetX, this.pathedTargetY, this.pathedTargetZ) >= 1.0 || this.mob.getRandom().nextFloat() < 0.05f)) {
+            if ((this.mob.getSensing().hasLineOfSight(this.target)) && this.ticksUntilNextPathRecalculation <= 0
+                    && (this.pathedTargetX == 0.0 && this.pathedTargetY == 0.0 && this.pathedTargetZ == 0.0
+                            || this.target.distanceToSqr(this.pathedTargetX, this.pathedTargetY,
+                                    this.pathedTargetZ) >= 1.0
+                            || this.mob.getRandom().nextFloat() < 0.05f)) {
                 this.pathedTargetX = this.target.getX();
                 this.pathedTargetY = this.target.getY();
                 this.pathedTargetZ = this.target.getZ();
@@ -391,7 +413,9 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
             if (distToEnemySqr <= reach && this.ticksUntilNextAttack <= 0) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(enemy);
+                if (this.mob.level() instanceof ServerLevel serverLevel) {
+                    this.mob.doHurtTarget(serverLevel, enemy);
+                }
             }
         }
 

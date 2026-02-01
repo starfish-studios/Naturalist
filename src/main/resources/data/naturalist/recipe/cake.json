@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "naturalist:cake",
+  "key": {
+    "A": "minecraft:milk_bucket",
+    "B": "minecraft:sugar",
+    "C": "minecraft:wheat",
+    "E": "naturalist:duck_egg"
+  },
+  "pattern": [
+    "AAA",
+    "BEB",
+    "CCC"
+  ],
+  "result": {
+    "id": "minecraft:cake"
+  }
+}

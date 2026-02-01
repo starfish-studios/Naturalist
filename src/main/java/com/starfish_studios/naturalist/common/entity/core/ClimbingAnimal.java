@@ -7,20 +7,23 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ClimbingAnimal extends NaturalistAnimal {
-    private static final EntityDataAccessor<Byte> CLIMB_FLAG = SynchedEntityData.defineId(ClimbingAnimal.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> CLIMB_FLAG = SynchedEntityData.defineId(ClimbingAnimal.class,
+            EntityDataSerializers.BYTE);
 
-    protected ClimbingAnimal(@NotNull EntityType<? extends Animal> entityType, @NotNull Level level) {
+    protected ClimbingAnimal(@NotNull EntityType<? extends net.minecraft.world.entity.TamableAnimal> entityType,
+            @NotNull Level level) {
         super(entityType, level);
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CLIMB_FLAG, (byte)0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CLIMB_FLAG, (byte) 0);
     }
 
     @Override
@@ -31,11 +34,12 @@ public abstract class ClimbingAnimal extends NaturalistAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.setClimbing(this.horizontalCollision);
         }
         if (this.horizontalCollision && this.onClimbable()) {
-            this.setDeltaMovement(this.getDeltaMovement().x, this.getDeltaMovement().y * this.getClimbSpeedMultiplier(), this.getDeltaMovement().z);
+            this.setDeltaMovement(this.getDeltaMovement().x, this.getDeltaMovement().y * this.getClimbSpeedMultiplier(),
+                    this.getDeltaMovement().z);
         }
     }
 
@@ -51,9 +55,9 @@ public abstract class ClimbingAnimal extends NaturalistAnimal {
     public void setClimbing(boolean pClimbing) {
         byte flag = this.entityData.get(CLIMB_FLAG);
         if (pClimbing) {
-            flag = (byte)(flag | 1);
+            flag = (byte) (flag | 1);
         } else {
-            flag = (byte)(flag & -2);
+            flag = (byte) (flag & -2);
         }
 
         this.entityData.set(CLIMB_FLAG, flag);

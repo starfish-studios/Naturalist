@@ -1,10 +1,6 @@
 package com.starfish_studios.naturalist.core.platform;
 
-//? if fabric {
-/*import com.starfish_studios.naturalist.core.platform.fabric.ClientPlatformHelperImpl;
-*///?} else {
-import com.starfish_studios.naturalist.core.platform.forge.ClientPlatformHelperImpl;
-//?}
+import com.starfish_studios.naturalist.core.platform.fabric.ClientPlatformHelperImpl;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Entity;
@@ -18,8 +14,8 @@ public class ClientPlatformHelper {
         ClientPlatformHelperImpl.setRenderLayer(block, type);
     }
 
-    public static <T extends Entity> void registerEntityRenderers(Supplier<EntityType<T>> type, EntityRendererProvider<T> renderProvider) {
+    public static <T extends Entity> void registerEntityRenderers(Supplier<EntityType<T>> type,
+            EntityRendererProvider<T> renderProvider) {
         ClientPlatformHelperImpl.registerEntityRenderers(type, renderProvider);
     }
 }
-

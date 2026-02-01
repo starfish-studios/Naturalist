@@ -6,7 +6,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.EggItem;
 import net.minecraft.world.item.ItemStack;
@@ -19,10 +20,12 @@ public class DuckEggItem extends EggItem {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult use(@NotNull Level level, Player player,
+            @NotNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EGG_THROW, SoundSource.PLAYERS, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
-        if (!level.isClientSide) {
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EGG_THROW, SoundSource.PLAYERS,
+                0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+        if (!level.isClientSide()) {
             ThrownDuckEgg thrownEgg = new ThrownDuckEgg(level, player);
             thrownEgg.setItem(new ItemStack(NaturalistItems.DUCK_EGG.get()));
             thrownEgg.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
@@ -34,6 +37,6 @@ public class DuckEggItem extends EggItem {
             itemStack.shrink(1);
         }
 
-        return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
+        return InteractionResult.SUCCESS;
     }
 }

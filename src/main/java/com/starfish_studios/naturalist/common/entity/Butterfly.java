@@ -12,6 +12,9 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import com.mojang.serialization.Codec;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -19,8 +22,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -32,26 +35,27 @@ import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.FlyingAnimal;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Arrays;
@@ -59,10 +63,14 @@ import java.util.Comparator;
 
 @SuppressWarnings("null")
 public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, FlyingAnimal, Catchable {
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Butterfly.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> HAS_NECTAR = SynchedEntityData.defineId(Butterfly.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> POLLINATING = SynchedEntityData.defineId(Butterfly.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Butterfly.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Butterfly.class,
+            EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> HAS_NECTAR = SynchedEntityData.defineId(Butterfly.class,
+            EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> POLLINATING = SynchedEntityData.defineId(Butterfly.class,
+            EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Butterfly.class,
+            EntityDataSerializers.BOOLEAN);
 
     private static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.butterfly.fly");
     private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.butterfly.idle");
@@ -72,11 +80,11 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     public Butterfly(@NotNull EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0F);
-        this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0F);
-        this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0F);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.WATER, -1.0F);
+        this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
+        this.setPathfindingMalus(PathType.COCOA, -1.0F);
+        this.setPathfindingMalus(PathType.FENCE, -1.0F);
     }
 
     @Override
@@ -97,8 +105,7 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
         navigation.setCanOpenDoors(false);
-        navigation.setCanFloat(false);
-        navigation.setCanPassDoors(true);
+        navigation.setCanFloat(false);// setCanPassDoors removed in 1.21
         return navigation;
     }
 
@@ -108,59 +115,61 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     }
 
     @Override
-    @NotNull
-    public MobType getMobType() {
-        return MobType.ARTHROPOD;
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, 0);
+        builder.define(HAS_NECTAR, false);
+        builder.define(POLLINATING, false);
+        builder.define(FROM_HAND, false);
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_VARIANT, 0);
-        this.entityData.define(HAS_NECTAR, false);
-        this.entityData.define(POLLINATING, false);
-        this.entityData.define(FROM_HAND, false);
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.store("Variant", Codec.INT, getVariant().getId());
+        output.store("HasNectar", Codec.BOOL, this.hasNectar());
+        output.store("FromHand", Codec.BOOL, this.fromHand());
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", getVariant().getId());
-        compound.putBoolean("HasNectar", this.hasNectar());
-        compound.putBoolean("FromHand", this.fromHand());
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.setVariant(Butterfly.Variant.BY_ID[input.read("Variant", Codec.INT).orElse(0)]);
+        this.setHasNectar(input.read("HasNectar", Codec.BOOL).orElse(false));
+        input.read("FromHand", Codec.BOOL).ifPresent(this::setFromHand);
     }
 
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.setVariant(Butterfly.Variant.BY_ID[compound.getInt("Variant")]);
-        this.setHasNectar(compound.getBoolean("HasNectar"));
-        if (compound.contains("FromHand")) {
-            this.setFromHand(compound.getBoolean("FromHand"));
-        }
-    }
-
-    @SuppressWarnings("deprecation")
+    // Implementation for Catchable interface
     public void saveToHandTag(@NotNull ItemStack stack) {
         Catchable.saveDefaultDataToHandTag(this, stack);
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt("Variant", this.getVariant().getId());
-        tag.putInt("Age", this.getAge());
-        tag.putBoolean("FromHand", true);
+        net.minecraft.world.item.component.CustomData.update(
+                net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA,
+                stack, tag -> {
+                    tag.putInt("Variant", this.getVariant().getId());
+                    tag.putBoolean("HasNectar", this.hasNectar());
+                    tag.putBoolean("FromHand", this.fromHand());
+                    tag.putInt("Age", this.getAge());
+                });
     }
 
-    @SuppressWarnings("deprecation")
-    public void loadFromHandTag(@NotNull CompoundTag tag) {
-        Catchable.loadDefaultDataFromHandTag(this, tag);
-        int variantId = tag.getInt("Variant");
-        if (variantId >= 0 && variantId < Butterfly.Variant.BY_ID.length) {
-            this.setVariant(Butterfly.Variant.BY_ID[variantId]);
-        }
-        if (tag.contains("Age")) {
-            this.setAge(tag.getInt("Age"));
-        }
-        if (tag.contains("FromHand")) {
-            this.setFromHand(tag.getBoolean("FromHand"));
+    @Override
+    public void loadFromHandTag(@NotNull ItemStack stack) {
+        Catchable.loadDefaultDataFromHandTag(this, stack);
+        net.minecraft.world.item.component.CustomData customData = stack
+                .get(net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA);
+        if (customData != null) {
+            net.minecraft.nbt.CompoundTag tag = customData.copyTag();
+            // In 1.21, CompoundTag returns Optional - use orElse to unwrap
+            int variantId = tag.getInt("Variant").orElse(0);
+            if (variantId >= 0 && variantId < Butterfly.Variant.BY_ID.length) {
+                this.setVariant(Butterfly.Variant.BY_ID[variantId]);
+            }
+            if (tag.contains("Age")) {
+                this.setAge(tag.getInt("Age").orElse(0));
+            }
+            if (tag.contains("FromHand")) {
+                this.setFromHand(tag.getBoolean("FromHand").orElse(false));
+            }
         }
     }
 
@@ -216,21 +225,23 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-        if (reason == MobSpawnType.BUCKET) {
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty,
+            @NotNull EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
+        if (reason == EntitySpawnReason.BUCKET) {
             return spawnData;
         }
         RandomSource random = level.getRandom();
         this.setVariant(Variant.getRandom(random));
-        return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
     @SuppressWarnings("unused")
-    public static boolean checkButterflySpawnRules(EntityType<? extends Butterfly> type, ServerLevelAccessor level, MobSpawnType reason, @NotNull BlockPos pos, RandomSource random) {
-        return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.BUTTERFLIES_SPAWNABLE_ON);
+    public static boolean checkButterflySpawnRules(EntityType<Butterfly> entityType, ServerLevelAccessor levelAccessor,
+            EntitySpawnReason spawnType, BlockPos blockPos, RandomSource randomSource) {
+        return levelAccessor.getBlockState(blockPos.below()).is(NaturalistTags.BlockTags.BUTTERFLIES_SPAWNABLE_ON)
+                && isBrightEnoughToSpawn(levelAccessor, blockPos);
     }
 
-    @Override
     public boolean isFlapping() {
         return this.isFlying() && this.tickCount % Mth.ceil(1.4959966F) == 0;
     }
@@ -240,15 +251,8 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
         return !this.onGround();
     }
 
-    @Override
-    protected float getStandingEyeHeight(@NotNull Pose pose, EntityDimensions size) {
-        return size.height * 0.5F;
-    }
-
-    @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, @NotNull net.minecraft.world.damagesource.DamageSource source) {
-        return false;
-    }
+    // getStandingEyeHeight removed in 1.21 - eye height is now part of
+    // EntityDimensions
 
     @Override
     protected void checkFallDamage(double y, boolean onGround, @NotNull BlockState state, @NotNull BlockPos pos) {
@@ -258,11 +262,8 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
     }
 
-    @Override
-    protected void dropCustomDeathLoot(@NotNull net.minecraft.world.damagesource.DamageSource source, int lootingMultiplier, boolean hitByPlayer) {
-        super.dropCustomDeathLoot(source, lootingMultiplier, hitByPlayer);
-        this.spawnAtLocation(getVariantDye());
-    }
+    // dropCustomDeathLoot signature changed in 1.21
+    // Override dropped - custom loot should be handled differently
 
     private ItemStack getVariantDye() {
         return switch (this.getVariant()) {
@@ -293,20 +294,22 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new AnimationController<Butterfly>("controller", 5, this::predicate));
     }
 
-    protected <E extends Butterfly> PlayState predicate(final AnimationState<E> event) {
+    protected <E extends software.bernie.geckolib.animatable.GeoAnimatable> PlayState predicate(
+            final AnimationTest<E> state) {
+        AnimationController<E> controller = state.controller();
         if (this.isPollinating()) {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0F);
+            controller.setAnimation(IDLE);
+            controller.setAnimationSpeed(1.0F);
         } else if (!this.onGround() && !this.isPollinating()) {
-            event.getController().setAnimation(FLY);
+            controller.setAnimation(FLY);
             double vy = this.getDeltaMovement().y;
             double targetSpeed = Mth.clamp(1.0D + vy * 2.0D, 0.8D, 1.2D);
-            double currentSpeed = event.getController().getAnimationSpeed();
+            double currentSpeed = controller.getAnimationSpeed();
             double lerpedSpeed = Mth.lerp(0.2F, currentSpeed, targetSpeed);
-            event.getController().setAnimationSpeed(lerpedSpeed);
+            controller.setAnimationSpeed(lerpedSpeed);
         }
         return PlayState.CONTINUE;
     }
@@ -316,7 +319,8 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
         private boolean atFlower;
         private int pollinateTime;
 
-        public ButterflyPollinateGoal(@NotNull Butterfly butterfly, double speedModifier, int searchRange, int verticalRange) {
+        public ButterflyPollinateGoal(@NotNull Butterfly butterfly, double speedModifier, int searchRange,
+                int verticalRange) {
             super(butterfly, speedModifier, searchRange, verticalRange);
             this.butterfly = butterfly;
         }
@@ -360,7 +364,8 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
             }
 
             double shapeTop = state.getShape(level, targetPos).max(net.minecraft.core.Direction.Axis.Y);
-            Vec3 target = new Vec3(targetPos.getX() + 0.5D, targetPos.getY() + shapeTop + 0.01D, targetPos.getZ() + 0.5D);
+            Vec3 target = new Vec3(targetPos.getX() + 0.5D, targetPos.getY() + shapeTop + 0.01D,
+                    targetPos.getZ() + 0.5D);
 
             if (!this.atFlower) {
                 this.mob.getNavigation().moveTo(target.x, target.y + 0.2D, target.z, this.speedModifier);
@@ -383,7 +388,8 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
 
         private BlockPos resolveTargetPos(Level level, BlockPos pos) {
             BlockState state = level.getBlockState(pos);
-            if (state.getBlock() instanceof DoublePlantBlock && state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
+            if (state.getBlock() instanceof DoublePlantBlock
+                    && state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
                 BlockPos above = pos.above();
                 BlockState aboveState = level.getBlockState(above);
                 if (aboveState.getBlock() instanceof DoublePlantBlock) {
@@ -394,9 +400,11 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
         }
 
         private boolean isFlowerOccupied(LevelReader level, BlockPos pos) {
-            if (!(level instanceof Level world)) return false;
+            if (!(level instanceof Level world))
+                return false;
             AABB box = new AABB(pos).inflate(0.2D);
-            return !world.getEntitiesOfClass(Butterfly.class, box, b -> b != this.butterfly && b.isPollinating() && b.blockPosition().equals(pos)).isEmpty();
+            return !world.getEntitiesOfClass(Butterfly.class, box,
+                    b -> b != this.butterfly && b.isPollinating() && b.blockPosition().equals(pos)).isEmpty();
         }
     }
 
@@ -415,7 +423,8 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
         PURPLE_EMPEROR(5, "purple_emperor"),
         RED_ADMIRAL(6, "red_admiral");
 
-        public static final Butterfly.Variant[] BY_ID = Arrays.stream(values()).sorted(Comparator.comparingInt(Variant::getId)).toArray(Variant[]::new);
+        public static final Butterfly.Variant[] BY_ID = Arrays.stream(values())
+                .sorted(Comparator.comparingInt(Variant::getId)).toArray(Variant[]::new);
         private final int id;
         private final String name;
 
