@@ -1,0 +1,119 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.sf_nba.hippo",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 5,
+				"visible_bounds_height": 3.5,
+				"visible_bounds_offset": [0, 1.25, 0]
+			},
+			"bones": [
+				{
+					"name": "root",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "body",
+					"parent": "root",
+					"pivot": [0, 18.5, 7],
+					"cubes": [
+						{"origin": [-11, 9, -9], "size": [22, 19, 34], "uv": [8, 66]}
+					]
+				},
+				{
+					"name": "tail",
+					"parent": "body",
+					"pivot": [0, 25, 25],
+					"rotation": [10, 0, 0],
+					"cubes": [
+						{"origin": [-2, 18, 24], "size": [4, 7, 3], "uv": [111, 63]}
+					]
+				},
+				{
+					"name": "bone",
+					"parent": "body",
+					"pivot": [0, 18, -10]
+				},
+				{
+					"name": "head",
+					"parent": "bone",
+					"pivot": [0, 18, -10],
+					"locators": {
+						"lead": [0, 20, -9]
+					}
+				},
+				{
+					"name": "topJaw",
+					"parent": "head",
+					"pivot": [0, 18, -9],
+					"cubes": [
+						{"origin": [-6.5, 18, -28], "size": [13, 6, 10], "uv": [76, 23]},
+						{"origin": [-6.5, 18, -18], "size": [13, 7, 9], "uv": [0, 0]},
+						{"origin": [2.5, 25, -18], "size": [4, 1, 4], "uv": [35, 0]},
+						{"origin": [-6.5, 25, -18], "size": [4, 1, 4], "uv": [35, 31]},
+						{"origin": [-7.5, 25, -13], "size": [2, 2, 1], "uv": [0, 0]},
+						{"origin": [5.5, 25, -13], "size": [2, 2, 1], "uv": [0, 4]},
+						{"origin": [3.5, 17, -24], "size": [2, 1, 2], "uv": [68, 49]},
+						{"origin": [-5.5, 17, -24], "size": [2, 1, 2], "uv": [68, 49], "mirror": true},
+						{"origin": [-6.5, 13, -14], "size": [13, 5, 5], "inflate": 0.02, "uv": [39, 11]}
+					]
+				},
+				{
+					"name": "botJaw",
+					"parent": "head",
+					"pivot": [0, 18, -14],
+					"cubes": [
+						{"origin": [-6.5, 13, -28], "size": [13, 5, 10], "uv": [76, 44]},
+						{"origin": [2.5, 18, -27], "size": [2, 5, 2], "uv": [77, 46]},
+						{"origin": [-4.5, 18, -27], "size": [2, 5, 2], "uv": [77, 46], "mirror": true},
+						{"origin": [-6.5, 13, -18], "size": [13, 5, 4], "uv": [39, 21]}
+					]
+				},
+				{
+					"name": "skinFlap",
+					"parent": "botJaw",
+					"pivot": [0, 19.5, -15],
+					"rotation": [-22.5, 0, 0],
+					"cubes": [
+						{"origin": [-6.5, 17, -17], "size": [13, 7, 4], "inflate": -0.01, "uv": [82, 7]}
+					]
+				},
+				{
+					"name": "left_arm",
+					"parent": "root",
+					"pivot": [7, 9, -3.5],
+					"cubes": [
+						{"origin": [4, 0, -7], "size": [6, 10, 7], "uv": [3, 68]}
+					]
+				},
+				{
+					"name": "right_arm",
+					"parent": "root",
+					"pivot": [-7, 9, -3.5],
+					"cubes": [
+						{"origin": [-10, 0, -7], "size": [6, 10, 7], "uv": [3, 68], "mirror": true}
+					]
+				},
+				{
+					"name": "left_leg",
+					"parent": "root",
+					"pivot": [7, 9, 20.5],
+					"cubes": [
+						{"origin": [4, 0, 17], "size": [6, 10, 7], "uv": [3, 68]}
+					]
+				},
+				{
+					"name": "right_leg",
+					"parent": "root",
+					"pivot": [-7, 9, 19.5],
+					"cubes": [
+						{"origin": [-10, 0, 16], "size": [6, 10, 7], "uv": [3, 68], "mirror": true}
+					]
+				}
+			]
+		}
+	]
+}

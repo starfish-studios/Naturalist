@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "naturalist:bushmeat"
+  },
+  "result": {
+    "id": "naturalist:cooked_bushmeat"
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}

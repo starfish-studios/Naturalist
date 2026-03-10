@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "naturalist:shellstone"
+  },
+  "result": {
+    "id": "naturalist:smooth_shellstone"
+  },
+  "experience": 0.1,
+  "cookingtime": 200
+}

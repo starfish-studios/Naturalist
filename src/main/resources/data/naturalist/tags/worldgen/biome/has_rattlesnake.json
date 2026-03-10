@@ -1,0 +1,27 @@
+{
+  "values": [
+    "#minecraft:is_badlands",
+    "#minecraft:is_savanna",
+    "minecraft:desert",
+    {
+      "id": "#forge:is_sandy",
+      "required": false
+    },
+    {
+      "id": "#forge:is_savanna",
+      "required": false
+    },
+    {
+      "id": "#forge:is_desert",
+      "required": false
+    },
+    {
+      "id": "#c:is_desert",
+      "required": false
+    },
+    {
+      "id": "#c:is_savanna",
+      "required": false
+    }
+  ]
+}

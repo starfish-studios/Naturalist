@@ -1,0 +1,20 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.sf_nba.lizard_tail.flop": {
+			"sound_effects": {
+				"0.0":{
+					"effect": "flop"
+				}
+			},
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"root": {
+					"rotation": ["Math.cos((query.anim_time - 0.0) * 720) * 16", 0, 0],
+					"position": [0, 1, 0]
+				}
+			}
+		}
+	}
+}

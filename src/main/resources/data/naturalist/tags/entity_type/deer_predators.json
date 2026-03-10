@@ -1,0 +1,13 @@
+{
+  "values": [
+    "naturalist:bear",
+    {
+      "id": "alexsmobs:grizzly_bear",
+      "required": false
+    },
+    {
+      "id": "alexsmobs:crocodile",
+      "required": false
+    }
+  ]
+}

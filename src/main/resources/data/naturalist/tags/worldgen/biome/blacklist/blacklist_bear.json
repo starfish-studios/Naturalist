@@ -1,0 +1,13 @@
+{
+    "replace": false,
+    "values": [
+        {
+            "id": "#c:is_hot_overworld",
+            "required": false
+          },
+        {
+            "id": "#atmospheric:is_rainforest",
+            "required": false
+          }
+    ]
+}

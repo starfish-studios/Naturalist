@@ -1,0 +1,24 @@
+{
+  "values": [
+    "#minecraft:is_jungle",
+    "#minecraft:is_river",
+    "minecraft:beach",
+    "minecraft:stony_shore",
+    {
+      "id": "#forge:is_beach",
+      "required": false
+    },
+    {
+      "id": "#c:is_jungle",
+      "required": false
+    },
+    {
+      "id": "#c:is_river",
+      "required": false
+    },
+    {
+      "id": "#c:is_beach",
+      "required": false
+    }
+  ]
+}

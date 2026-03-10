@@ -1,0 +1,32 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.sf_nba.dragonfly.fly": {
+			"sound_effects": {
+				"0.0":{
+					"effect": "fly"
+				}
+			},
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"main": {
+					"rotation": ["Math.cos((query.anim_time - 0.5) * 180) * -2", 0, 0],
+					"position": [0, "Math.cos((query.anim_time - 0.5) * 180) * -0.25", 0]
+				},
+				"left_back_wing": {
+					"rotation": [0, 0, "25 + Math.cos((query.anim_time - 0.1) * 2880) * 45"]
+				},
+				"left_front_wing": {
+					"rotation": [0, 0, "15 + Math.cos((query.anim_time - 0.2) * 2880) * 45"]
+				},
+				"right_front_wing": {
+					"rotation": [0, 0, "-15 + Math.cos((query.anim_time - 0.2) * 2880) * -45"]
+				},
+				"right_back_wing": {
+					"rotation": [0, 0, "-25 + Math.cos((query.anim_time - 0.1) * 2880) * -45"]
+				}
+			}
+		}
+	}
+}

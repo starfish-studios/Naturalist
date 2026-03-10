@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": {
+    "item": "naturalist:catfish"
+  },
+  "result": {
+    "id": "naturalist:cooked_catfish"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

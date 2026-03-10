@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "naturalist:textures/entity/butterfly.png": "outlined_sprite:naturalist/butterfly.png",
+        "naturalist:textures/entity/blue_butterfly.png": "outlined_sprite:naturalist/blue_butterfly.png",
+        "default": "outlined_sprite:naturalist/butterfly.png"
+    }
+}

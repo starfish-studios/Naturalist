@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#c:raw_fish",
+    {
+      "id": "#forge:raw_fishes",
+      "required": false
+    }
+  ]
+}

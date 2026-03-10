@@ -1,0 +1,33 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.sf_nba.butterfly.fly": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"root": {
+					"rotation": ["Math.cos((query.anim_time - 0.4) * 720) * 4", 0, 0],
+					"position": [0, "Math.cos((query.anim_time - 0.5) * 720) * -1", 0]
+				},
+				"right_wing": {
+					"rotation": ["Math.cos((query.anim_time - 0.1) * 720) * 15", 0, "Math.cos((query.anim_time - 0.2) * 720) * -60"]
+				},
+				"left_wing": {
+					"rotation": ["Math.cos((query.anim_time - 0.1) * 720) * 15", 0, "Math.cos((query.anim_time - 0.2) * 720) * 60"]
+				},
+				"front_legs": {
+					"rotation": ["Math.cos((query.anim_time - 0.5) * 720) * -8", 0, 0]
+				},
+				"middle_legs": {
+					"rotation": ["Math.cos((query.anim_time - 0.3) * 720) * -8", 0, 0]
+				},
+				"back_legs": {
+					"rotation": ["Math.cos((query.anim_time - 0.1) * 720) * -8", 0, 0]
+				},
+				"antennae": {
+					"rotation": ["Math.sin((query.anim_time - 0.0) * 720) * 8", 0, 0]
+				}
+			}
+		}
+	}
+}

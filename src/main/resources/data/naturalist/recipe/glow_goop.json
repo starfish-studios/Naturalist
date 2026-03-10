@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "minecraft:glow_berries"
+  },
+  "result": {
+    "id": "naturalist:glow_goop"
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}
