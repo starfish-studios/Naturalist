@@ -4,26 +4,28 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "item",
+          "type": "minecraft:item",
           "name": "minecraft:bone_meal",
           "functions": [
             {
-              "function": "set_count",
+              "function": "minecraft:set_count",
               "count": {
                 "min": 0,
                 "max": 1
               }
             },
             {
-              "function": "looting_enchant",
+              "function": "minecraft:enchanted_count_increase",
               "count": {
                 "min": 0,
                 "max": 1
-              }
+              },
+              "enchantment": "minecraft:looting"
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "type": "minecraft:entity"
 }

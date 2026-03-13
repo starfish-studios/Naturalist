@@ -42,6 +42,10 @@ public class NaturalistConfig extends MidnightConfig {
     @Entry(category = "mobRemoval") public static boolean tortoiseRemoved = false;
     @Entry(category = "mobRemoval") public static boolean vultureRemoved = false;
     @Entry(category = "mobRemoval") public static boolean zebraRemoved = false;
+    @Entry(category = "mobRemoval") public static boolean mooseRemoved = false;
+    @Entry(category = "mobRemoval") public static boolean capybaraRemoved = false;
+    @Entry(category = "mobRemoval") public static boolean mammothRemoved = false;
+    @Entry(category = "mobRemoval") public static boolean fennecFoxRemoved = false;
 
 
     @Comment(category = "mobConfig") public static Comment biomeConfig;
@@ -172,6 +176,20 @@ public class NaturalistConfig extends MidnightConfig {
     @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int zebraSpawnMinGroupSize = 2;
     @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int zebraSpawnMaxGroupSize = 6;
 
+    @Entry(category = "mobConfig") public static int mooseSpawnWeight = 8;
+    @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int mooseSpawnMinGroupSize = 1;
+    @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int mooseSpawnMaxGroupSize = 2;
 
+    @Entry(category = "mobConfig") public static int capybaraSpawnWeight = 10;
+    @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int capybaraSpawnMinGroupSize = 2;
+    @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int capybaraSpawnMaxGroupSize = 4;
+
+    @Entry(category = "mobConfig") public static int mammothSpawnWeight = 5;
+    @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int mammothSpawnMinGroupSize = 2;
+    @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int mammothSpawnMaxGroupSize = 3;
+
+    @Entry(category = "mobConfig") public static int fennecFoxSpawnWeight = 10;
+    @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int fennecFoxSpawnMinGroupSize = 1;
+    @Entry(category = "mobConfig",isSlider = true, min = 1, max = 8) public static int fennecFoxSpawnMaxGroupSize = 3;
 
 }

@@ -161,6 +161,10 @@ public class NaturalistRegistry {
     public static final Supplier<SpawnEggItem> TORTOISE_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("tortoise_spawn_egg", NaturalistEntityTypes.TORTOISE, 15724462, 11765582);
     public static final Supplier<SpawnEggItem> VULTURE_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("vulture_spawn_egg", NaturalistEntityTypes.VULTURE, 4010022, 15325376);
     public static final Supplier<SpawnEggItem> ZEBRA_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("zebra_spawn_egg", NaturalistEntityTypes.ZEBRA, 15263457, 1710104);
+    public static final Supplier<SpawnEggItem> MOOSE_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("moose_spawn_egg", NaturalistEntityTypes.MOOSE, 4599848, 7556150);
+    public static final Supplier<SpawnEggItem> CAPYBARA_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("capybara_spawn_egg", NaturalistEntityTypes.CAPYBARA, 9268529, 6704178);
+    public static final Supplier<SpawnEggItem> MAMMOTH_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("mammoth_spawn_egg", NaturalistEntityTypes.MAMMOTH, 6502450, 4207894);
+    public static final Supplier<SpawnEggItem> FENNEC_FOX_SPAWN_EGG = CommonPlatformHelper.registerSpawnEggItem("fennec_fox_spawn_egg", NaturalistEntityTypes.FENNEC_FOX, 15194682, 14526218);
     //endregion
 
 

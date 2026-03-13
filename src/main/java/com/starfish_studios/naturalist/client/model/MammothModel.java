@@ -1,12 +1,11 @@
 package com.starfish_studios.naturalist.client.model;
 
 import com.starfish_studios.naturalist.Naturalist;
-import com.starfish_studios.naturalist.common.entity.Moose;
+import com.starfish_studios.naturalist.common.entity.Mammoth;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -15,26 +14,26 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class MooseModel extends GeoModel<Moose> {
+public class MammothModel extends GeoModel<Mammoth> {
     @Override
     @SuppressWarnings("removal")
-    public @NotNull ResourceLocation getModelResource(Moose moose) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/moose.geo.json");
+    public @NotNull ResourceLocation getModelResource(Mammoth entity) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/mammoth.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
-    public ResourceLocation getTextureResource(@NotNull Moose moose) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/moose.png");
+    public ResourceLocation getTextureResource(@NotNull Mammoth entity) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/mammoth.png");
     }
 
     @Override
-    public ResourceLocation getAnimationResource(Moose moose) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/moose.rp_anim.json");
+    public ResourceLocation getAnimationResource(Mammoth entity) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/mammoth.rp_anim.json");
     }
 
     @Override
-    public void setCustomAnimations(Moose entity, long instanceId, AnimationState<Moose> animationState) {
+    public void setCustomAnimations(Mammoth entity, long instanceId, AnimationState<Mammoth> animationState) {
         super.setCustomAnimations(entity, instanceId, animationState);
 
         if (animationState == null) return;
@@ -55,8 +54,11 @@ public class MooseModel extends GeoModel<Moose> {
         head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
         head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
 
-        // Show saddle bone when moose is saddled
+        // Show/hide saddle and chest bones
         GeoBone saddle = this.getAnimationProcessor().getBone("saddle");
+        GeoBone chests = this.getAnimationProcessor().getBone("chests");
+
         saddle.setHidden(!entity.isSaddled());
+        chests.setHidden(!entity.hasChest());
     }
 }

@@ -4,23 +4,24 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "item",
+          "type": "minecraft:item",
           "name": "minecraft:feather",
           "weight": 1,
           "functions": [
             {
-              "function": "set_count",
+              "function": "minecraft:set_count",
               "count": {
                 "min": 0,
                 "max": 2
               }
             },
             {
-              "function": "looting_enchant",
+              "function": "minecraft:enchanted_count_increase",
               "count": {
                 "min": 0,
                 "max": 1
-              }
+              },
+              "enchantment": "minecraft:looting"
             }
           ]
         }
@@ -30,15 +31,15 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "item",
+          "type": "minecraft:item",
           "name": "naturalist:duck",
           "weight": 1,
           "functions": [
             {
-              "function": "furnace_smelt",
+              "function": "minecraft:furnace_smelt",
               "conditions": [
                 {
-                  "condition": "entity_properties",
+                  "condition": "minecraft:entity_properties",
                   "entity": "this",
                   "predicate": {
                     "flags": {
@@ -49,15 +50,17 @@
               ]
             },
             {
-              "function": "looting_enchant",
+              "function": "minecraft:enchanted_count_increase",
               "count": {
                 "min": 0,
                 "max": 1
-              }
+              },
+              "enchantment": "minecraft:looting"
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "type": "minecraft:entity"
 }

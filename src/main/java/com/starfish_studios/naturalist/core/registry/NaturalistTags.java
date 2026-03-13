@@ -36,6 +36,8 @@ public class NaturalistTags {
         public static final TagKey<Item> CRAB_FOOD = tag("crab_food");
         public static final TagKey<Item> MOOSE_FOOD = tag("moose_food");
         public static final TagKey<Item> CAPYBARA_FOOD = tag("capybara_food");
+        public static final TagKey<Item> MAMMOTH_FOOD = tag("mammoth_food");
+        public static final TagKey<Item> FENNEC_FOX_FOOD = tag("fennec_fox_food");
         public static final TagKey<Item> PENGUIN_FOOD = tag("penguin_food");
 
         public static final TagKey<Item> HYENA_FOOD_ITEMS = tag("hyena_food_items");
@@ -107,6 +109,10 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_TORTOISE = tag("has_tortoise");
         public static final TagKey<Biome> HAS_VULTURE = tag("has_vulture");
         public static final TagKey<Biome> HAS_ZEBRA = tag("has_zebra");
+        public static final TagKey<Biome> HAS_MOOSE = tag("has_moose");
+        public static final TagKey<Biome> HAS_CAPYBARA = tag("has_capybara");
+        public static final TagKey<Biome> HAS_MAMMOTH = tag("has_mammoth");
+        public static final TagKey<Biome> HAS_FENNEC_FOX = tag("has_fennec_fox");
 
         public static final TagKey<Biome> BLACKLIST_ALLIGATOR = tag("blacklist/blacklist_alligator");
         public static final TagKey<Biome> BLACKLIST_BASS = tag("blacklist/blacklist_bass");
@@ -137,8 +143,10 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_TORTOISE = tag("blacklist/blacklist_tortoise");
         public static final TagKey<Biome> BLACKLIST_VULTURE = tag("blacklist/blacklist_vulture");
         public static final TagKey<Biome> BLACKLIST_ZEBRA = tag("blacklist/blacklist_zebra");
-
-
+        public static final TagKey<Biome> BLACKLIST_MOOSE = tag("blacklist/blacklist_moose");
+        public static final TagKey<Biome> BLACKLIST_CAPYBARA = tag("blacklist/blacklist_capybara");
+        public static final TagKey<Biome> BLACKLIST_MAMMOTH = tag("blacklist/blacklist_mammoth");
+        public static final TagKey<Biome> BLACKLIST_FENNEC_FOX = tag("blacklist/blacklist_fennec_fox");
 
         private static @NotNull TagKey<Biome> tag(String name) {
             return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));

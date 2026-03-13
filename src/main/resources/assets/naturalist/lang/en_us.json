@@ -71,6 +71,10 @@
   "entity.naturalist.sparrow": "Sparrow",
   "entity.naturalist.tortoise": "Tortoise",
   "entity.naturalist.vulture": "Vulture",
+  "entity.naturalist.moose": "Moose",
+  "entity.naturalist.capybara": "Capybara",
+  "entity.naturalist.mammoth": "Mammoth",
+  "entity.naturalist.fennec_fox": "Fennec Fox",
   "entity.naturalist.zebra": "Zebra",
 
   "item.naturalist.alligator_spawn_egg": "Alligator Spawn Egg",
@@ -128,6 +132,10 @@
   "item.naturalist.tortoise_spawn_egg": "Tortoise Spawn Egg",
   "item.naturalist.venison": "Venison",
   "item.naturalist.vulture_spawn_egg": "Vulture Spawn Egg",
+  "item.naturalist.moose_spawn_egg": "Moose Spawn Egg",
+  "item.naturalist.capybara_spawn_egg": "Capybara Spawn Egg",
+  "item.naturalist.mammoth_spawn_egg": "Mammoth Spawn Egg",
+  "item.naturalist.fennec_fox_spawn_egg": "Fennec Fox Spawn Egg",
   "item.naturalist.zebra_spawn_egg": "Zebra Spawn Egg",
 
 
@@ -560,5 +568,41 @@
   "naturalist.midnightconfig.zebraSpawnMinGroupSize": "§7§oZebra Minimum Group Size",
   "naturalist.midnightconfig.zebraSpawnMinGroupSize.tooltip": "§8§o[?]§7§o The minimum number of Zebras that can spawn in a group.",
   "naturalist.midnightconfig.zebraSpawnMaxGroupSize": "§7§oZebra Maximum Group Size",
-  "naturalist.midnightconfig.zebraSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o The maximum number of Zebras that can spawn in a group."
+  "naturalist.midnightconfig.zebraSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o The maximum number of Zebras that can spawn in a group.",
+
+  "naturalist.midnightconfig.mooseRemoved": "§7Remove Moose",
+  "naturalist.midnightconfig.mooseRemoved.tooltip": "§8§o[?]§7§o If set to 'Yes', Moose will not spawn, and existing Moose will be removed.",
+  "naturalist.midnightconfig.mooseSpawnWeight": "§9Moose Spawn Weight",
+  "naturalist.midnightconfig.mooseSpawnWeight.tooltip": "§8§o[?]§7§o The chance of Moose spawning in the world.",
+  "naturalist.midnightconfig.mooseSpawnMinGroupSize": "§7§oMoose Minimum Group Size",
+  "naturalist.midnightconfig.mooseSpawnMinGroupSize.tooltip": "§8§o[?]§7§o The minimum number of Moose that can spawn in a group.",
+  "naturalist.midnightconfig.mooseSpawnMaxGroupSize": "§7§oMoose Maximum Group Size",
+  "naturalist.midnightconfig.mooseSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o The maximum number of Moose that can spawn in a group.",
+
+  "naturalist.midnightconfig.capybaraRemoved": "§7Remove Capybara",
+  "naturalist.midnightconfig.capybaraRemoved.tooltip": "§8§o[?]§7§o If set to 'Yes', Capybaras will not spawn, and existing Capybaras will be removed.",
+  "naturalist.midnightconfig.capybaraSpawnWeight": "§9Capybara Spawn Weight",
+  "naturalist.midnightconfig.capybaraSpawnWeight.tooltip": "§8§o[?]§7§o The chance of Capybaras spawning in the world.",
+  "naturalist.midnightconfig.capybaraSpawnMinGroupSize": "§7§oCapybara Minimum Group Size",
+  "naturalist.midnightconfig.capybaraSpawnMinGroupSize.tooltip": "§8§o[?]§7§o The minimum number of Capybaras that can spawn in a group.",
+  "naturalist.midnightconfig.capybaraSpawnMaxGroupSize": "§7§oCapybara Maximum Group Size",
+  "naturalist.midnightconfig.capybaraSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o The maximum number of Capybaras that can spawn in a group.",
+
+  "naturalist.midnightconfig.mammothRemoved": "§7Remove Mammoth",
+  "naturalist.midnightconfig.mammothRemoved.tooltip": "§8§o[?]§7§o If set to 'Yes', Mammoths will not spawn, and existing Mammoths will be removed.",
+  "naturalist.midnightconfig.mammothSpawnWeight": "§9Mammoth Spawn Weight",
+  "naturalist.midnightconfig.mammothSpawnWeight.tooltip": "§8§o[?]§7§o The chance of Mammoths spawning in the world.",
+  "naturalist.midnightconfig.mammothSpawnMinGroupSize": "§7§oMammoth Minimum Group Size",
+  "naturalist.midnightconfig.mammothSpawnMinGroupSize.tooltip": "§8§o[?]§7§o The minimum number of Mammoths that can spawn in a group.",
+  "naturalist.midnightconfig.mammothSpawnMaxGroupSize": "§7§oMammoth Maximum Group Size",
+  "naturalist.midnightconfig.mammothSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o The maximum number of Mammoths that can spawn in a group.",
+
+  "naturalist.midnightconfig.fennecFoxRemoved": "§7Remove Fennec Fox",
+  "naturalist.midnightconfig.fennecFoxRemoved.tooltip": "§8§o[?]§7§o If set to 'Yes', Fennec Foxes will not spawn, and existing Fennec Foxes will be removed.",
+  "naturalist.midnightconfig.fennecFoxSpawnWeight": "§9Fennec Fox Spawn Weight",
+  "naturalist.midnightconfig.fennecFoxSpawnWeight.tooltip": "§8§o[?]§7§o The chance of Fennec Foxes spawning in the world.",
+  "naturalist.midnightconfig.fennecFoxSpawnMinGroupSize": "§7§oFennec Fox Minimum Group Size",
+  "naturalist.midnightconfig.fennecFoxSpawnMinGroupSize.tooltip": "§8§o[?]§7§o The minimum number of Fennec Foxes that can spawn in a group.",
+  "naturalist.midnightconfig.fennecFoxSpawnMaxGroupSize": "§7§oFennec Fox Maximum Group Size",
+  "naturalist.midnightconfig.fennecFoxSpawnMaxGroupSize.tooltip": "§8§o[?]§7§o The maximum number of Fennec Foxes that can spawn in a group."
 }

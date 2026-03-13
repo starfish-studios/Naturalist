@@ -97,11 +97,10 @@ public class NaturalistFabric implements ModInitializer {
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.TORTOISE.get(), Tortoise.createAttributes());
         FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.DUCK.get(), Duck.createAttributes());
 
-//        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.TOUCAN.get(), Toucan.createAttributes());
-//        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.CRAB.get(), Crab.createAttributes());
-//        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.MOOSE.get(), Moose.createAttributes());
-//        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.CAPYBARA.get(), Capybara.createAttributes());
-//        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.EMPEROR_PENGUIN.get(), EmperorPenguin.createAttributes());
+        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.MOOSE.get(), Moose.createAttributes());
+        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.CAPYBARA.get(), Capybara.createAttributes());
+        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.MAMMOTH.get(), Mammoth.createAttributes());
+        FabricDefaultAttributeRegistry.register(NaturalistEntityTypes.FENNEC_FOX.get(), FennecFox.createAttributes());
     }
 
     void addSpawns() {
@@ -143,6 +142,10 @@ public class NaturalistFabric implements ModInitializer {
         addMobSpawn(NaturalistTags.Biomes.HAS_LIZARD, MobCategory.CREATURE, NaturalistEntityTypes.LIZARD.get(), NaturalistConfig.lizardSpawnWeight, 1, 2);
         addMobSpawn(NaturalistTags.Biomes.HAS_TORTOISE, MobCategory.CREATURE, NaturalistEntityTypes.TORTOISE.get(), NaturalistConfig.tortoiseSpawnWeight, 1, 3);
         addMobSpawn(NaturalistTags.Biomes.HAS_DUCK, MobCategory.CREATURE, NaturalistEntityTypes.DUCK.get(), NaturalistConfig.duckSpawnWeight, 1, 3);
+        addMobSpawn(NaturalistTags.Biomes.HAS_MOOSE, MobCategory.CREATURE, NaturalistEntityTypes.MOOSE.get(), NaturalistConfig.mooseSpawnWeight, 1, 2);
+        addMobSpawn(NaturalistTags.Biomes.HAS_CAPYBARA, MobCategory.CREATURE, NaturalistEntityTypes.CAPYBARA.get(), NaturalistConfig.capybaraSpawnWeight, 2, 4);
+        addMobSpawn(NaturalistTags.Biomes.HAS_MAMMOTH, MobCategory.CREATURE, NaturalistEntityTypes.MAMMOTH.get(), NaturalistConfig.mammothSpawnWeight, 2, 3);
+        addMobSpawn(NaturalistTags.Biomes.HAS_FENNEC_FOX, MobCategory.CREATURE, NaturalistEntityTypes.FENNEC_FOX.get(), NaturalistConfig.fennecFoxSpawnWeight, 1, 3);
 //        if (NaturalistConfig.spawnFarmAnimalsInSavannas) {
 //            removeSpawn(BiomeTags.IS_SAVANNA, List.of(EntityType.SHEEP, EntityType.PIG, EntityType.CHICKEN, EntityType.COW));
 //        }

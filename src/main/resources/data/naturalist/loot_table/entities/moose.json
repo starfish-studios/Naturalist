@@ -12,7 +12,7 @@
               "count": {
                 "type": "minecraft:uniform",
                 "max": 2,
-                "min": 0
+                "min": 1
               },
               "function": "minecraft:set_count"
             },
@@ -26,7 +26,7 @@
               "enchantment": "minecraft:looting"
             }
           ],
-          "name": "minecraft:leather"
+          "name": "naturalist:fur"
         }
       ],
       "rolls": 1
@@ -41,10 +41,19 @@
               "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "max": 2,
+                "max": 3,
                 "min": 1
               },
               "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1,
+                "min": 0
+              },
+              "function": "minecraft:enchanted_count_increase",
+              "enchantment": "minecraft:looting"
             },
             {
               "conditions": [
@@ -59,15 +68,6 @@
                 }
               ],
               "function": "minecraft:furnace_smelt"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1,
-                "min": 0
-              },
-              "function": "minecraft:enchanted_count_increase",
-              "enchantment": "minecraft:looting"
             }
           ],
           "name": "naturalist:venison"
