@@ -29,6 +29,42 @@
     {
       "id": "biomesoplenty:shrubland",
       "required": false
+    },
+    {
+      "id": "terralith:blooming_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:brushland",
+      "required": false
+    },
+    {
+      "id": "terralith:ice_marsh",
+      "required": false
+    },
+    {
+      "id": "terralith:lavender_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:moonlight_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:orchid_swamp",
+      "required": false
+    },
+    {
+      "id": "terralith:sakura_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:shrubland",
+      "required": false
+    },
+    {
+      "id": "terralith:warm_river",
+      "required": false
     }
   ]
 }

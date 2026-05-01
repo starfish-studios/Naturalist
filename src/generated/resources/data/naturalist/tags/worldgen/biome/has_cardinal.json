@@ -56,6 +56,62 @@
     {
       "id": "biomesoplenty:wetland",
       "required": false
+    },
+    {
+      "id": "terralith:blooming_plateau",
+      "required": false
+    },
+    {
+      "id": "terralith:blooming_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:brushland",
+      "required": false
+    },
+    {
+      "id": "terralith:desert_oasis",
+      "required": false
+    },
+    {
+      "id": "terralith:lavender_forest",
+      "required": false
+    },
+    {
+      "id": "terralith:lavender_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:lush_desert",
+      "required": false
+    },
+    {
+      "id": "terralith:moonlight_grove",
+      "required": false
+    },
+    {
+      "id": "terralith:moonlight_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:orchid_swamp",
+      "required": false
+    },
+    {
+      "id": "terralith:red_oasis",
+      "required": false
+    },
+    {
+      "id": "terralith:sakura_grove",
+      "required": false
+    },
+    {
+      "id": "terralith:sakura_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:shrubland",
+      "required": false
     }
   ]
 }

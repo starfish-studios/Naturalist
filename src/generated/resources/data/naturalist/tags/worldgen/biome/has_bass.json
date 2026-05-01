@@ -18,6 +18,26 @@
     {
       "id": "biomesoplenty:wetland",
       "required": false
+    },
+    {
+      "id": "terralith:orchid_swamp",
+      "required": false
+    },
+    {
+      "id": "terralith:ice_marsh",
+      "required": false
+    },
+    {
+      "id": "terralith:warm_river",
+      "required": false
+    },
+    {
+      "id": "terralith:desert_oasis",
+      "required": false
+    },
+    {
+      "id": "terralith:red_oasis",
+      "required": false
     }
   ]
 }

@@ -13,6 +13,26 @@
     {
       "id": "#atmospheric:is_rainforest",
       "required": false
+    },
+    {
+      "id": "terralith:amethyst_rainforest",
+      "required": false
+    },
+    {
+      "id": "terralith:orchid_swamp",
+      "required": false
+    },
+    {
+      "id": "terralith:rocky_jungle",
+      "required": false
+    },
+    {
+      "id": "terralith:tropical_jungle",
+      "required": false
+    },
+    {
+      "id": "terralith:warm_river",
+      "required": false
     }
   ]
 }
