@@ -108,11 +108,6 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
 
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     public boolean hasEgg() {
         return this.entityData.get(HAS_EGG);
     }

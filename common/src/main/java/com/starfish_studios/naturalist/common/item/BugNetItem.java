@@ -24,7 +24,8 @@ public class BugNetItem extends Item {
         var recipeManager = player.level().getRecipeManager();
         Optional<BugNetInteractionRecipe> allRecipes = recipeManager.getAllRecipesFor(NaturalistRecipes.BUG_NET)
                 .stream()
-                .filter(r -> r.entityType() == interactionTarget.getType())
+                .map(recipe -> recipe.value())
+                .filter(recipe -> recipe.entityType() == interactionTarget.getType())
                 .findFirst();
 
         if (allRecipes.isPresent()) {

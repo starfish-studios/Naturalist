@@ -259,7 +259,7 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
         if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
             itemEntity.setPickUpDelay(80);
-            itemEntity.setThrower(this.getUUID());
+            itemEntity.setThrower(this);
             this.playSound(SoundEvents.FOX_SPIT, 1.0F, 1.0F);
             this.level().addFreshEntity(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
@@ -513,7 +513,7 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
                     if (this.path != null) {
                         return true;
                     } else {
-                        return this.getAttackReachSqr(livingEntity) >= this.mob.distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+                        return this.isWithinAttackRange(livingEntity);
                     }
                 }
             }
@@ -525,8 +525,14 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return 4.0F + pAttackTarget.getBbWidth();
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            return this.isTimeToAttack()
+                && this.isWithinAttackRange(attackTarget)
+                && this.mob.getSensing().hasLineOfSight(attackTarget);
+        }
+
+        private boolean isWithinAttackRange(LivingEntity attackTarget) {
+            return this.mob.distanceToSqr(attackTarget) <= 4.0F + attackTarget.getBbWidth();
         }
     }
 }

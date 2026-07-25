@@ -20,7 +20,7 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.scores.Team;
+import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class TamableNaturalistAnimal extends NaturalistAnimal implements OwnableEntity {
@@ -163,7 +163,7 @@ public abstract class TamableNaturalistAnimal extends NaturalistAnimal implement
         return true;
     }
 
-    public Team getTeam() {
+    public PlayerTeam getTeam() {
         if (this.isTame()) {
             LivingEntity livingEntity = this.getOwner();
             if (livingEntity != null) {

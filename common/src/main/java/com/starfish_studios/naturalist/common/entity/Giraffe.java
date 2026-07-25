@@ -314,16 +314,11 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
             this.yBodyRot = mob.yBodyRot;
         }
 
-        callback.accept(passenger, this.getX(), this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset(), this.getZ());
+        callback.accept(passenger, this.getX(), this.getY() + this.getBbHeight() * 0.6 + passenger.getMyRidingOffset(this), this.getZ());
 
         if (passenger instanceof LivingEntity livingEntity) {
             livingEntity.yBodyRot = this.yBodyRot;
         }
-    }
-
-    @Override
-    public double getPassengersRidingOffset() {
-        return this.getBbHeight() * 0.6;
     }
 
     @Override

@@ -112,11 +112,6 @@ public class Zebra extends AbstractChestedHorse {
     }
 
     @Override
-    public double getPassengersRidingOffset() {
-        return super.getPassengersRidingOffset() + 0;
-    }
-
-    @Override
     protected void playJumpSound() {
         this.playSound(NaturalistSoundEvents.ZEBRA_JUMP.get(), 0.4F, 1.0F);
     }
