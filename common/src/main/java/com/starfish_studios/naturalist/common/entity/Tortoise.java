@@ -254,11 +254,6 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         return 0.4;
     }
 
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
     // ENTITY DATA
 
     public int getVariant() {

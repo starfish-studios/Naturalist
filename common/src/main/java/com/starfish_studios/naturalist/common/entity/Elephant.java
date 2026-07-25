@@ -305,8 +305,10 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity attackTarget) {
-            return Mth.square(this.mob.getBbWidth());
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            return this.isTimeToAttack()
+                && this.mob.distanceToSqr(attackTarget) <= Mth.square(this.mob.getBbWidth())
+                && this.mob.getSensing().hasLineOfSight(attackTarget);
         }
     }
 

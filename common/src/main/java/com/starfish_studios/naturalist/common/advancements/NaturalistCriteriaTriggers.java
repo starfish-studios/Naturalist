@@ -11,16 +11,17 @@ import java.util.Map;
 
 public class NaturalistCriteriaTriggers {
     private static final Map<ResourceLocation, CriterionTrigger<?>> CRITERIA = Maps.newHashMap();
-    public static final CaughtEntityTrigger CAUGHT_ENTITY = register(new CaughtEntityTrigger());
+    public static final ResourceLocation CAUGHT_ENTITY_ID = new ResourceLocation("naturalist", "caught_entity");
+    public static final CaughtEntityTrigger CAUGHT_ENTITY = register(CAUGHT_ENTITY_ID, new CaughtEntityTrigger());
 
     public void CriteriaTriggers() {
     }
 
-    public static <T extends CriterionTrigger<?>> @NotNull T register(T criterion) {
-        if (CRITERIA.containsKey(criterion.getId())) {
-            throw new IllegalArgumentException("Duplicate criterion id " + criterion.getId());
+    public static <T extends CriterionTrigger<?>> @NotNull T register(ResourceLocation id, T criterion) {
+        if (CRITERIA.containsKey(id)) {
+            throw new IllegalArgumentException("Duplicate criterion id " + id);
         } else {
-            CRITERIA.put(criterion.getId(), criterion);
+            CRITERIA.put(id, criterion);
             return criterion;
         }
     }

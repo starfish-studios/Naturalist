@@ -399,7 +399,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
             itemEntity.setPickUpDelay(80);
-            itemEntity.setThrower(this.getUUID());
+            itemEntity.setThrower(this);
             this.playSound(NaturalistSoundEvents.BEAR_SPIT.get(), 1.0F, 1.0F);
             this.level().addFreshEntity(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
@@ -856,8 +856,14 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         }
 
         @Override
-        protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return pAttackTarget instanceof AbstractSchoolingFish ? super.getAttackReachSqr(pAttackTarget) : 4.0F + pAttackTarget.getBbWidth();
+        protected boolean canPerformAttack(LivingEntity attackTarget) {
+            if (attackTarget instanceof AbstractSchoolingFish) {
+                return super.canPerformAttack(attackTarget);
+            }
+            double reach = 4.0F + attackTarget.getBbWidth();
+            return this.isTimeToAttack()
+                && this.mob.distanceToSqr(attackTarget) <= reach
+                && this.mob.getSensing().hasLineOfSight(attackTarget);
         }
     }
 }

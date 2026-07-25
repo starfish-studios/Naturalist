@@ -120,11 +120,6 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new SmoothFloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));

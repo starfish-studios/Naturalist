@@ -337,9 +337,8 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         }
 
         @Override
-        protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
-            double reach = this.getAttackReachSqr(enemy);
-            if (distToEnemySqr <= reach && this.getTicksUntilNextAttack() <= 0) {
+        protected void checkAndPerformAttack(LivingEntity enemy) {
+            if (this.canPerformAttack(enemy)) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
                 if (!(enemy instanceof Player)) {

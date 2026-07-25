@@ -6,10 +6,10 @@ import com.starfish_studios.naturalist.core.platform.CommonPlatformHelper;
 import com.starfish_studios.naturalist.core.registry.*;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.AbstractProjectileDispenseBehavior;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.server.level.ServerLevel;
@@ -57,8 +57,8 @@ public class Naturalist {
 
             public @NotNull ItemStack execute(@NotNull BlockSource source, ItemStack stack) {
                 DispensibleContainerItem dispensibleContainerItem = (DispensibleContainerItem)stack.getItem();
-                BlockPos blockPos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
-                Level level = source.getLevel();
+                BlockPos blockPos = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
+                Level level = source.level();
                 if (dispensibleContainerItem.emptyContents(null, level, blockPos, null)) {
                     dispensibleContainerItem.checkExtraContent(null, level, stack, blockPos);
                     return new ItemStack(Items.BUCKET);
@@ -74,9 +74,9 @@ public class Naturalist {
 
         DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET.get(), new DefaultDispenseItemBehavior() {
             public @NotNull ItemStack execute(@NotNull BlockSource source, ItemStack stack) {
-                Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-                BlockPos blockPos = source.getPos().relative(direction);
-                ServerLevel serverLevel = source.getLevel();
+                Direction direction = source.state().getValue(DispenserBlock.FACING);
+                BlockPos blockPos = source.pos().relative(direction);
+                ServerLevel serverLevel = source.level();
                 Snail snail = NaturalistEntityTypes.SNAIL.get().spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
                 if (snail != null) {
                     snail.setSnailColor(Snail.Color.getTypeById(stack.getOrCreateTag().getInt("Color")));
@@ -88,9 +88,9 @@ public class Naturalist {
         });
         DispenserBlock.registerBehavior(NaturalistRegistry.BUTTERFLY.get(), new DefaultDispenseItemBehavior() {
             public @NotNull ItemStack execute(BlockSource source, ItemStack stack) {
-                Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-                BlockPos blockPos = source.getPos().relative(direction);
-                ServerLevel serverLevel = source.getLevel();
+                Direction direction = source.state().getValue(DispenserBlock.FACING);
+                BlockPos blockPos = source.pos().relative(direction);
+                ServerLevel serverLevel = source.level();
                 Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.get().spawn(serverLevel, stack, null, blockPos, MobSpawnType.DISPENSER, true, false);
                 if (butterfly != null) {
                     butterfly.setVariant(Butterfly.Variant.getTypeById(stack.getOrCreateTag().getInt("Variant")));

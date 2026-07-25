@@ -1,5 +1,6 @@
 package com.starfish_studios.naturalist.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -12,11 +13,17 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class TeddyBearBlock extends HorizontalDirectionalBlock {
+    public static final MapCodec<TeddyBearBlock> CODEC = simpleCodec(TeddyBearBlock::new);
     private static final VoxelShape X_AXIS_AABB = Block.box(3, 0, 2, 13, 15, 14);
     private static final VoxelShape Z_AXIS_AABB = Block.box(2, 0, 3, 14, 15, 13);
 
     public TeddyBearBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends TeddyBearBlock> codec() {
+        return CODEC;
     }
 
     @Override

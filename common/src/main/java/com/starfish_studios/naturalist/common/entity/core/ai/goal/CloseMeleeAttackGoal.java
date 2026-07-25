@@ -11,7 +11,9 @@ public class CloseMeleeAttackGoal extends MeleeAttackGoal {
     }
 
     @Override
-    protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-        return Mth.square(this.mob.getBbWidth() * 1.2f);
+    protected boolean canPerformAttack(LivingEntity attackTarget) {
+        return this.isTimeToAttack()
+            && this.mob.distanceToSqr(attackTarget) <= Mth.square(this.mob.getBbWidth() * 1.2f)
+            && this.mob.getSensing().hasLineOfSight(attackTarget);
     }
 }

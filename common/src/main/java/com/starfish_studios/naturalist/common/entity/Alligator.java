@@ -166,11 +166,6 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
         return 40;
     }
 
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
     // region DATA
 
     @Override
