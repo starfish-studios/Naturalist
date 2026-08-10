@@ -20,6 +20,10 @@ public class CapybaraRideAlligatorGoal extends Goal {
             return false;
         }
 
+        if (this.capybara.isTame()) {
+            return false;
+        }
+        
         if (this.capybara.getRandom().nextInt(20) != 0) {
             return false;
         }
