@@ -355,6 +355,29 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     public float getVoicePitch() {
         return NaturalistAnimal.defaultVoicePitch(this.random);
     }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        if (this.hasPassenger(entity -> entity instanceof Capybara)) {
+            return false;
+            }
+        return super.canAttack(target);
+    }
+    
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return passenger instanceof Capybara || super.canAddPassenger(passenger);
+    }
+    
+    @Override
+    protected void addPassenger(Entity passenger) {
+        super.addPassenger(passenger);
+        if (passenger instanceof Capybara && !this.level().isClientSide) {
+            this.setTarget(null);
+            this.setLastHurtByMob(null);
+            this.getNavigation().stop();
+       }
+    }
     //endregion
 
     //region Animation

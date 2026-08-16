@@ -199,6 +199,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(9, new RideAlligatorGoal(this, 1.2D));
     }
 
     @Override
