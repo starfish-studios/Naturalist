@@ -60,10 +60,13 @@ public class BugNetItem extends Item {
         Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
                 .stream()
                 .filter(r -> r.value().entityType() == interactionTarget.getType())
+                .filter(r -> r.value().hasIngredient(player))
                 .findFirst();
 
         if (allRecipes.isPresent()) {
-            var dropItem = allRecipes.get().value().dropStack().copy();
+            BugNetInteractionRecipe recipe = allRecipes.get().value();
+            var dropItem = recipe.dropStack().copy();
+            recipe.consumeIngredient(player);
             swing(player.level(), player);
             Containers.dropItemStack(player.level(), interactionTarget.getX(), interactionTarget.getY(), interactionTarget.getZ(), dropItem);
             playCaughtEffects(player.level(), interactionTarget);
